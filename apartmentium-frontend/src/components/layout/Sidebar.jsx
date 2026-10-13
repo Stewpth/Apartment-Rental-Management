@@ -30,6 +30,8 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               end={item.path === "/admin/dashboard"}
+              aria-label={item.title}
+              title={item.title}
               className={({ isActive }) =>
                 `sidebar-link ${isActive ? "active" : ""}`
               }
@@ -49,6 +51,8 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               end={item.path === "/admin/settings"}
+              aria-label={item.title}
+              title={item.title}
               className={({ isActive }) =>
                 `sidebar-link ${isActive ? "active" : ""}`
               }
