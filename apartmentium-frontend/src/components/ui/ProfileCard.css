@@ -1,0 +1,132 @@
+/* ---- Profile Card ---- */
+
+.profile-card-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  min-width: 0;
+  padding: 12px;
+
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.profile-card-container:hover {
+  background-color: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ---- Profile Left Section ---- */
+
+.profile-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-card-user-img {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+.profile-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-card-name {
+  overflow: hidden;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-card-role {
+  width: fit-content;
+  padding: 3px 8px;
+
+  border-radius: 5px;
+
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.profile-card-role.admin {
+  color: #dbeafe;
+  background-color: rgba(59, 112, 246, 0.25);
+  border: 1px solid rgba(147, 197, 253, 0.2);
+}
+
+/* ---- Logout Action ---- */
+
+.profile-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 15px;
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.logout-button:hover {
+  color: #ffffff;
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.logout-button:active {
+  transform: scale(0.94);
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
