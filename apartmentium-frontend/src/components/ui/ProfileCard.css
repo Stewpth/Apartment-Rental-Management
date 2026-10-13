@@ -4,10 +4,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 
+  width: 100%;
   min-width: 0;
-  padding: 12px;
+  padding: 10px;
 
   background-color: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -15,7 +16,8 @@
 
   transition:
     background-color 0.25s ease,
-    border-color 0.25s ease;
+    border-color 0.25s ease,
+    padding 0.3s ease;
 }
 
 .profile-card-container:hover {
@@ -34,7 +36,28 @@
   min-width: 0;
 }
 
+/* ---- Clickable Profile Image ---- */
+
+.profile-card-image-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+
+  cursor: pointer;
+}
+
 .profile-card-user-img {
+  display: block;
+
   width: 42px;
   height: 42px;
   flex-shrink: 0;
@@ -43,7 +66,23 @@
   border-radius: 50%;
 
   object-fit: cover;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
+
+.profile-card-image-button:hover .profile-card-user-img {
+  border-color: #93c5fd;
+  transform: scale(1.05);
+}
+
+.profile-card-image-button:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+/* ---- Profile Details ---- */
 
 .profile-card-details {
   display: flex;
@@ -52,6 +91,13 @@
 
   flex: 1;
   min-width: 0;
+
+  opacity: 1;
+  overflow: hidden;
+
+  transition:
+    opacity 0.2s ease,
+    max-width 0.3s ease;
 }
 
 .profile-card-name {
@@ -68,6 +114,7 @@
 
 .profile-card-role {
   width: fit-content;
+  flex-shrink: 0;
   padding: 3px 8px;
 
   border-radius: 5px;
@@ -83,6 +130,12 @@
   border: 1px solid rgba(147, 197, 253, 0.2);
 }
 
+.profile-card-role.tenant {
+  color: #dbfee7;
+  background-color: rgba(59, 246, 174, 0.25);
+  border: 1px solid rgba(147, 253, 218, 0.2);
+}
+
 /* ---- Logout Action ---- */
 
 .profile-card-actions {
@@ -91,6 +144,9 @@
   justify-content: center;
 
   flex-shrink: 0;
+
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 .logout-button {
@@ -129,4 +185,32 @@
 .logout-button:focus-visible {
   outline: 2px solid #93c5fd;
   outline-offset: 2px;
+}
+
+/* ---- Collapsed Profile Card ---- */
+
+.profile-card-container.collapsed {
+  justify-content: center;
+  padding: 5px;
+  gap: 0;
+}
+
+.profile-card-container.collapsed .profile-card-left {
+  flex: 0 0 auto;
+  justify-content: center;
+  gap: 0;
+}
+
+.profile-card-container.collapsed .profile-card-image-button,
+.profile-card-container.collapsed .profile-card-user-img {
+  width: 40px;
+  height: 40px;
+}
+
+.profile-card-container.collapsed .profile-card-details {
+  display: none;
+}
+
+.profile-card-container.collapsed .profile-card-actions {
+  display: none;
 }

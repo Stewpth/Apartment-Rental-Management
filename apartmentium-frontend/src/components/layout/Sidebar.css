@@ -1,17 +1,36 @@
+/* ---- Sidebar Container ---- */
+
 .sidebar-container {
-  width: 200px;
+  box-sizing: border-box;
+  width: 220px;
+  min-width: 0;
+  flex-shrink: 0;
+
   position: relative;
   top: 0;
   left: 0;
 
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 
   padding: 24px 16px;
+
   background-color: rgb(20, 43, 78);
   border-right: 1px solid #e5e7eb;
 
   z-index: 1000;
+  overflow: visible;
+
+  transition:
+    width 0.3s ease,
+    padding 0.3s ease;
+}
+
+.sidebar-container *,
+.sidebar-container *::before,
+.sidebar-container *::after {
+  box-sizing: border-box;
 }
 
 /* ---- Sidebar Header ---- */
@@ -21,21 +40,37 @@
   align-items: center;
   justify-content: center;
 
+  min-width: 0;
   margin-bottom: 32px;
+
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .sidebar-logo {
+  flex-shrink: 0;
   font-size: 27px;
   font-weight: 700;
   color: white;
 }
 
 .sidebar-system-name {
-  margin: 0;
-  margin-left: 10px;
+  max-width: 140px;
+  margin: 0 0 0 10px;
+
+  overflow: hidden;
+  white-space: nowrap;
+
   font-size: 20px;
   font-weight: 700;
   color: white;
+
+  opacity: 1;
+
+  transition:
+    opacity 0.2s ease,
+    max-width 0.3s ease,
+    margin 0.3s ease;
 }
 
 /* ---- Sidebar Navigation ---- */
@@ -44,6 +79,11 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  min-width: 0;
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-link {
@@ -51,16 +91,37 @@
   align-items: center;
   gap: 12px;
 
+  min-width: 0;
   padding: 14px 16px;
+
   border-radius: 4px;
 
   color: white;
   text-decoration: none;
   font-size: 13px;
+
+  overflow: hidden;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.2s ease,
+    padding 0.3s ease,
+    gap 0.3s ease;
 }
 
 .sidebar-icon {
+  flex-shrink: 0;
   font-size: 20px;
+}
+
+.sidebar-link span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+
+  opacity: 1;
+
+  transition: opacity 0.2s ease;
 }
 
 .sidebar-link:hover {
@@ -74,50 +135,141 @@
 /* ---- Sidebar Options ---- */
 
 .sidebar-options {
-  margin-top: 30px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  min-width: 0;
+  padding: 10px 0;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* ---- Sidebar Footer ---- */
+
+.sidebar-footer {
+  min-width: 0;
+
+  font-size: 12px;
+  color: #b1c4dc;
+
+  background-color: #16335b;
+  border-radius: 8px;
+
+  opacity: 1;
+  transform: translateY(0);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s ease;
+}
+
+/* ---- Toggle Button ---- */
 
 .sidebar-toggle-box {
   position: absolute;
-  right: 0;
   top: 50%;
+  right: -10px;
+
   transform: translate(50%, -50%);
 
   display: flex;
   align-items: center;
+  justify-content: center;
+
   padding: 8px;
-  border-radius: 50%;
+  border-radius: 0 50% 50% 0;
+
   background-color: rgb(20, 43, 78);
+
+  z-index: 1;
 }
 
 .sidebar-toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
   padding: 10px;
-  border-radius: 50%;
+
   border: none;
+  border-radius: 50%;
+
   background-color: white;
   color: rgb(20, 43, 78);
+
   cursor: pointer;
-  transition: background-color 0.3s ease;
   font-size: 20px;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.sidebar-toggle-button:hover {
+  background-color: #dbeafe;
 }
 
 .sidebar-toggle-icon {
   font-weight: 800;
 }
 
-.sidebar-footer {
-  position: absolute;
-  bottom: 24px;
-  left: 16px;
-  right: 16px;
+/* =================================
+   COLLAPSED SIDEBAR
+================================= */
 
-  font-size: 12px;
-  color: #b1c4dc;
-  background-color: #16335b;
-  border-radius: 8px;
+.sidebar-container.closed {
+  width: 80px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* ---- Collapsed Header ---- */
+
+.sidebar-container.closed .sidebar-header {
+  justify-content: center;
+}
+
+.sidebar-container.closed .sidebar-system-name {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+}
+
+/* ---- Collapsed Navigation ---- */
+
+.sidebar-container.closed .sidebar-link {
+  justify-content: center;
+  gap: 0;
+
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.sidebar-container.closed .sidebar-link span {
+  width: 0;
+  opacity: 0;
+}
+
+/* ---- Collapsed Footer ---- */
+
+/* Huwag itago ang footer kapag collapsed */
+.sidebar-container.closed .sidebar-footer {
+  transform: none;
+  pointer-events: auto;
+}
+
+/* ---- Responsive Safety ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-container,
+  .sidebar-system-name,
+  .sidebar-link,
+  .sidebar-link span,
+  .sidebar-footer,
+  .sidebar-toggle-button {
+    transition: none;
+  }
 }
