@@ -1,0 +1,46 @@
+.dashboard-content-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+/* The text inside this parent applied the text color from the child*/
+.content-header-left {
+  font-weight: 500;
+  font-size: 14px;
+  color: #98aac7;
+}
+
+.greet-with-username {
+  margin: 5px 0;
+  font-size: 30px;
+  color: #0e2c5b;
+}
+
+.content-header-right {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #e8f0fb;
+  box-shadow: 1px 7px 15px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  font-size: 13px;
+  color: #16376b;
+}
+
+.calendar-icon {
+  font-size: 30px;
+}
+
+.calendar-info {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.date {
+  font-weight: 700;
+  font-size: 16px;
+}
