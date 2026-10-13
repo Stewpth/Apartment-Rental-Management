@@ -1,0 +1,125 @@
+/* ---------- Left Background ---------- */
+
+.login-background {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 48px;
+  background: var(--primary);
+  color: #fff;
+}
+
+.login-background-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.login-background-darker {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(16, 35, 65, 0.82),
+    rgba(18, 39, 70, 0.62),
+    rgba(10, 22, 40, 0.88)
+  );
+}
+
+.login-content-box {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo {
+  font-size: 54px;
+  margin-bottom: 18px;
+}
+
+.login-system-name {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.login-description {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.login-brand-footer {
+  position: absolute;
+  top: calc(100% + 120px);
+  width: 100%;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+@media (max-width: 1023px) {
+  .login-background {
+    flex: 0.8;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .login-background {
+    flex: none;
+    min-height: 190px;
+    padding: 28px 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .login-content-box {
+    max-width: 100%;
+  }
+
+  .login-logo {
+    margin-bottom: 10px;
+    font-size: 34px;
+  }
+
+  .login-system-name {
+    font-size: 26px;
+    letter-spacing: -0.5px;
+  }
+
+  .login-description {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+
+  .login-brand-footer {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-background {
+    min-height: 165px;
+  }
+}

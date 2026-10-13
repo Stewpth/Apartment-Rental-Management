@@ -1,0 +1,41 @@
+/* ---------- Global ---------- */
+
+.login-container,
+.login-container * {
+  box-sizing: border-box;
+}
+
+.login-container {
+  --primary: #243b64;
+  --primary-hover: #1a2a47;
+  --text-primary: #172b4d;
+  --text-secondary: #697586;
+  --border-color: #dce3ed;
+
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 767px) {
+  .login-container {
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
+/* ---------- Reduced Motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-form-input-field,
+  .login-button {
+    transition: none;
+  }
+}

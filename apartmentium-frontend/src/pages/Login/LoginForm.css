@@ -1,0 +1,263 @@
+/* ---------- Right Form Panel ---------- */
+
+.login-form-container {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  background: #f8fafc;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 36px;
+  border: 1px solid rgba(220, 227, 237, 0.8);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(23, 43, 77, 0.07);
+}
+
+.login-form-heading {
+  margin-bottom: 32px;
+}
+
+.login-form-title {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 2.5vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+
+.login-form-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ---------- Inputs ---------- */
+
+.login-form-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.login-form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+}
+
+.login-form-label {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-form-input-field {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-form-input-field::placeholder {
+  color: #9aa5b5;
+}
+
+.login-form-input-field:focus {
+  border-color: #5278b7;
+  box-shadow: 0 0 0 3px rgba(82, 120, 183, 0.14);
+}
+
+.login-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.login-input-container .login-form-input-field {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #697586;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  background: #f0f4f9;
+  color: var(--primary);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid #5278b7;
+  outline-offset: 2px;
+}
+
+/* ---------- Remember Me ---------- */
+
+.login-form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.remember-me input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* ---------- Login Button ---------- */
+
+.login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 2px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-button:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 5px 14px rgba(36, 59, 100, 0.18);
+}
+
+.login-button:active {
+  transform: scale(0.99);
+}
+
+.login-button:focus-visible {
+  outline: 3px solid rgba(82, 120, 183, 0.5);
+  outline-offset: 3px;
+}
+
+/* ---------- Form Footer ---------- */
+
+.login-form-footer {
+  margin: 26px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.login-form-footer span {
+  display: block;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 1023px) {
+  .login-form-container {
+    flex: 1.2;
+    padding: 32px 24px;
+  }
+
+  .login-form {
+    padding: 30px 26px;
+  }
+
+  .login-logo {
+    font-size: 46px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 767px) {
+  .login-form-container {
+    flex: 1;
+    padding: 28px 20px;
+  }
+
+  .login-form {
+    max-width: 440px;
+    padding: 28px 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(23, 43, 77, 0.06);
+  }
+
+  .login-form-heading {
+    margin-bottom: 26px;
+  }
+
+  .login-form-title {
+    font-size: 27px;
+  }
+
+  .login-form-inputs {
+    gap: 20px;
+  }
+}
+
+/* ---------- Small Mobile ---------- */
+
+@media (max-width: 380px) {
+  .login-form-container {
+    padding: 20px 14px;
+  }
+
+  .login-form {
+    padding: 24px 18px;
+  }
+
+  .login-form-title {
+    font-size: 24px;
+  }
+}
