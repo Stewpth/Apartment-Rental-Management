@@ -1,0 +1,78 @@
+.summary-card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.summary-total-card {
+  flex: 1;
+  padding: 20px 18px;
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 10px;
+  color: #3d5781;
+}
+
+.summary-total-icon-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.summary-total-icon-box.tenant {
+  background-color: #d8e8fe;
+  color: #2563e1;
+}
+
+.summary-total-icon-box.units {
+  background-color: #daf7ed;
+  color: #33a96c;
+}
+
+.summary-total-icon-box.occupied-units {
+  background-color: #eee6fd;
+  color: #6825c6;
+}
+
+.summary-total-icon-box.payments {
+  background-color: #fef1d3;
+  color: #f3971d;
+}
+
+.summary-total-title {
+  margin: 0;
+}
+
+.summary-total-count {
+  margin: 10px 0;
+  color: #032452;
+}
+
+.summary-result-text {
+  font-size: 12px;
+}
+
+.result-arrow-icon {
+  margin-right: 5px;
+  font-weight: 800;
+}
+
+.result-percent-label {
+  margin-right: 5px;
+  font-weight: 800;
+}
+
+.result-arrow-icon.positive,
+.result-percent-label.positive {
+  color: #11cf00;
+}
+
+.result-arrow-icon.negative,
+.result-percent-label.negative {
+  color: #eb424b;
+}
