@@ -4,6 +4,8 @@ import DashboardContentHeader from "./Admin-Dashboard-Contents/DashboardContentH
 import SummaryCard from "./Admin-Dashboard-Contents/SummaryCard";
 import RentalOverview from "./Admin-Dashboard-Contents/RentalOverview";
 import RecentTenants from "./Admin-Dashboard-Contents/RecentTenants";
+import UnitStatus from "./Admin-Dashboard-Contents/UnitStatus";
+import UpcomingEvents from "./Admin-Dashboard-Contents/UpcomingEvents";
 
 import "./AdminDashboard.css";
 import "./Dashboard.css";
@@ -24,11 +26,16 @@ export default function AdminDashboard() {
               <DashboardContentHeader />
               <SummaryCard />
 
-              <section className="mini-contents-left">
-                <RentalOverview />
-                <RecentTenants />
-              </section>
-              <section className="mini-contents-right"></section>
+              <div className="mini-contents-container">
+                <section className="mini-contents-left">
+                  <RentalOverview />
+                  <RecentTenants />
+                </section>
+                <section className="mini-contents-right">
+                  <UnitStatus />
+                  <UpcomingEvents />
+                </section>
+              </div>
             </div>
             <div className="dashboard-content-right-admin">hello</div>
           </div>

@@ -11,3 +11,17 @@
 .dashboard-content-right-admin {
   flex: 1;
 }
+
+.mini-contents-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.mini-contents-left {
+  flex: 2;
+}
+
+.mini-contents-right {
+  flex: 1;
+}
