@@ -136,3 +136,58 @@
     padding: 16px;
   }
 }
+
+@media (max-width: 480px) {
+  .recent-tenants-table {
+    table-layout: fixed;
+    white-space: normal;
+  }
+
+  .recent-tenants-table th:first-child,
+  .recent-tenants-table td:first-child {
+    width: 68%;
+  }
+
+  .recent-tenants-table th:nth-child(2),
+  .recent-tenants-table td:nth-child(2),
+  .recent-tenants-table th:nth-child(4),
+  .recent-tenants-table td:nth-child(4),
+  .recent-tenants-table th:last-child,
+  .recent-tenants-table td:last-child {
+    display: none;
+  }
+
+  .recent-tenants-table th:nth-child(3),
+  .recent-tenants-table td:nth-child(3) {
+    width: 32%;
+  }
+
+  .recent-tenants-table th,
+  .recent-tenants-table td {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .recent-tenant-name {
+    max-width: 100%;
+    min-width: 0;
+    gap: 6px;
+    overflow: hidden;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .recent-tenant-avatar {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  .recent-tenant-status {
+    min-width: 0;
+    padding-right: 6px;
+    padding-left: 6px;
+    font-size: 9px;
+  }
+}

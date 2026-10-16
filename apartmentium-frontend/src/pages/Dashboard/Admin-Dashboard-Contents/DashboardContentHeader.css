@@ -44,3 +44,44 @@
   font-weight: 700;
   font-size: 16px;
 }
+
+@media (max-width: 655px) {
+  .content-header-left {
+    font-weight: 500;
+    font-size: 12px;
+    color: #98aac7;
+  }
+
+  .greet-with-username {
+    font-size: 25px;
+  }
+
+  .content-header-right {
+    align-self: flex-start;
+    padding: 12px 16px;
+    font-size: 10px;
+  }
+
+  .date {
+    font-weight: 700;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-content-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .greet-with-username {
+    font-size: clamp(23px, 6vw, 30px);
+  }
+
+  .content-header-right {
+    align-self: flex-start;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}

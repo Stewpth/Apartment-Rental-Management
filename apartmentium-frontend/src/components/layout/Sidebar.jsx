@@ -17,60 +17,64 @@ export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <aside className={`sidebar-container ${isSidebarOpen ? "open" : "closed"}`}>
-      <section className="sidebar-top">
-        <div className="sidebar-header">
-          <FontAwesomeIcon icon={faHouse} className="sidebar-logo" />
-          <h1 className="sidebar-system-name">Apartmentium</h1>
-        </div>
+    <div className="sidebar-wrapper">
+      <aside
+        className={`sidebar-container ${isSidebarOpen ? "open" : "closed"}`}
+      >
+        <section className="sidebar-top">
+          <div className="sidebar-header">
+            <FontAwesomeIcon icon={faHouse} className="sidebar-logo" />
+            <h1 className="sidebar-system-name">Apartmentium</h1>
+          </div>
 
-        <nav className="sidebar-nav">
-          {sidebarNavigation.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.path === "/admin/dashboard"}
-              aria-label={item.title}
-              title={item.title}
-              className={({ isActive }) =>
-                `sidebar-link ${isActive ? "active" : ""}`
-              }
-            >
-              <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
+          <nav className="sidebar-nav">
+            {sidebarNavigation.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === "/admin/dashboard"}
+                aria-label={item.title}
+                title={item.title}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
 
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </nav>
-      </section>
+                <span>{item.title}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </section>
 
-      <section className="sidebar-bottom">
-        <nav className="sidebar-options">
-          {sidebarOptions.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.path === "/admin/settings"}
-              aria-label={item.title}
-              title={item.title}
-              className={({ isActive }) =>
-                `sidebar-link ${isActive ? "active" : ""}`
-              }
-            >
-              <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
+        <section className="sidebar-bottom">
+          <nav className="sidebar-options">
+            {sidebarOptions.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === "/admin/settings"}
+                aria-label={item.title}
+                title={item.title}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
 
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </nav>
+                <span>{item.title}</span>
+              </NavLink>
+            ))}
+          </nav>
 
-        <div className="sidebar-footer">
-          <ProfileCard
-            isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
-          />
-        </div>
-      </section>
+          <div className="sidebar-footer">
+            <ProfileCard
+              isSidebarOpen={isSidebarOpen}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+          </div>
+        </section>
+      </aside>
 
       <div className="sidebar-toggle-box">
         <button
@@ -83,6 +87,6 @@ export default function Sidebar() {
           />
         </button>
       </div>
-    </aside>
+    </div>
   );
 }

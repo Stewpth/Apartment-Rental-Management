@@ -1,8 +1,14 @@
+.sidebar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
 /* ---- Sidebar Container ---- */
 
 .sidebar-container {
   box-sizing: border-box;
   width: 220px;
+  height: 100dvh;
   min-width: 0;
   flex-shrink: 0;
 
@@ -20,7 +26,7 @@
   border-right: 1px solid #e5e7eb;
 
   z-index: 1000;
-  overflow: visible;
+  overflow: hidden;
 
   transition:
     width 0.3s ease,
@@ -182,7 +188,7 @@
 
   background-color: rgb(20, 43, 78);
 
-  z-index: 1;
+  z-index: 1001;
 }
 
 .sidebar-toggle-button {

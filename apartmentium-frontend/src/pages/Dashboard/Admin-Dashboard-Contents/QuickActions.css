@@ -70,3 +70,13 @@
   border-color: #b9d2f5;
   background-color: #fbfdff;
 }
+
+@media (max-width: 480px) {
+  .quick-actions-grid {
+    gap: 8px;
+  }
+
+  .quick-action {
+    padding: 8px;
+  }
+}
