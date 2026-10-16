@@ -3,6 +3,7 @@ import Header from "../../components/layout/Header";
 import DashboardContentHeader from "./Admin-Dashboard-Contents/DashboardContentHeader";
 import SummaryCard from "./Admin-Dashboard-Contents/SummaryCard";
 import RentalOverview from "./Admin-Dashboard-Contents/RentalOverview";
+import RecentTenants from "./Admin-Dashboard-Contents/RecentTenants";
 
 import "./AdminDashboard.css";
 import "./Dashboard.css";
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
 
               <section className="mini-contents-left">
                 <RentalOverview />
+                <RecentTenants />
               </section>
               <section className="mini-contents-right"></section>
             </div>
