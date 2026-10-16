@@ -1,0 +1,72 @@
+.quick-actions-card {
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  box-sizing: border-box;
+  border: 1px solid #e8edf3;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.quick-actions-card h2 {
+  margin: 0;
+  color: #142b4e;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.quick-action {
+  display: grid;
+  min-width: 0;
+  min-height: 74px;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid #e3edf9;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #314766;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quick-action-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: #eef5ff;
+  color: #3478e5;
+  font-size: 16px;
+}
+
+.quick-action-label {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-action-arrow {
+  margin-left: 5px;
+  color: #6d8ebd;
+  font-size: 10px;
+}
+
+.quick-action:hover {
+  border-color: #b9d2f5;
+  background-color: #fbfdff;
+}

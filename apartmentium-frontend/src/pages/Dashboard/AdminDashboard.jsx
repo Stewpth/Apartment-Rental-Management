@@ -6,6 +6,8 @@ import RentalOverview from "./Admin-Dashboard-Contents/RentalOverview";
 import RecentTenants from "./Admin-Dashboard-Contents/RecentTenants";
 import UnitStatus from "./Admin-Dashboard-Contents/UnitStatus";
 import UpcomingEvents from "./Admin-Dashboard-Contents/UpcomingEvents";
+import QuickActions from "./Admin-Dashboard-Contents/QuickActions";
+import RecentActivity from "./Admin-Dashboard-Contents/RecentActivity";
 
 import "./AdminDashboard.css";
 import "./Dashboard.css";
@@ -37,7 +39,10 @@ export default function AdminDashboard() {
                 </section>
               </div>
             </div>
-            <div className="dashboard-content-right-admin">hello</div>
+            <div className="dashboard-content-right-admin">
+              <QuickActions />
+              <RecentActivity />
+            </div>
           </div>
         </main>
       </div>

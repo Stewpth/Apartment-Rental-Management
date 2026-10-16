@@ -1,0 +1,131 @@
+.recent-activity-card {
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  box-sizing: border-box;
+  border: 1px solid #e8edf3;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.recent-activity-header h2 {
+  margin: 0;
+  color: #142b4e;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.recent-activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.recent-activity-view-all {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #3478e5;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.recent-activity-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recent-activity-item {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.recent-activity-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.recent-activity-icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.recent-activity-icon.tenant {
+  background-color: #e3efff;
+  color: #3478e5;
+}
+
+.recent-activity-icon.payment {
+  background-color: #daf5e9;
+  color: #16a779;
+}
+
+.recent-activity-icon.maintenance {
+  background-color: #ffebcf;
+  color: #e99a2d;
+}
+
+.recent-activity-icon.announcement {
+  background-color: #eee3ff;
+  color: #8a55d7;
+}
+
+.recent-activity-icon.move-out {
+  background-color: #e6edf6;
+  color: #45688e;
+}
+
+.recent-activity-details {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  color: #7890b0;
+  font-size: 10px;
+}
+
+.recent-activity-details strong,
+.recent-activity-details > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-activity-details strong {
+  color: #314766;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.recent-activity-time {
+  align-self: start;
+  padding-top: 2px;
+  color: #8492a6;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .recent-activity-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .recent-activity-time {
+    grid-column: 2;
+    padding-top: 0;
+  }
+}
