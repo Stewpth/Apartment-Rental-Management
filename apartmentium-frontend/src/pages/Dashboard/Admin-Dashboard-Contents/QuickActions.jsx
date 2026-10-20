@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
@@ -10,20 +11,23 @@ import {
 import "./QuickActions.css";
 
 const actions = [
-  { label: "Add Tenant", icon: faUserPlus },
-  { label: "Add Unit", icon: faBuilding },
-  { label: "Record Payment", icon: faCreditCard },
-  { label: "Create Request", icon: faClipboard },
+  { label: "Add Tenant", icon: faUserPlus, path: "/admin/rentals" },
+  { label: "Add Unit", icon: faBuilding, path: "/admin/rentals" },
+  { label: "Record Payment", icon: faCreditCard, path: "/admin/payments" },
+  { label: "Check Request", icon: faClipboard, path: "/admin/requests" },
 ];
 
 export default function QuickActions() {
   return (
-    <section className="quick-actions-card" aria-labelledby="quick-actions-title">
+    <section
+      className="quick-actions-card"
+      aria-labelledby="quick-actions-title"
+    >
       <h2 id="quick-actions-title">Quick Actions</h2>
 
       <div className="quick-actions-grid">
         {actions.map((action) => (
-          <button className="quick-action" key={action.label} type="button">
+          <NavLink className="quick-action" key={action.label} to={action.path}>
             <span className="quick-action-icon">
               <FontAwesomeIcon icon={action.icon} />
             </span>
@@ -33,7 +37,7 @@ export default function QuickActions() {
               className="quick-action-arrow"
               aria-hidden="true"
             />
-          </button>
+          </NavLink>
         ))}
       </div>
     </section>

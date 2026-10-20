@@ -97,7 +97,7 @@ export default function RentalOverview() {
               cursor={{ fill: "#F3F7FC" }}
               formatter={(value, name) => [
                 formatCurrency(value),
-                name === "collected" ? "Collected" : "Pending",
+                name === "Collected" ? "Collected" : "Pending",
               ]}
               labelFormatter={(label) => `${label}`}
               contentStyle={{
