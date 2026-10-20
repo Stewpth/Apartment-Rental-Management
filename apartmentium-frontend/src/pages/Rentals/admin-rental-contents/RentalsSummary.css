@@ -1,0 +1,50 @@
+.rentals-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.rentals-summary-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fbfe;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  border-radius: 12px;
+  gap: 10px;
+}
+
+.rentals-card-icon {
+  font-size: 25px;
+}
+
+.rentals-card-icon.units {
+  color: rgb(6, 115, 204);
+}
+
+.rentals-card-icon.occupied {
+  color: rgb(33, 134, 83);
+}
+.rentals-card-icon.available {
+  color: rgb(194, 138, 34);
+}
+.rentals-card-icon.active_rentals {
+  color: rgb(120, 86, 197);
+}
+
+.rentals-card-title {
+  font-size: 15px;
+  color: rgb(100, 116, 139);
+}
+
+.rentals-card-count {
+  margin: 0;
+  font-size: 30px;
+  color: rgb(20, 43, 78);
+}
+
+@media (max-width: 635px) {
+  .rentals-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

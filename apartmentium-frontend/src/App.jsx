@@ -1,15 +1,15 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+import Rentals from "./pages/Rentals/Rentals";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+    <Routes>
+      <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
 
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      </Routes>
-    </BrowserRouter>
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/rentals" element={<Rentals />} />
+    </Routes>
   );
 }
 

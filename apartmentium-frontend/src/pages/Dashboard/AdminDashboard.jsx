@@ -10,20 +10,19 @@ import QuickActions from "./Admin-Dashboard-Contents/QuickActions";
 import RecentActivity from "./Admin-Dashboard-Contents/RecentActivity";
 
 import "./AdminDashboard.css";
-import "./Dashboard.css";
 
 export default function AdminDashboard() {
   return (
     <>
       <title>Dashboard</title>
 
-      <div className="dashboard-container">
+      <div className="page-container">
         <Sidebar />
 
-        <main className="dashboard-main">
+        <main className="page-main">
           <Header />
 
-          <div className="dashboard-content">
+          <div className="page-content">
             <div className="dashboard-content-left-admin">
               <DashboardContentHeader />
               <SummaryCard />

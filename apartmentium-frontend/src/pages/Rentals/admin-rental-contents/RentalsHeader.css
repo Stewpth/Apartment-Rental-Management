@@ -1,0 +1,16 @@
+.rentals-header {
+  padding: 25px;
+  width: 100%;
+  color: #38404d;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  background-color: #f8fbfe;
+  box-sizing: border-box;
+}
+
+.page-name-rentals {
+  font-size: 30px;
+  color: #0e2c5b;
+  margin: 5px 0;
+}

@@ -1,0 +1,18 @@
+.rentals-container {
+  row-gap: 20px;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+}
+
+.rentals-contents {
+  box-sizing: border-box;
+  row-gap: 30px;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 900px;
+}
