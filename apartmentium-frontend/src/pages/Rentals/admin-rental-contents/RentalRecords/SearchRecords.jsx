@@ -1,7 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-export default function SearchRecords() {
+export default function SearchRecords({
+  selectedFilter,
+  setSelectedFilter,
+  searchTerm,
+  setSearchTerm,
+}) {
+  const filters = ["All Rentals", "Occupied", "Available"];
+
   return (
     <>
       <div className="search-records-container">
@@ -9,19 +16,30 @@ export default function SearchRecords() {
           className="search-records-icon"
           icon={faMagnifyingGlass}
         />
+
         <input
-          name="Search record"
+          name="search-records"
           type="text"
           className="search-record-input"
-          placeholder="Search tenant and Units"
+          placeholder="Search tenant and units"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
         />
       </div>
+
       <div className="search-records-filter-box">
-        <button className="search-records-filter-btn selected">
-          All Rentals
-        </button>
-        <button className="search-records-filter-btn">Occupied</button>
-        <button className="search-records-filter-btn">Available</button>
+        {filters.map((filter) => (
+          <button
+            key={filter}
+            type="button"
+            className={`search-records-filter-btn ${
+              selectedFilter === filter ? "selected" : ""
+            }`}
+            onClick={() => setSelectedFilter(filter)}
+          >
+            {filter}
+          </button>
+        ))}
       </div>
     </>
   );

@@ -53,31 +53,55 @@ const rentalsRecordList = [
 function UnitStatus({ isAvailable }) {
   return (
     <div
-      className={`rentals-unit-status ${isAvailable ? "available" : "occupied"}`}
+      className={`rentals-unit-status ${
+        isAvailable ? "available" : "occupied"
+      }`}
     >
       {isAvailable ? "Available" : "Occupied"}
     </div>
   );
 }
 
-export default function RecordList() {
+export default function RecordList({ selectedFilter, searchTerm }) {
+  const filteredRecords = rentalsRecordList.filter((unit) => {
+    // 1. Search by tenant name or unit number.
+    const search = searchTerm.trim().toLowerCase();
+
+    const matchesSearch =
+      (unit.tenant_name || "").toLowerCase().includes(search) ||
+      unit.unit.toLowerCase().includes(search);
+
+    // 2. Filter by availability.
+    const matchesFilter =
+      selectedFilter === "All Rentals" ||
+      (selectedFilter === "Available" && unit.isAvailable) ||
+      (selectedFilter === "Occupied" && !unit.isAvailable);
+
+    // Both conditions must be true.
+    return matchesSearch && matchesFilter;
+  });
+
   return (
     <div className="rentals-record-list">
-      {rentalsRecordList.map((unit) => (
-        <div className="rentals-record-unit" key={unit.unit_id}>
-          <div className="rentals-unit-details">
-            <span className="unit-tenant-name">
-              {unit.tenant_name || "No tenant assigned"}
-            </span>
+      {filteredRecords.length > 0 ? (
+        filteredRecords.map((unit) => (
+          <div className="rentals-record-unit" key={unit.unit_id}>
+            <div className="rentals-unit-details">
+              <span className="unit-tenant-name">
+                {unit.tenant_name || "No tenant assigned"}
+              </span>
 
-            <span className="unit-tenant-room-details">
-              {unit.unit} · ₱{unit.unit_cost.toLocaleString("en-PH")}/month
-            </span>
+              <span className="unit-tenant-room-details">
+                {unit.unit} · ₱{unit.unit_cost.toLocaleString("en-PH")}/month
+              </span>
+            </div>
+
+            <UnitStatus isAvailable={unit.isAvailable} />
           </div>
-
-          <UnitStatus isAvailable={unit.isAvailable} />
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="rentals-record-empty">No rental records found.</p>
+      )}
     </div>
   );
 }

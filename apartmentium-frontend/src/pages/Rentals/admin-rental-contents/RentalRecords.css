@@ -124,6 +124,9 @@
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .search-records-filter-btn.selected {
