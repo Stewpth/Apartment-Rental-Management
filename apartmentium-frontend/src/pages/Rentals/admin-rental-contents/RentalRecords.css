@@ -1,0 +1,236 @@
+.rentals-records-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fbfe;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  gap: 15px 10px;
+}
+
+/* ==============================
+    RentalRecordsHeader
+   ==============================
+*/
+
+.rental-records-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rental-records-title {
+  font-size: 25px;
+  margin: 0;
+  color: #0e2c5b;
+}
+
+.rental-records-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.rental-action-button {
+  background-color: rgb(52, 120, 229);
+  border: none;
+  border-radius: 12px;
+
+  padding: 17px 15px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: white;
+
+  cursor: pointer;
+}
+
+.rental-records-icons {
+  font-size: 20px;
+}
+
+/* ==============================
+    SearchRecords
+   ==============================
+*/
+
+.search-records-container {
+  position: relative;
+}
+
+.search-records-icon {
+  position: absolute;
+  top: 17px;
+  left: 13px;
+  font-size: 17px;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  color: gray;
+}
+
+.search-record-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  padding: 10px 10px 10px 45px;
+  border-radius: 12px;
+  border: 1px solid gray;
+  background-color: transparent;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    padding 0.2s ease;
+}
+
+.search-record-input::placeholder {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+}
+
+.search-record-input:focus {
+  border-color: rgb(52, 120, 229);
+}
+
+.search-records-container:focus-within .search-records-icon {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.search-records-container:focus-within .search-record-input {
+  padding-left: 20px;
+  color: rgb(77, 106, 153);
+}
+
+.search-records-filter-box {
+  display: flex;
+  gap: 10px;
+}
+
+.search-records-filter-btn {
+  color: rgb(82, 97, 118);
+  background-color: rgb(241, 245, 249);
+
+  border: none;
+  font-size: 14px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-records-filter-btn.selected {
+  background-color: rgb(229, 237, 255);
+  color: rgb(40, 89, 165);
+}
+
+/* ==============================
+    RecordList
+   ==============================
+*/
+
+.rentals-record-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.rentals-record-unit {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgb(196, 196, 196);
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rentals-record-unit:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+.rentals-unit-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: 300;
+}
+
+.unit-tenant-name {
+  color: #0e2c5b;
+  font-weight: 500;
+}
+
+.unit-tenant-room-details {
+  color: #4b5461;
+}
+
+/* Unit Status */
+
+.rentals-unit-status {
+  border-radius: 20px;
+  padding: 10px 12px;
+  font-size: 14px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rentals-unit-status.available {
+  background-color: rgb(255, 242, 214);
+  color: rgb(148, 98, 0);
+}
+
+.rentals-unit-status.occupied {
+  background-color: rgb(226, 245, 233);
+  color: rgb(36, 119, 68);
+}
+
+/* =========================
+  RESPONSIVE
+========================= */
+
+/* RentalRecordsHeader*/
+
+@media (max-width: 805px) {
+  .rental-records-title {
+    font-size: 22px;
+  }
+
+  .rental-action-button {
+    padding: 15px 12px;
+    font-size: 13px;
+  }
+
+  .rental-records-icons {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 500px) {
+  .rental-records-title {
+    font-size: 19px;
+  }
+
+  .rental-action-button {
+    padding: 13px 10px;
+    font-size: 13px;
+  }
+
+  .rental-records-icons {
+    font-size: 14px;
+  }
+}

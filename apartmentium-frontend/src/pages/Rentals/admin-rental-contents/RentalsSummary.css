@@ -43,6 +43,18 @@
   color: rgb(20, 43, 78);
 }
 
+@media (max-width: 880px) {
+  .rentals-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .rentals-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 635px) {
   .rentals-summary-grid {
     grid-template-columns: repeat(2, 1fr);
