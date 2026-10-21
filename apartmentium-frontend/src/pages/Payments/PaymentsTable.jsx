@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -8,14 +9,54 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const payments = [
-  { tenant: "Juan Dela Cruz", dueDate: "October 5, 2026", totalDue: 5000 },
-  { tenant: "Maria Santos", dueDate: "October 10, 2026", totalDue: 9000 },
-  { tenant: "Pedro Reyes", dueDate: "October 15, 2026", totalDue: 11000 },
-  { tenant: "Ana Lopez", dueDate: "October 5, 2026", totalDue: 4500 },
-  { tenant: "Mark Villanueva", dueDate: "October 10, 2026", totalDue: 6000 },
-  { tenant: "Riza Cruz", dueDate: "October 20, 2026", totalDue: 5500 },
-  { tenant: "John Lim", dueDate: "October 25, 2026", totalDue: 8000 },
-  { tenant: "Erika Tan", dueDate: "October 30, 2026", totalDue: 4500 },
+  {
+    tenant_payments_id: "tpid-1",
+    tenant: "Juan Dela Cruz",
+    dueDate: "October 5, 2026",
+    totalDue: 5000,
+  },
+  {
+    tenant_payments_id: "tpid-2",
+    tenant: "Maria Santos",
+    dueDate: "October 10, 2026",
+    totalDue: 9000,
+  },
+  {
+    tenant_payments_id: "tpid-3",
+    tenant: "Pedro Reyes",
+    dueDate: "October 15, 2026",
+    totalDue: 11000,
+  },
+  {
+    tenant_payments_id: "tpid-4",
+    tenant: "Ana Lopez",
+    dueDate: "October 5, 2026",
+    totalDue: 4500,
+  },
+  {
+    tenant_payments_id: "tpid-5",
+    tenant: "Mark Villanueva",
+    dueDate: "October 10, 2026",
+    totalDue: 6000,
+  },
+  {
+    tenant_payments_id: "tpid-6",
+    tenant: "Riza Cruz",
+    dueDate: "October 20, 2026",
+    totalDue: 5500,
+  },
+  {
+    tenant_payments_id: "tpid-7",
+    tenant: "John Lim",
+    dueDate: "October 25, 2026",
+    totalDue: 8000,
+  },
+  {
+    tenant_payments_id: "tpid-8",
+    tenant: "Erika Tan",
+    dueDate: "October 30, 2026",
+    totalDue: 4500,
+  },
 ];
 
 const currency = new Intl.NumberFormat("en-PH", {
@@ -92,20 +133,21 @@ export default function PaymentsTable({ searchTerm = "" }) {
           <tbody>
             {visibleRows.length ? (
               visibleRows.map((payment) => (
-                <tr key={payment.tenant}>
+                <tr key={payment.tenant_payments_id}>
                   <td>{payment.tenant}</td>
                   <td>{payment.dueDate}</td>
                   <td className="payments-amount">
                     {currency.format(payment.totalDue)}
                   </td>
                   <td className="payments-row-action-box">
-                    <button
+                    <Link
                       className="payments-row-action"
                       type="button"
                       aria-label={`Open ${payment.tenant} payment`}
+                      to={`/admin/payments/${payment.tenant_payments_id}`}
                     >
                       <FontAwesomeIcon icon={faChevronRight} />
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))

@@ -1,0 +1,23 @@
+.view-payments-container {
+  row-gap: 20px;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.view-payments-contents {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 900px;
+  padding: 16px;
+  border: 1px solid #e8edf3;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(20, 42, 74, 0.08);
+  gap: 14px;
+}

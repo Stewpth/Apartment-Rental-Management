@@ -1,0 +1,65 @@
+.payment-details-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.payment-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  color: #1762e8;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.payment-back-link:hover {
+  text-decoration: underline;
+}
+
+.payment-details-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.payment-details-heading-row h1 {
+  margin: 0 0 3px;
+  color: #101a2f;
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.payment-details-heading-row p {
+  margin: 0;
+  color: #69778b;
+  font-size: 12px;
+}
+
+.record-payment-button {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #1762e8;
+  color: white;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.record-payment-button:hover {
+  background: #0f50c7;
+}
+
+@media (max-width: 420px) {
+  .payment-details-heading-row h1 {
+    font-size: 18px;
+  }
+  .record-payment-button {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}

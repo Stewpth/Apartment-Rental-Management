@@ -1,0 +1,52 @@
+.payment-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.payment-detail-section h2 {
+  margin: 0;
+  color: #101a2f;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.payment-detail-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e8edf3;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.payment-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #17243b;
+  font-size: 11px;
+  text-align: left;
+}
+
+.payment-detail-table th,
+.payment-detail-table td {
+  height: 29px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e9edf3;
+  white-space: nowrap;
+}
+
+.payment-detail-table thead {
+  background: #f7f9fc;
+}
+
+.payment-detail-table th {
+  color: #3c4a60;
+  font-weight: 600;
+}
+
+.payment-detail-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.payment-detail-table .payment-detail-amount {
+  text-align: right;
+}

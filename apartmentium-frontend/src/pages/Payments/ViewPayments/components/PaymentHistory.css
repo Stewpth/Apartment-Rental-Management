@@ -1,0 +1,4 @@
+.payment-history-table th:first-child,
+.payment-history-table td:first-child { width: 35%; }
+.payment-history-table th:nth-child(2),
+.payment-history-table td:nth-child(2) { width: 30%; }
