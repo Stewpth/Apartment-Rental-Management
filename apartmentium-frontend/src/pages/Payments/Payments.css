@@ -1,0 +1,241 @@
+/* ==============================
+    Payments
+   ==============================
+*/
+
+.payments-container {
+  row-gap: 20px;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.payments-contents {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 900px;
+  background-color: #f8fbfe;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  gap: 18px;
+}
+
+/* PaymentsHeader */
+.payments-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px 10px;
+}
+
+.payments-title {
+  font-size: 25px;
+  margin: 0;
+  color: #0e2c5b;
+}
+
+.payments-description {
+  font-weight: 300;
+  font-size: 14px;
+  color: #1f488a;
+}
+
+/* Search */
+.payments-search-container {
+  position: relative;
+}
+
+.payments-search-icon {
+  position: absolute;
+  top: 17px;
+  left: 13px;
+  font-size: 17px;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  color: gray;
+}
+
+.payments-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  padding: 10px 10px 10px 45px;
+  border-radius: 12px;
+  border: 1px solid gray;
+  background-color: transparent;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    padding 0.2s ease;
+}
+
+.payments-search-input::placeholder {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+}
+
+.payments-search-input:focus {
+  border-color: rgb(52, 120, 229);
+}
+
+.payments-search-container:focus-within .payments-search-icon {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.payments-search-container:focus-within .payments-search-input {
+  padding-left: 20px;
+  color: rgb(77, 106, 153);
+}
+
+/* PaymentsTable */
+.payments-table-card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #e5eaf1;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.payments-table-scroll {
+  overflow-x: auto;
+}
+
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #17243b;
+  font-size: 12px;
+  text-align: left;
+}
+
+.payments-table thead {
+  background: #f7f9fc;
+}
+
+.payments-table th,
+.payments-table td {
+  height: 37px;
+  box-sizing: border-box;
+  padding: 0 13px;
+  border-bottom: 1px solid #e9edf3;
+  white-space: nowrap;
+}
+
+.payments-table th {
+  height: 33px;
+  color: #26334a;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.payments-table th button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.payments-sort-icon {
+  color: #8a96a8;
+  font-size: 9px;
+}
+
+.payments-table .payments-amount-heading,
+.payments-table .payments-amount {
+  text-align: right;
+}
+
+.payments-row-action {
+  display: inline-flex;
+  width: 20px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #7890b0;
+  cursor: pointer;
+}
+
+.payments-row-action:hover {
+  color: #1762e8;
+}
+
+.payments-row-action-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payments-empty {
+  height: 64px !important;
+  color: #7c899d;
+  text-align: center;
+}
+
+.payments-table-footer {
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  color: #8290a5;
+  font-size: 10px;
+}
+
+.payments-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.payments-pagination button {
+  width: 23px;
+  height: 23px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e6ebf2;
+  border-radius: 50%;
+  background: #fff;
+  color: #8b9ab0;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.payments-pagination button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.payments-pagination .payments-current-page {
+  border-color: #1762e8;
+  background: #1762e8;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .payments-contents {
+    padding: 14px;
+  }
+
+  .payments-table th,
+  .payments-table td {
+    padding: 0 10px;
+  }
+}
