@@ -12,7 +12,7 @@ export default function Requests() {
 
   return (
     <>
-      <title>Rentals</title>
+      <title>Requests</title>
 
       <div className="page-container">
         <Sidebar />

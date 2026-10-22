@@ -4,6 +4,7 @@ import Rentals from "./pages/Rentals/Rentals";
 import Payments from "./pages/Payments/Payments";
 import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
 import Requests from "./pages/Request/Requests";
+import ViewRequest from "./pages/Request/ViewRequest/ViewRequest";
 
 function App() {
   return (
@@ -15,7 +16,9 @@ function App() {
 
       <Route path="/admin/payments" element={<Payments />} />
       <Route path="/admin/payments/:id" element={<ViewPayments />} />
+
       <Route path="/admin/requests" element={<Requests />} />
+      <Route path="/admin/requests/:id" element={<ViewRequest />} />
     </Routes>
   );
 }
