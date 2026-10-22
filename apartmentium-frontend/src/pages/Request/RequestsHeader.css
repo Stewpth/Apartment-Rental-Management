@@ -1,0 +1,22 @@
+.requests-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-name-requests {
+  font-size: 25px;
+  margin: 0;
+  color: #0e2c5b;
+}
+
+.payments-description {
+  font-weight: 300;
+  font-size: 14px;
+  color: #1f488a;
+}
+
+.requests-header-description {
+  font-weight: 300;
+  font-size: 14px;
+  color: #1f488a;
+}

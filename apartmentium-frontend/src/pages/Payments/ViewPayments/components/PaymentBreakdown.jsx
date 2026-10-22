@@ -7,7 +7,11 @@ export default function PaymentBreakdown({ items }) {
       <div className="payment-detail-table-wrap">
         <table className="payment-detail-table">
           <thead>
-            <tr><th>Rental Period</th><th>Due Date</th><th className="payment-detail-amount">Unpaid Amount</th></tr>
+            <tr>
+              <th>Rental Period</th>
+              <th>Due Date</th>
+              <th className="payment-detail-amount">Unpaid Amount</th>
+            </tr>
           </thead>
           <tbody>
             {items.map((item) => (

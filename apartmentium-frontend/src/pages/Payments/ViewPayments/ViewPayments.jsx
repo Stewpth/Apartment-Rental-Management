@@ -37,7 +37,18 @@ export default function ViewPayments() {
 
   function recordPayment({ amount, note }) {
     setHistory((current) => [
-      { date: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date()), amount: new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(amount), note: note || "-" },
+      {
+        date: new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }).format(new Date()),
+        amount: new Intl.NumberFormat("en-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(amount),
+        note: note || "-",
+      },
       ...current,
     ]);
     setTotalDue((current) => Math.max(0, current - amount));
@@ -60,7 +71,10 @@ export default function ViewPayments() {
                   onRecordPayment={() => setIsRecordingPayment(true)}
                 />
                 <PaymentSummary
-                  totalDue={new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(totalDue)}
+                  totalDue={new Intl.NumberFormat("en-PH", {
+                    style: "currency",
+                    currency: "PHP",
+                  }).format(totalDue)}
                   monthlyRent={paymentDetails.monthlyRent}
                 />
                 <PaymentBreakdown items={paymentDetails.breakdown} />
