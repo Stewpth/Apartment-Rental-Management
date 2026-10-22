@@ -5,6 +5,7 @@ import Payments from "./pages/Payments/Payments";
 import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
 import Requests from "./pages/Request/Requests";
 import ViewRequest from "./pages/Request/ViewRequest/ViewRequest";
+import Announcements from "./pages/Announcements/Announcements";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
 
       <Route path="/admin/requests" element={<Requests />} />
       <Route path="/admin/requests/:id" element={<ViewRequest />} />
+
+      <Route path="/admin/announcements" element={<Announcements />} />
     </Routes>
   );
 }

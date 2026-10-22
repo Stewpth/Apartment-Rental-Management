@@ -1,0 +1,107 @@
+.announcements-container {
+  row-gap: 20px;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.announcements-contents {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 1120px;
+  gap: 28px;
+}
+
+.announcements-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.announcements-heading h1 {
+  margin: 0 0 7px;
+  color: #172235;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.announcements-heading p {
+  margin: 0;
+  color: #667386;
+  font-size: 14px;
+}
+
+.announcement-create-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 17px;
+  border: 0;
+  border-radius: 9px;
+  background: #145583;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color .16s ease, transform .16s ease;
+}
+
+.announcement-create-button:hover {
+  background: #10466e;
+  transform: translateY(-1px);
+}
+
+.announcement-create-button:focus-visible {
+  outline: 3px solid rgba(20, 85, 131, .28);
+  outline-offset: 3px;
+}
+
+.announcements-empty-state {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  border: 1px solid #e0e4e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(24, 39, 56, .08);
+  text-align: center;
+}
+
+.announcements-empty-icon {
+  margin-bottom: 20px;
+  color: #c8cdd4;
+  font-size: 40px;
+}
+
+.announcements-empty-state h2 {
+  margin: 0 0 9px;
+  color: #202b3b;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.announcements-empty-state p {
+  margin: 0;
+  color: #6c7786;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .announcements-contents { gap: 20px; }
+  .announcements-heading { align-items: flex-start; flex-direction: column; }
+  .announcements-heading h1 { font-size: 25px; }
+  .announcement-create-button { width: 100%; }
+  .announcements-empty-state { min-height: 210px; }
+}

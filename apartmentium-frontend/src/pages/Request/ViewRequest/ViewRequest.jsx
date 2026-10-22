@@ -12,7 +12,7 @@ import "./ViewRequest.css";
 export default function ViewRequest() {
   return (
     <>
-      <title>Rentals</title>
+      <title>Request</title>
 
       <div className="page-container">
         <Sidebar />
