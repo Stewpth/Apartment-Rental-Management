@@ -1,9 +1,11 @@
+import { useState } from "react";
 import Sidebar from "../../../components/layout/Sidebar";
 import Header from "../../../components/layout/Header";
 import PaymentDetailsHeader from "./components/PaymentDetailsHeader";
 import PaymentSummary from "./components/PaymentSummary";
 import PaymentBreakdown from "./components/PaymentBreakdown";
 import PaymentHistory from "./components/PaymentHistory";
+import RecordPaymentModal from "./components/RecordPaymentModal";
 
 import "./ViewPayments.css";
 
@@ -29,6 +31,19 @@ const paymentDetails = {
 };
 
 export default function ViewPayments() {
+  const [totalDue, setTotalDue] = useState(9000);
+  const [history, setHistory] = useState(paymentDetails.history);
+  const [isRecordingPayment, setIsRecordingPayment] = useState(false);
+
+  function recordPayment({ amount, note }) {
+    setHistory((current) => [
+      { date: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date()), amount: new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(amount), note: note || "-" },
+      ...current,
+    ]);
+    setTotalDue((current) => Math.max(0, current - amount));
+    setIsRecordingPayment(false);
+  }
+
   return (
     <>
       <title>Payment Details</title>
@@ -42,18 +57,28 @@ export default function ViewPayments() {
                 <PaymentDetailsHeader
                   tenantName={paymentDetails.tenantName}
                   unit={paymentDetails.unit}
+                  onRecordPayment={() => setIsRecordingPayment(true)}
                 />
                 <PaymentSummary
-                  totalDue={paymentDetails.totalDue}
+                  totalDue={new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(totalDue)}
                   monthlyRent={paymentDetails.monthlyRent}
                 />
                 <PaymentBreakdown items={paymentDetails.breakdown} />
-                <PaymentHistory payments={paymentDetails.history} />
+                <PaymentHistory payments={history} />
               </div>
             </div>
           </div>
         </main>
       </div>
+      {isRecordingPayment && (
+        <RecordPaymentModal
+          tenantName={paymentDetails.tenantName}
+          unit={paymentDetails.unit}
+          totalDue={totalDue}
+          onClose={() => setIsRecordingPayment(false)}
+          onSubmit={recordPayment}
+        />
+      )}
     </>
   );
 }

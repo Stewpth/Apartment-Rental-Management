@@ -1,0 +1,84 @@
+.record-payment-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(25, 39, 57, 0.58);
+}
+
+.record-payment-modal {
+  box-sizing: border-box;
+  width: min(100%, 470px);
+  padding: 16px;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(10, 25, 45, 0.25);
+}
+
+.record-payment-modal-header,
+.record-payment-tenant,
+.record-payment-calculation div,
+.record-payment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.record-payment-modal-header { margin-bottom: 12px; }
+.record-payment-modal-header h2 { margin: 0; color: #101a2f; font-size: 16px; }
+.record-payment-close { border: 0; background: transparent; color: #77849a; font-size: 17px; cursor: pointer; }
+
+.record-payment-tenant {
+  gap: 12px;
+  margin-bottom: 13px;
+  padding: 11px 12px;
+  border-radius: 7px;
+  background: #f4f7fb;
+}
+.record-payment-tenant > div:first-child,
+.record-payment-due { display: flex; flex-direction: column; gap: 4px; }
+.record-payment-tenant strong { color: #101a2f; font-size: 12px; }
+.record-payment-tenant span { color: #64738a; font-size: 10px; }
+.record-payment-due { align-items: flex-end; }
+
+.record-payment-field { display: flex; flex-direction: column; gap: 5px; margin: 11px 0; }
+.record-payment-field > span { color: #26364e; font-size: 11px; }
+.record-payment-field b { color: #e23b4b; }
+.record-payment-field input,
+.record-payment-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #d9e1eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #142138;
+  font: inherit;
+  font-size: 11px;
+  outline: none;
+}
+.record-payment-field input:focus,
+.record-payment-field textarea:focus { border-color: #1762e8; box-shadow: 0 0 0 2px rgba(23, 98, 232, 0.12); }
+.record-payment-field textarea { resize: vertical; }
+.record-payment-field input::placeholder,
+.record-payment-field textarea::placeholder { color: #98a5b7; }
+
+.record-payment-calculation { margin-top: 12px; padding: 10px 11px; border-radius: 7px; background: #f4f7fb; }
+.record-payment-calculation div { padding: 3px 0; color: #5d6c82; font-size: 10px; }
+.record-payment-calculation strong { color: #142138; font-size: 11px; }
+.record-payment-calculation .record-payment-credit { color: #159447; }
+.record-payment-calculation .record-payment-remaining { margin-top: 5px; padding-top: 8px; border-top: 1px solid #dfe6ef; color: #142138; font-weight: 700; }
+.record-payment-calculation .record-payment-remaining strong { font-size: 15px; }
+.record-payment-error { margin: 8px 0 0; color: #c73544; font-size: 11px; }
+.record-payment-actions { justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.record-payment-actions button { padding: 8px 12px; border-radius: 6px; font: inherit; font-size: 11px; cursor: pointer; }
+.record-payment-cancel { border: 1px solid #d5deea; background: #fff; color: #33445d; }
+.record-payment-submit { border: 1px solid #1762e8; background: #1762e8; color: #fff; }
+.record-payment-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+@media (max-width: 420px) {
+  .record-payment-modal { padding: 13px; }
+  .record-payment-tenant { align-items: flex-start; }
+}
