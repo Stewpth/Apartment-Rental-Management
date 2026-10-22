@@ -1,0 +1,197 @@
+.requests-table {
+  width: 100%;
+  overflow-x: auto;
+  background-color: #eef3f7;
+  border: 1px solid #e5eaf2;
+  border-radius: 12px;
+  min-height: 738px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.requests-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+
+/* Table header */
+.requests-table thead {
+  background-color: #f8fafc;
+}
+
+.requests-table th {
+  padding: 18px 20px;
+  color: #64748b;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  border-bottom: 1px solid #e5eaf2;
+}
+
+/* Table cells */
+.requests-table td {
+  padding: 12px 20px;
+  color: #334155;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  border-bottom: 1px solid #edf1f7;
+  white-space: nowrap;
+}
+
+.request-tenant-details {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tenant name */
+.request-name {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.request-unit {
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* Clickable row */
+.requests-row {
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.requests-row:hover {
+  background-color: #f1f6fd;
+}
+
+.requests-row:last-child td {
+  border-bottom: none;
+}
+
+/* Status styles */
+
+.request-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.request-status.not_resolved {
+  background-color: oklab(0.695979 0.142433 0.130979 / 0.16);
+  color: rgb(167, 63, 11);
+}
+
+.request-status.in_progress {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+.request-status.resolved {
+  color: #047857;
+  background-color: #d1fae5;
+}
+
+/* Category styles */
+
+.request-category {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  background-color: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.request-category.repair {
+  color: #b45309;
+  background-color: #fef3c7;
+}
+
+.request-category.permission {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+/*Request Paginations*/
+
+.requests-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-top: 1px solid #e5eaf2;
+  background-color: #ffffff;
+}
+
+.pagination-info {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-buttons button {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+  background-color: #f1f5f9;
+}
+
+.pagination-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-buttons span {
+  color: #475569;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .requests-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .requests-table th,
+  .requests-table td {
+    padding: 14px 16px;
+  }
+}

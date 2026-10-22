@@ -4,6 +4,7 @@ import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
 import RequestsHeader from "./RequestsHeader";
 import SearchRequests from "./SearchRequests";
+import RequestsTable from "./RequestsTable";
 import "./Requests.css";
 
 export default function Requests() {
@@ -27,6 +28,7 @@ export default function Requests() {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                 />
+                <RequestsTable />
               </div>
             </div>
           </div>
