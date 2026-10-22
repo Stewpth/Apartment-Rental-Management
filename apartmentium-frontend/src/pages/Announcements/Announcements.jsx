@@ -1,11 +1,31 @@
+import { useState } from "react";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faPlus } from "@fortawesome/free-solid-svg-icons";
+import CreateAnnouncement from "./CreateAnnouncement";
 
 import "./Announcements.css";
 
 export default function Announcements() {
+  const [isCreating, setIsCreating] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+
+  function publishAnnouncement({ title, content }) {
+    setAnnouncements((current) => [
+      {
+        id: Date.now(),
+        title,
+        content,
+        date: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+          new Date(),
+        ),
+      },
+      ...current,
+    ]);
+    setIsCreating(false);
+  }
+
   return (
     <>
       <title>Announcements</title>
@@ -24,22 +44,58 @@ export default function Announcements() {
                     <h1>Announcements</h1>
                     <p>View and manage announcements for your community</p>
                   </div>
-                  <button type="button" className="announcement-create-button">
+                  <button
+                    type="button"
+                    className="announcement-create-button"
+                    onClick={() => setIsCreating(true)}
+                  >
                     <FontAwesomeIcon icon={faPlus} />
                     <span>New Announcement</span>
                   </button>
                 </div>
 
-                <section className="announcements-empty-state" aria-live="polite">
-                  <FontAwesomeIcon className="announcements-empty-icon" icon={faBullhorn} />
-                  <h2>No announcements yet</h2>
-                  <p>Announcements will appear here when posted</p>
-                </section>
+                {announcements.length === 0 ? (
+                  <section
+                    className="announcements-empty-state"
+                    aria-live="polite"
+                  >
+                    <FontAwesomeIcon
+                      className="announcements-empty-icon"
+                      icon={faBullhorn}
+                    />
+                    <h2>No announcements yet</h2>
+                    <p>Announcements will appear here when posted</p>
+                  </section>
+                ) : (
+                  <section
+                    className="announcement-list"
+                    aria-label="Published announcements"
+                  >
+                    {announcements.map((announcement) => (
+                      <article
+                        className="announcement-card"
+                        key={announcement.id}
+                      >
+                        <div className="announcement-card-heading">
+                          <h2>{announcement.title}</h2>
+                          <time>{announcement.date}</time>
+                        </div>
+                        <p>{announcement.content}</p>
+                      </article>
+                    ))}
+                  </section>
+                )}
               </div>
             </div>
           </div>
         </main>
       </div>
+      {isCreating && (
+        <CreateAnnouncement
+          onClose={() => setIsCreating(false)}
+          onPublish={publishAnnouncement}
+        />
+      )}
     </>
   );
 }
