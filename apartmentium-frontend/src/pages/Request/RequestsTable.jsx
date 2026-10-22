@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RequestsTable.css";
 
@@ -103,16 +103,40 @@ const requests = [
   },
 ];
 
-export default function RequestsTable() {
+export default function RequestsTable({ searchTerm }) {
+  // Instead of Link, we will use useNavigate to substitute the non-link element to link.
+  const navigate = useNavigate();
+  // Search functionality
+  const filteredRequests = requests.filter((request) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    const searchableText = [
+      request.name,
+      request.unit,
+      getRequestsStatus(request.status),
+      getRequestsCategory(request.category),
+      request.date_created,
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(search);
+  });
+
   // Pagination functionalities
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  const totalPages = Math.ceil(requests.length / pageSize);
+  const totalPages = Math.ceil(filteredRequests.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
-  const displayedRequests = requests.slice(startIndex, startIndex + pageSize);
 
-  // Instead of Link, we will use useNavigate to substitute the non-link element to link.
-  const navigate = useNavigate();
+  const displayedRequests = filteredRequests.slice(
+    startIndex,
+    startIndex + pageSize,
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   function getRequestsStatus(status) {
     switch (status) {
@@ -144,37 +168,48 @@ export default function RequestsTable() {
         </thead>
 
         <tbody>
-          {displayedRequests.map((request) => (
-            <tr
-              key={request.id}
-              className="requests-row"
-              onClick={() => navigate(`/admin/requests/${request.id}`)}
-            >
-              <td className="request-tenant-details">
-                <span className="request-name">{request.name}</span>
-                <span className="request-unit">{request.unit}</span>
+          {displayedRequests.length > 0 ? (
+            displayedRequests.map((request) => (
+              <tr
+                key={request.id}
+                className="requests-row"
+                onClick={() => navigate(`/admin/requests/${request.id}`)}
+              >
+                <td className="request-tenant-details">
+                  <span className="request-name">{request.name}</span>
+                  <span className="request-unit">{request.unit}</span>
+                </td>
+
+                <td>
+                  <span className={`request-status ${request.status}`}>
+                    {getRequestsStatus(request.status)}
+                  </span>
+                </td>
+
+                <td>
+                  <span className={`request-category ${request.category}`}>
+                    {getRequestsCategory(request.category)}
+                  </span>
+                </td>
+
+                <td>{request.date_created}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="requests-empty">
+                No requests found.
               </td>
-              <td>
-                <span className={`request-status ${request.status}`}>
-                  {getRequestsStatus(request.status)}
-                </span>
-              </td>
-              <td>
-                <span className={`request-category ${request.category}`}>
-                  {getRequestsCategory(request.category)}
-                </span>
-              </td>
-              <td>{request.date_created}</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
       <div className="requests-pagination">
         <span className="pagination-info">
-          Showing {requests.length === 0 ? 0 : startIndex + 1} to{" "}
-          {Math.min(startIndex + pageSize, requests.length)} of{" "}
-          {requests.length} requests
+          Showing {filteredRequests.length === 0 ? 0 : startIndex + 1} to{" "}
+          {Math.min(startIndex + pageSize, filteredRequests.length)} of{" "}
+          {filteredRequests.length} requests
         </span>
 
         <div className="pagination-buttons">
@@ -192,7 +227,7 @@ export default function RequestsTable() {
 
           <button
             type="button"
-            disabled={currentPage >= totalPages}
+            disabled={totalPages === 0 || currentPage >= totalPages}
             onClick={() => setCurrentPage((page) => page + 1)}
           >
             Next

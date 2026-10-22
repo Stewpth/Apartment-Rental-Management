@@ -176,6 +176,12 @@
   font-size: 13px;
 }
 
+.requests-empty {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
 @media (max-width: 600px) {
   .requests-pagination {
     flex-direction: column;

@@ -28,7 +28,7 @@ export default function Requests() {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                 />
-                <RequestsTable />
+                <RequestsTable searchTerm={searchTerm} />
               </div>
             </div>
           </div>
