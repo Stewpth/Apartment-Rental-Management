@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../../components/layout/Sidebar";
 import Header from "../../../components/layout/Header";
 import ViewRequestHeader from "./ViewRequestHeader";
 import RequestInfo from "./RequestInfo";
+import RequestDescription from "./RequestDescription";
 
 import "./ViewRequest.css";
 
@@ -23,12 +24,24 @@ export default function ViewRequest() {
             <div className="request-container">
               <div className="request-contents">
                 <Link to="/admin/requests" className="request-back-link">
-                  {" "}
-                  <FontAwesomeIcon icon={faArrowLeft} />
-                  <span>Back to Payments</span>
+                  <FontAwesomeIcon icon={faArrowLeft} />{" "}
+                  <span>Back to Requests</span>
                 </Link>
                 <ViewRequestHeader />
                 <RequestInfo />
+                <RequestDescription />
+                <div className="view-request-actions">
+                  <button className="request-btn reject">
+                    <span>Reject</span>
+                  </button>
+                  <button className="request-btn accept">
+                    <FontAwesomeIcon
+                      className="request-btn-icon"
+                      icon={faCheck}
+                    />
+                    <span>Accept Request</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
