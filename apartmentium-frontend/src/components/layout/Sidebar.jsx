@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
@@ -7,7 +7,11 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { sidebarNavigation, sidebarOptions } from "./SidebarNavigation";
+import {
+  sidebarAdminNavigation,
+  sidebarTenantNavigation,
+  sidebarOptions,
+} from "./SidebarNavigation";
 
 import ProfileCard from "../ui/ProfileCard";
 
@@ -15,6 +19,21 @@ import "./Sidebar.css";
 
 export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Change navigation depends on the user's role
+  const location = useLocation();
+  const userRoleNavigation = location.pathname.startsWith("/admin")
+    ? sidebarAdminNavigation
+    : sidebarTenantNavigation;
+
+  function shouldUseExactMatch(path) {
+    return (
+      path === "/admin/dashboard" ||
+      path === "/tenant/dashboard" ||
+      path === "/admin/settings" ||
+      path === "/tenant/settings"
+    );
+  }
 
   return (
     <div className="sidebar-wrapper">
@@ -28,11 +47,11 @@ export default function Sidebar() {
           </div>
 
           <nav className="sidebar-nav">
-            {sidebarNavigation.map((item) => (
+            {userRoleNavigation.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/admin/dashboard"}
+                end={shouldUseExactMatch(item.path)}
                 aria-label={item.title}
                 title={item.title}
                 className={({ isActive }) =>
@@ -40,7 +59,6 @@ export default function Sidebar() {
                 }
               >
                 <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
-
                 <span>{item.title}</span>
               </NavLink>
             ))}
@@ -53,7 +71,7 @@ export default function Sidebar() {
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/admin/settings"}
+                end={shouldUseExactMatch(item.path)}
                 aria-label={item.title}
                 title={item.title}
                 className={({ isActive }) =>
@@ -61,7 +79,6 @@ export default function Sidebar() {
                 }
               >
                 <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
-
                 <span>{item.title}</span>
               </NavLink>
             ))}

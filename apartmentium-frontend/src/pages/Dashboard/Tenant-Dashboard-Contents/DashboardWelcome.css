@@ -1,0 +1,12 @@
+﻿.tenant-welcome { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.tenant-welcome h1 { margin: 4px 0 5px; color: #18345d; font-size: 27px; }
+.tenant-welcome p { color: #718198; font-size: 12px; }
+.tenant-eyebrow { color: #6483ac; font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+.tenant-today { display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: #fff; border: 1px solid #e4ebf4; border-radius: 10px; color: #235598; }
+.tenant-today span { display: grid; gap: 3px; font-size: 12px; }
+.tenant-today small { color: #8190a4; }
+@media (max-width: 700px) {
+  .tenant-welcome { align-items: flex-start; flex-direction: column; }
+  .tenant-welcome h1 { font-size: 23px; }
+  .tenant-today { padding: 9px 12px; }
+}

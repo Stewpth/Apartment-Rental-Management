@@ -8,7 +8,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
-export const sidebarNavigation = [
+export const sidebarAdminNavigation = [
   {
     title: "Dashboard",
     path: "/admin/dashboard",
@@ -32,6 +32,30 @@ export const sidebarNavigation = [
   {
     title: "Requests",
     path: "/admin/requests",
+    icon: faClipboard,
+  },
+];
+
+// Announcement should be only on the dashboard
+export const sidebarTenantNavigation = [
+  {
+    title: "Dashboard",
+    path: "/tenant/dashboard",
+    icon: faBorderAll,
+  },
+  {
+    title: "My Rentals",
+    path: "/tenant/rentals",
+    icon: faBuilding,
+  },
+  {
+    title: "My Payments",
+    path: "/tenant/payments",
+    icon: faCreditCard,
+  },
+  {
+    title: "My Requests",
+    path: "/tenant/requests",
     icon: faClipboard,
   },
 ];
