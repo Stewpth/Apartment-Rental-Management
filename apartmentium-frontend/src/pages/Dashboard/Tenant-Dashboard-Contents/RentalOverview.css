@@ -1,22 +1,121 @@
-﻿.tenant-rental { display: grid; grid-template-columns: minmax(110px, .85fr) 1fr; gap: 16px; padding-top: 14px; align-items: center; }
-.tenant-building-art { height: 130px; position: relative; overflow: hidden; border-radius: 7px; background: linear-gradient(145deg, #c8def1, #edf4fa 58%, #91aec7); }
-.tenant-building-art::before, .tenant-building-art::after { content: ""; position: absolute; bottom: 0; width: 30px; height: 60px; background: #a1b8c8; opacity: .7; }
-.tenant-building-art::before { left: 5px; }
-.tenant-building-art::after { right: 0; width: 22px; height: 78px; }
-.tenant-building-art > span { position: absolute; top: 10px; left: 10px; z-index: 1; color: #45637e; font-size: 7px; letter-spacing: .12em; }
-.building { position: absolute; z-index: 1; left: 25%; bottom: -4px; width: 58%; height: 102px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 7px 5px; padding: 12px 9px; background: #e9e3d8; border: 4px solid #d2c8b9; box-shadow: 6px 0 #b9c4cc; transform: perspective(120px) rotateY(-5deg); }
-.building i { background: #8ab4d1; border: 2px solid #f5f1e9; }
-.tenant-rental-details { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; align-items: center; }
-.tenant-rental-details strong { color: #203d68; font-size: 13px; }
-.tenant-rental-details .tenant-muted { font-size: 10px; }
-.payment-overview > .tenant-muted { margin-top: 16px; }
-.tenant-balance { display: block; padding: 5px 0 14px; color: #173866; font-size: 25px; border-bottom: 1px solid #edf1f6; }
-.tenant-due { display: flex; align-items: center; justify-content: space-between; padding-top: 13px; }
-.tenant-due span:first-child { display: grid; gap: 5px; }
-.tenant-due small { color: #718198; font-size: 10px; }
-.tenant-due strong { color: #29466e; font-size: 12px; }
+﻿.tenant-rental {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.85fr) 1fr;
+  gap: 16px;
+  padding-top: 14px;
+  align-items: center;
+}
+.tenant-building-art {
+  height: 130px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 7px;
+  background: linear-gradient(145deg, #c8def1, #edf4fa 58%, #91aec7);
+}
+.tenant-building-art::before,
+.tenant-building-art::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 30px;
+  height: 60px;
+  background: #a1b8c8;
+  opacity: 0.7;
+}
+.tenant-building-art::before {
+  left: 5px;
+}
+.tenant-building-art::after {
+  right: 0;
+  width: 22px;
+  height: 78px;
+}
+.tenant-building-art > span {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  color: #45637e;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+.building {
+  position: absolute;
+  z-index: 1;
+  left: 25%;
+  bottom: -4px;
+  width: 58%;
+  height: 102px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 7px 5px;
+  padding: 12px 9px;
+  background: #e9e3d8;
+  border: 4px solid #d2c8b9;
+  box-shadow: 6px 0 #b9c4cc;
+  transform: perspective(120px) rotateY(-5deg);
+}
+.building i {
+  background: #8ab4d1;
+  border: 2px solid #f5f1e9;
+}
+.tenant-rental-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px 12px;
+  justify-content: start;
+  align-items: center;
+}
+
+.tenant-rental-details .tenant-status {
+  justify-self: start;
+  width: fit-content;
+}
+
+.tenant-rental-details strong {
+  color: #203d68;
+  font-size: 13px;
+}
+.tenant-rental-details .tenant-muted {
+  font-size: 10px;
+}
+.payment-overview > .tenant-muted {
+  margin-top: 16px;
+}
+.tenant-balance {
+  display: block;
+  padding: 5px 0 14px;
+  color: #173866;
+  font-size: 25px;
+  border-bottom: 1px solid #edf1f6;
+}
+.tenant-due {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 13px;
+}
+.tenant-due span:first-child {
+  display: grid;
+  gap: 5px;
+}
+.tenant-due small {
+  color: #718198;
+  font-size: 10px;
+}
+.tenant-due strong {
+  color: #29466e;
+  font-size: 12px;
+}
 @media (max-width: 700px) {
-  .tenant-rental { grid-template-columns: 1fr; }
-  .tenant-building-art { height: 150px; }
-  .tenant-rental-details { grid-template-columns: 1fr 1fr; }
+  .tenant-rental {
+    grid-template-columns: 1fr;
+  }
+  .tenant-building-art {
+    height: 150px;
+  }
+  .tenant-rental-details {
+    grid-template-columns: 1fr 1fr;
+  }
 }

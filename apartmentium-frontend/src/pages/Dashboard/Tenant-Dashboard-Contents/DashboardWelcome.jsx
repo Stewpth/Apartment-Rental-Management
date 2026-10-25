@@ -8,7 +8,7 @@ export default function DashboardWelcome() {
     <section className="tenant-welcome">
       <div>
         <span className="tenant-eyebrow">YOUR HOME, AT A GLANCE</span>
-        <h1>Welcome back, Maria!</h1>
+        <h1>Hello, Maria!</h1>
         <p>Here&apos;s what&apos;s happening with your apartment today.</p>
       </div>
       <div className="tenant-today">

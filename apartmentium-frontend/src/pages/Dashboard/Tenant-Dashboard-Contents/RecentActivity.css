@@ -1,12 +1,124 @@
-﻿.tenant-list { display: grid; }
-.tenant-list-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #edf1f6; }
-.tenant-list-row:last-child { padding-bottom: 0; border-bottom: 0; }
-.tenant-row-icon { display: grid; place-items: center; flex: 0 0 30px; width: 30px; height: 30px; color: #3474cf; background: #eff5fc; border-radius: 7px; font-size: 12px; }
-.tenant-row-copy { display: grid; flex: 1; min-width: 0; gap: 4px; }
-.tenant-row-copy strong { color: #29466e; font-size: 10px; }
-.tenant-row-copy span, .tenant-row-copy small { color: #8391a4; font-size: 9px; }
-.tenant-payment-list { padding-top: 4px; }
-.tenant-payment-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 9px; padding: 12px 0; border-bottom: 1px solid #edf1f6; font-size: 10px; }
-.tenant-payment-row:last-child { border-bottom: 0; }
-.tenant-payment-row > span:first-child { color: #718198; }
-.tenant-payment-row strong { color: #203d68; font-size: 11px; }
+﻿.tenant-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tenant-list-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.tenant-list-row:last-child {
+  border-bottom: 0;
+}
+
+.tenant-row-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  color: #3474cf;
+  background: #eff5fc;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.tenant-row-copy {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.tenant-row-copy strong {
+  overflow: hidden;
+  color: #29466e;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-row-copy span,
+.tenant-row-copy small {
+  color: #8391a4;
+  font-size: 9px;
+}
+
+.tenant-payment-list {
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.tenant-payment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf1f6;
+  font-size: 10px;
+}
+
+.tenant-payment-row:last-child {
+  border-bottom: 0;
+}
+
+.tenant-payment-details-dashboard {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tenant-payment-details-label.id {
+  overflow: hidden;
+  color: #718198;
+  font-size: 10px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-payment-details-label.date {
+  color: #29466e;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tenant-payment-stats-dashboard {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.tenant-payment-row strong {
+  color: #203d68;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Keep content usable on narrow screens */
+@media (max-width: 480px) {
+  .tenant-list-row {
+    gap: 8px;
+  }
+
+  .tenant-payment-row {
+    gap: 8px;
+  }
+
+  .tenant-payment-stats-dashboard .tenant-status {
+    padding: 4px 7px;
+    font-size: 8px;
+  }
+}
