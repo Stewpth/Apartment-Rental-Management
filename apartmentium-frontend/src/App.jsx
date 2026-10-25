@@ -1,7 +1,8 @@
-﻿import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import Rentals from "./pages/Rentals/Rentals";
 import TenantRentals from "./pages/Rentals/TenantRentals";
+import ViewRentalPage from "./pages/Rentals/ViewRentalPage/ViewRentalPage";
 import Payments from "./pages/Payments/Payments";
 import TenantPayments from "./pages/Payments/TenantPayments";
 import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
@@ -22,6 +23,7 @@ function App() {
       <Route path="/admin/profile" element={<ProfilePage />} />
       <Route path="/admin/settings" element={<SecuritySettingsPage />} />
       <Route path="/admin/rentals" element={<Rentals />} />
+      <Route path="/admin/rentals/:unitId" element={<ViewRentalPage />} />
 
       <Route path="/admin/payments" element={<Payments />} />
       <Route path="/admin/payments/:id" element={<ViewPayments />} />
@@ -42,6 +44,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

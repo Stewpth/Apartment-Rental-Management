@@ -8,11 +8,11 @@ import AssignTenantModal from "./RentalRecords/AssignTenantModal";
 import { initialRentalRecords } from "./RentalRecords/rentalRecords";
 import "./RentalRecords.css";
 
-export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, setUnitUpdates }) {
+export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, setUnitUpdates, initialUnitId }) {
   const [selectedFilter, setSelectedFilter] = useState("All Rentals");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
-  const [isAssignTenantOpen, setIsAssignTenantOpen] = useState(false);
+  const [isAssignTenantOpen, setIsAssignTenantOpen] = useState(Boolean(initialUnitId));
   const existingUnits = [...initialRentalRecords, ...newUnits].map((unit) => ({
     ...unit,
     ...(unitUpdates[unit.unit_id] || {}),
@@ -68,6 +68,7 @@ export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, set
       {isAssignTenantOpen && (
         <AssignTenantModal
           availableUnits={existingUnits.filter((unit) => unit.isAvailable)}
+          initialUnitId={initialUnitId}
           onCancel={() => setIsAssignTenantOpen(false)}
           onCreate={assignTenant}
         />
@@ -75,3 +76,4 @@ export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, set
     </>
   );
 }
+
