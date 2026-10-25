@@ -26,9 +26,10 @@ export default function TenantRequests() {
     const newRequest = {
       id: `tenant-request-${Date.now()}`,
       ...formValues,
-      title: formValues.description.length > 55
-        ? `${formValues.description.slice(0, 52).trim()}...`
-        : formValues.description,
+      title:
+        formValues.description.length > 55
+          ? `${formValues.description.slice(0, 52).trim()}...`
+          : formValues.description,
       submitted: formatRequestDate(new Date()),
       status: "not_resolved",
     };
@@ -39,7 +40,7 @@ export default function TenantRequests() {
 
   return (
     <>
-      <title>My Requests | Apartmentium</title>
+      <title>My Requests</title>
       <div className="page-container">
         <Sidebar />
         <main className="page-main">
@@ -73,5 +74,3 @@ export default function TenantRequests() {
     </>
   );
 }
-
-

@@ -1,4 +1,4 @@
-import {
+﻿import {
   faBorderAll,
   faBuilding,
   faClipboard,
@@ -64,11 +64,15 @@ export const sidebarOptions = [
   {
     title: "Settings",
     path: "/admin/settings",
+    tenantPath: "/tenant/settings",
     icon: faCog,
   },
   {
-    title: "User",
-    path: "/admin/user",
+    title: "Profile",
+    path: "/admin/profile",
+    tenantPath: "/tenant/profile",
     icon: faUser,
   },
 ];
+
+

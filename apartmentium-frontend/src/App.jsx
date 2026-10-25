@@ -10,6 +10,8 @@ import TenantRequests from "./pages/Request/TenantRequests";
 import ViewRequest from "./pages/Request/ViewRequest/ViewRequest";
 import Announcements from "./pages/Announcements/Announcements";
 import TenantDashboard from "./pages/Dashboard/TenantDashboard";
+import ProfilePage from "./pages/Account/ProfilePage";
+import SecuritySettingsPage from "./pages/Account/SecuritySettingsPage";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
 
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/profile" element={<ProfilePage />} />
+      <Route path="/admin/settings" element={<SecuritySettingsPage />} />
       <Route path="/admin/rentals" element={<Rentals />} />
 
       <Route path="/admin/payments" element={<Payments />} />
@@ -28,6 +32,8 @@ function App() {
       <Route path="/admin/announcements" element={<Announcements />} />
 
       <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+      <Route path="/tenant/profile" element={<ProfilePage />} />
+      <Route path="/tenant/settings" element={<SecuritySettingsPage />} />
       <Route path="/tenant/rentals" element={<TenantRentals />} />
       <Route path="/tenant/payments" element={<TenantPayments />} />
       <Route path="/tenant/requests" element={<TenantRequests />} />
@@ -36,6 +42,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

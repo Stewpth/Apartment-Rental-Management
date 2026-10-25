@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,17 +22,15 @@ export default function Sidebar() {
 
   // Change navigation depends on the user's role
   const location = useLocation();
-  const userRoleNavigation = location.pathname.startsWith("/admin")
-    ? sidebarAdminNavigation
-    : sidebarTenantNavigation;
+  const isAdmin = location.pathname.startsWith("/admin");
+  const userRoleNavigation = isAdmin ? sidebarAdminNavigation : sidebarTenantNavigation;
+  const userRoleOptions = sidebarOptions.map((item) => ({
+    ...item,
+    path: isAdmin ? item.path : item.tenantPath,
+  }));
 
   function shouldUseExactMatch(path) {
-    return (
-      path === "/admin/dashboard" ||
-      path === "/tenant/dashboard" ||
-      path === "/admin/settings" ||
-      path === "/tenant/settings"
-    );
+    return path.endsWith("/dashboard") || path.endsWith("/settings") || path.endsWith("/profile");
   }
 
   return (
@@ -67,7 +65,7 @@ export default function Sidebar() {
 
         <section className="sidebar-bottom">
           <nav className="sidebar-options">
-            {sidebarOptions.map((item) => (
+            {userRoleOptions.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -107,3 +105,5 @@ export default function Sidebar() {
     </div>
   );
 }
+
+
