@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
@@ -9,6 +9,7 @@ import "./Rentals.css";
 
 export default function Rentals() {
   const [newUnits, setNewUnits] = useState([]);
+  const [unitUpdates, setUnitUpdates] = useState({});
 
   return (
     <>
@@ -21,8 +22,16 @@ export default function Rentals() {
             <div className="rentals-container">
               <div className="rentals-contents">
                 <RentalsHeader />
-                <RentalsSummary additionalUnits={newUnits.length} />
-                <RentalsRecords newUnits={newUnits} setNewUnits={setNewUnits} />
+                <RentalsSummary
+                  additionalUnits={newUnits.length}
+                  assignedTenants={Object.keys(unitUpdates).length}
+                />
+                <RentalsRecords
+                  newUnits={newUnits}
+                  setNewUnits={setNewUnits}
+                  unitUpdates={unitUpdates}
+                  setUnitUpdates={setUnitUpdates}
+                />
               </div>
             </div>
           </div>
