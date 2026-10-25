@@ -3,6 +3,7 @@ import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import Rentals from "./pages/Rentals/Rentals";
 import TenantRentals from "./pages/Rentals/TenantRentals";
 import Payments from "./pages/Payments/Payments";
+import TenantPayments from "./pages/Payments/TenantPayments";
 import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
 import Requests from "./pages/Request/Requests";
 import ViewRequest from "./pages/Request/ViewRequest/ViewRequest";
@@ -27,9 +28,11 @@ function App() {
 
       <Route path="/tenant/dashboard" element={<TenantDashboard />} />
       <Route path="/tenant/rentals" element={<TenantRentals />} />
+      <Route path="/tenant/payments" element={<TenantPayments />} />
     </Routes>
   );
 }
 
 export default App;
+
 
