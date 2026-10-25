@@ -1,4 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+﻿import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faBuilding, faFileLines } from "@fortawesome/free-regular-svg-icons";
 import "./RentalsSummary.css";
@@ -16,7 +16,7 @@ const rentalCards = [
   },
 ];
 
-export default function RentalsSummary() {
+export default function RentalsSummary({ additionalUnits = 0 }) {
   return (
     <div className="rentals-summary-grid">
       {rentalCards.map((card) => {
@@ -27,10 +27,11 @@ export default function RentalsSummary() {
               className={`rentals-card-icon ${card.key}`}
             />
             <span className="rentals-card-title">{card.title}</span>
-            <h2 className="rentals-card-count">{card.counts}</h2>
+            <h2 className="rentals-card-count">{card.counts + (card.key === "units" || card.key === "available" ? additionalUnits : 0)}</h2>
           </div>
         );
       })}
     </div>
   );
 }
+
