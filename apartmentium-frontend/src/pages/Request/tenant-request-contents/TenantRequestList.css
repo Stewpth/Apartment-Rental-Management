@@ -1,22 +1,145 @@
-﻿.tenant-request-list { overflow: hidden; border: 1px solid #e4ebf4; border-radius: 11px; background: #fff; }
-.tenant-request-card { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; align-items: start; gap: 12px; padding: 14px; border-bottom: 1px solid #edf1f6; }
-.tenant-request-card:last-child { border-bottom: 0; }
-.tenant-request-icon { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 9px; font-size: 15px; }
-.tenant-request-icon.repair { color: #2473df; background: #e8f1ff; }
-.tenant-request-icon.permission { color: #8749db; background: #f2eaff; }
-.tenant-request-details { min-width: 0; }
-.tenant-request-details h2 { color: #203b63; font-size: 14px; }
-.tenant-request-meta { display: block; margin-top: 5px; color: #718198; font-size: 11px; }
-.tenant-request-details p { margin-top: 7px; color: #52647c; font-size: 12px; line-height: 1.5; }
-.tenant-request-status { display: inline-flex; margin-top: 7px; padding: 4px 9px; border-radius: 99px; font-size: 10px; font-weight: 600; }
-.tenant-request-status.ongoing { color: #1762c4; background: #e8f1ff; }
-.tenant-request-status.resolved { color: #138451; background: #e1f8ef; }
-.tenant-request-status.not_resolved { color: #b45309; background: #fff3df; }
-.tenant-request-view { align-self: end; border: 0; padding: 4px 0; background: transparent; color: #2473df; font: inherit; font-size: 11px; white-space: nowrap; cursor: pointer; }
-.tenant-request-view:hover { color: #174f9d; text-decoration: underline; }
-.tenant-request-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-top: 1px solid #edf1f6; color: #718198; font-size: 10px; }
-.tenant-request-pagination nav { display: flex; align-items: center; gap: 5px; }
-.tenant-request-pagination button { display: grid; min-width: 26px; height: 26px; place-items: center; padding: 0 7px; border: 1px solid #e4ebf4; border-radius: 6px; background: #fff; color: #52647c; font: inherit; cursor: pointer; }
-.tenant-request-pagination button.current { border-color: #2473df; background: #2473df; color: #fff; }
-.tenant-request-pagination button:disabled { opacity: .45; cursor: default; }
-@media (max-width: 560px) { .tenant-request-card { grid-template-columns: 36px minmax(0,1fr); gap: 10px; padding: 12px; } .tenant-request-icon { width: 36px; height: 36px; } .tenant-request-details h2 { font-size: 12px; } .tenant-request-details p { font-size: 11px; } .tenant-request-view { grid-column: 2; justify-self: start; } .tenant-request-pagination { align-items: flex-start; flex-direction: column; } }
+﻿.tenant-request-list {
+  overflow: hidden;
+  border: 1px solid #e4ebf4;
+  border-radius: 11px;
+  background: #fff;
+}
+.tenant-request-card {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid #edf1f6;
+}
+.tenant-request-card:last-child {
+  border-bottom: 0;
+}
+.tenant-request-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 15px;
+}
+.tenant-request-icon.repair {
+  color: #2473df;
+  background: #e8f1ff;
+}
+.tenant-request-icon.permission {
+  color: #8749db;
+  background: #f2eaff;
+}
+.tenant-request-details {
+  min-width: 0;
+}
+.tenant-request-details h2 {
+  color: #203b63;
+  font-size: 14px;
+}
+.tenant-request-meta {
+  display: block;
+  margin-top: 5px;
+  color: #718198;
+  font-size: 11px;
+}
+.tenant-request-details p {
+  margin-top: 7px;
+  color: #52647c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.tenant-request-status {
+  display: inline-flex;
+  margin-top: 7px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.tenant-request-status.ongoing {
+  color: #1762c4;
+  background: #e8f1ff;
+}
+.tenant-request-status.resolved {
+  color: #138451;
+  background: #e1f8ef;
+}
+.tenant-request-status.not_resolved {
+  color: #b45309;
+  background: #fff3df;
+}
+.tenant-request-view {
+  align-self: end;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: #2473df;
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tenant-request-view:hover {
+  color: #174f9d;
+  text-decoration: underline;
+}
+.tenant-request-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid #edf1f6;
+  color: #718198;
+  font-size: 10px;
+}
+.tenant-request-pagination nav {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tenant-request-pagination button {
+  display: grid;
+  min-width: 26px;
+  height: 26px;
+  place-items: center;
+  padding: 0 7px;
+  border: 1px solid #e4ebf4;
+  border-radius: 6px;
+  background: #fff;
+  color: #52647c;
+  font: inherit;
+  cursor: pointer;
+}
+.tenant-request-pagination button.current {
+  border-color: #2473df;
+  background: #2473df;
+  color: #fff;
+}
+.tenant-request-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+@media (max-width: 560px) {
+  .tenant-request-card {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+  .tenant-request-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .tenant-request-details h2 {
+    font-size: 12px;
+  }
+  .tenant-request-details p {
+    font-size: 11px;
+  }
+  .tenant-request-view {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

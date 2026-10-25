@@ -26,6 +26,9 @@ export default function TenantRequests() {
     const newRequest = {
       id: `tenant-request-${Date.now()}`,
       ...formValues,
+      title: formValues.description.length > 55
+        ? `${formValues.description.slice(0, 52).trim()}...`
+        : formValues.description,
       submitted: formatRequestDate(new Date()),
       status: "not_resolved",
     };
@@ -70,3 +73,5 @@ export default function TenantRequests() {
     </>
   );
 }
+
+
