@@ -1,14 +1,186 @@
-﻿.tenant-announcements { display: grid; }
-.tenant-announcement { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 11px; padding: 13px 0; border-bottom: 1px solid #edf1f6; }
-.tenant-announcement:last-child { padding-bottom: 2px; border: 0; }
-.tenant-announcement-icon { display: grid; place-items: center; flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; }
-.tenant-announcement-icon.blue { color: #2473df; background: #e8f1ff; }
-.tenant-announcement-icon.amber { color: #e18b12; background: #fff3df; }
-.tenant-announcement-icon.violet { color: #8749db; background: #f2eaff; }
-.tenant-announcement strong { display: block; color: #29466e; font-size: 11px; line-height: 1.4; }
-.tenant-announcement time { display: block; margin-top: 4px; color: #8190a4; font-size: 9px; }
-.tenant-announcement p { margin-top: 7px; color: #64758c; font-size: 10px; line-height: 1.6; }
-.tenant-help { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border-radius: 9px; background: #e8f2fc; }
-.tenant-help-icon { display: grid; place-items: center; flex: 0 0 36px; height: 36px; border-radius: 50%; color: #2674d7; background: #d7e9ff; }
-.tenant-help strong { color: #29466e; font-size: 10px; }
-.tenant-help p { margin-top: 4px; color: #718198; font-size: 10px; line-height: 1.55; }
+﻿/* ==============================
+   Latest Announcements
+============================== */
+
+.announcement-panel {
+  padding: 0;
+}
+
+.tenant-announcements {
+  display: grid;
+  max-height: 400px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #c6d4e5 transparent;
+}
+
+.tenant-announcement {
+  display: block;
+  padding: 13px 16px;
+  border-bottom: 1px solid #edf1f6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.tenant-announcement:last-child {
+  border-bottom: 0;
+}
+
+.tenant-announcement:hover {
+  background-color: #f7faff;
+}
+
+.tenant-announcement:focus-visible {
+  outline: 3px solid rgba(51, 103, 193, 0.28);
+  outline-offset: -3px;
+}
+
+.tenant-announcement strong {
+  display: block;
+  color: #29466e;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.tenant-announcement time {
+  display: block;
+  margin-top: 4px;
+  color: #8190a4;
+  font-size: 9px;
+}
+
+.tenant-announcement p {
+  margin: 7px 0 0;
+  color: #64758c;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* ==============================
+   Announcement Modal
+============================== */
+
+.tenant-announcement-modal-overlay {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  background: rgba(22, 33, 48, 0.48);
+}
+
+.tenant-announcement-modal {
+  box-sizing: border-box;
+  width: min(100%, 540px);
+  padding: 24px;
+  border: 1px solid #e1e8f0;
+  border-radius: 14px;
+  background: #fff;
+  color: #203b63;
+  box-shadow: 0 20px 60px rgba(18, 31, 48, 0.2);
+}
+
+.tenant-announcement-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.tenant-announcement-modal-eyebrow {
+  color: #6483ac;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.tenant-announcement-modal-header h2 {
+  margin: 7px 0 6px;
+  color: #203b63;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.tenant-announcement-modal-header time {
+  color: #8190a4;
+  font-size: 12px;
+}
+
+.tenant-announcement-modal-close {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e4ebf4;
+  border-radius: 9px;
+  background: #fff;
+  color: #64758c;
+  cursor: pointer;
+}
+
+.tenant-announcement-modal-close:hover {
+  background: #f4f8fc;
+  color: #235598;
+}
+
+.tenant-announcement-modal-close:focus-visible {
+  outline: 3px solid rgba(51, 103, 193, 0.28);
+  outline-offset: 2px;
+}
+
+.tenant-announcement-modal-text {
+  margin: 18px 0 2px;
+  color: #52647c;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tenant-help {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px;
+  border-radius: 9px;
+  background: #e8f2fc;
+}
+.tenant-help-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #2674d7;
+  background: #d7e9ff;
+}
+.tenant-help strong {
+  color: #29466e;
+  font-size: 10px;
+}
+.tenant-help p {
+  margin-top: 4px;
+  color: #718198;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* ==============================
+   Responsive
+============================== */
+
+@media (max-width: 600px) {
+  .tenant-announcement-modal {
+    padding: 20px 17px;
+    border-radius: 12px;
+  }
+
+  .tenant-announcement-modal-header h2 {
+    font-size: 18px;
+  }
+}

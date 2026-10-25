@@ -1,9 +1,55 @@
-﻿.tenant-panel { min-width: 0; padding: 16px; background: #fff; border: 1px solid #e4ebf4; border-radius: 10px; box-shadow: 0 3px 14px rgba(36, 75, 120, .035); }
-.tenant-panel-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 13px; border-bottom: 1px solid #edf1f6; }
-.tenant-panel-header h2 { display: flex; align-items: center; gap: 9px; color: #203b63; font-size: 13px; }
-.tenant-panel-header h2 svg { color: #3474cf; }
-.tenant-muted { color: #718198; font-size: 12px; }
-.tenant-status { display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 99px; font-size: 9px; font-weight: 700; white-space: nowrap; }
-.tenant-status.active { color: #15915b; background: #e1f8ef; }
-.tenant-status.due { color: #a9620c; background: #fff1d9; }
-.tenant-status.ongoing { color: #2667c7; background: #e9f1ff; }
+﻿.tenant-panel {
+  min-width: 0;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e4ebf4;
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(36, 75, 120, 0.035);
+}
+.tenant-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.tenant-panel-header.announcement-panel {
+  padding: 16px;
+}
+.tenant-panel-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #203b63;
+  font-size: 13px;
+}
+.tenant-panel-header h2 svg {
+  color: #3474cf;
+}
+.tenant-muted {
+  color: #718198;
+  font-size: 12px;
+}
+.tenant-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 99px;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tenant-status.active {
+  color: #15915b;
+  background: #e1f8ef;
+}
+.tenant-status.due {
+  color: #a9620c;
+  background: #fff1d9;
+}
+.tenant-status.ongoing {
+  color: #2667c7;
+  background: #e9f1ff;
+}
