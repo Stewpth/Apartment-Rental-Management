@@ -1,20 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faArrowRight,
-  faCheck,
-  faTimes,
-  faUpload,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useMemo, useState } from "react";
+import ChooseUnit from "./AssignTenantModal/ChooseUnit";
+import TenantInfoForm from "./AssignTenantModal/TenantInfoForm";
+import AccountCredentialsModal from "./AssignTenantModal/AccountCredentialsModal";
 import "./AssignTenantModal.css";
 
 const steps = ["Choose Unit", "Tenant Information", "Account Credentials"];
-
-function money(value) {
-  return `₱ ${Number(value || 0).toLocaleString("en-PH")}`;
-}
 
 function makeUsername(name) {
   return name
@@ -28,11 +20,16 @@ function makeUsername(name) {
 
 export default function AssignTenantModal({
   availableUnits,
+  initialUnitId,
   onCancel,
   onCreate,
 }) {
   const [step, setStep] = useState(1);
-  const [unitId, setUnitId] = useState(availableUnits[0]?.unit_id || "");
+  const [unitId, setUnitId] = useState(() =>
+    availableUnits.some((unit) => unit.unit_id === initialUnitId)
+      ? initialUnitId
+      : availableUnits[0]?.unit_id || "",
+  );
   const [tenant, setTenant] = useState({
     fullName: "",
     email: "",
@@ -61,18 +58,6 @@ export default function AssignTenantModal({
     setError("");
   }
 
-  function handlePhoto(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file.");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => updateTenant("profilePicture", String(reader.result));
-    reader.readAsDataURL(file);
-  }
-
   function continueStep(event) {
     event.preventDefault();
     setError("");
@@ -87,9 +72,8 @@ export default function AssignTenantModal({
         !tenant.fullName.trim() ||
         !tenant.email.trim() ||
         !tenant.contactNumber.trim()
-      ) {
+      )
         return setError("Complete all required tenant information.");
-      }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tenant.email))
         return setError("Enter a valid email address.");
       setUsername(makeUsername(tenant.fullName));
@@ -104,6 +88,11 @@ export default function AssignTenantModal({
     if (password !== confirmPassword)
       return setError("The passwords do not match.");
     onCreate({ unit: selectedUnit, tenant: { ...tenant, username, password } });
+  }
+
+  function goBack(targetStep) {
+    setError("");
+    setStep(targetStep);
   }
 
   return (
@@ -131,7 +120,6 @@ export default function AssignTenantModal({
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </header>
-
         <div className="assign-tenant-steps" aria-label="Assignment progress">
           {steps.map((label, index) => (
             <div
@@ -143,277 +131,42 @@ export default function AssignTenantModal({
             </div>
           ))}
         </div>
-
         {step === 1 && (
-          <form onSubmit={continueStep} className="assign-tenant-body">
-            <div className="assign-tenant-section-title">
-              <h3>Choose Unit</h3>
-              <p>Select an available unit to assign to the tenant.</p>
-            </div>
-            <label className="assign-tenant-field">
-              Available Unit <b>*</b>
-              <select
-                value={unitId}
-                onChange={(event) => setUnitId(event.target.value)}
-                disabled={!availableUnits.length}
-              >
-                {availableUnits.length ? (
-                  availableUnits.map((unit) => (
-                    <option key={unit.unit_id} value={unit.unit_id}>
-                      {unit.unit}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No available units</option>
-                )}
-              </select>
-            </label>
-            {selectedUnit && (
-              <div className="assign-unit-preview">
-                <div className="assign-unit-preview-top">
-                  <span>Selected Unit</span>
-                  <b>
-                    <FontAwesomeIcon icon={faCheck} /> Available
-                  </b>
-                </div>
-                <h3>{selectedUnit.unit}</h3>
-                <div className="assign-unit-rent">
-                  <span>Monthly Rent</span>
-                  <strong>{money(selectedUnit.unit_cost)}</strong>
-                </div>
-              </div>
-            )}
-            {!availableUnits.length && (
-              <p className="assign-tenant-error">
-                There are no available units to assign.
-              </p>
-            )}
-            {error && (
-              <p className="assign-tenant-error" role="alert">
-                {error}
-              </p>
-            )}
-            <footer className="assign-tenant-actions">
-              <button type="button" className="assign-tenant-back" disabled>
-                Back
-              </button>
-              <button
-                type="submit"
-                className="assign-tenant-continue"
-                disabled={!selectedUnit}
-              >
-                Continue <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </footer>
-          </form>
+          <ChooseUnit
+            availableUnits={availableUnits}
+            selectedUnit={selectedUnit}
+            unitId={unitId}
+            setUnitId={setUnitId}
+            error={error}
+            onContinue={continueStep}
+          />
         )}
-
         {step === 2 && (
-          <form onSubmit={continueStep} className="assign-tenant-body">
-            <div className="assign-tenant-section-title">
-              <h3>Tenant Information</h3>
-              <p>Enter the personal details of the tenant.</p>
-            </div>
-            <div className="assign-photo-field">
-              <span>
-                Profile Picture <small>(Optional)</small>
-              </span>
-              <div className="assign-photo-control">
-                <div className="assign-photo-preview">
-                  {tenant.profilePicture ? (
-                    <img
-                      src={tenant.profilePicture}
-                      alt="Tenant profile preview"
-                    />
-                  ) : (
-                    <FontAwesomeIcon icon={faUser} />
-                  )}
-                </div>
-                <label className="assign-photo-upload">
-                  <FontAwesomeIcon icon={faUpload} /> Upload Picture
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg"
-                    onChange={handlePhoto}
-                  />
-                </label>
-                <small>JPG or PNG � Recommended square image</small>
-              </div>
-            </div>
-            <label className="assign-tenant-field">
-              Full Name <b>*</b>
-              <input
-                required
-                value={tenant.fullName}
-                onChange={(event) =>
-                  updateTenant("fullName", event.target.value)
-                }
-                placeholder="Enter tenant's full name"
-              />
-            </label>
-            <label className="assign-tenant-field">
-              Email Address <b>*</b>
-              <input
-                required
-                type="email"
-                value={tenant.email}
-                onChange={(event) => updateTenant("email", event.target.value)}
-                placeholder="e.g. maria@email.com"
-              />
-              <small>
-                Gagamitin ang email na ito para sa OTP verification.
-              </small>
-            </label>
-            <label className="assign-tenant-field">
-              Contact Number <b>*</b>
-              <input
-                required
-                type="tel"
-                value={tenant.contactNumber}
-                onChange={(event) =>
-                  updateTenant("contactNumber", event.target.value)
-                }
-                placeholder="e.g. 09171234567"
-              />
-            </label>
-            {error && (
-              <p className="assign-tenant-error" role="alert">
-                {error}
-              </p>
-            )}
-            <footer className="assign-tenant-actions">
-              <button
-                type="button"
-                className="assign-tenant-back"
-                onClick={() => {
-                  setError("");
-                  setStep(1);
-                }}
-              >
-                <FontAwesomeIcon icon={faArrowLeft} /> Back
-              </button>
-              <button type="submit" className="assign-tenant-continue">
-                Continue <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </footer>
-          </form>
+          <TenantInfoForm
+            tenant={tenant}
+            updateTenant={updateTenant}
+            error={error}
+            setError={setError}
+            onContinue={continueStep}
+            onBack={() => goBack(1)}
+          />
         )}
-
         {step === 3 && (
-          <form
-            onSubmit={createTenant}
-            className="assign-tenant-body assign-tenant-final"
-          >
-            <div className="assign-tenant-section-title">
-              <h3>Tenant Information</h3>
-              <p>Review the tenant details before creating the account.</p>
-            </div>
-            <div className="assign-tenant-person">
-              <div className="assign-photo-preview">
-                {tenant.profilePicture ? (
-                  <img src={tenant.profilePicture} alt="Tenant profile" />
-                ) : (
-                  <FontAwesomeIcon icon={faUser} />
-                )}
-              </div>
-              <div>
-                <strong>{tenant.fullName}</strong>
-                <span>Tenant profile</span>
-              </div>
-              <em>
-                {tenant.profilePicture ? "Profile photo" : "Optional photo"}
-              </em>
-            </div>
-            <div className="assign-tenant-details">
-              <div>
-                <small>Full Name</small>
-                <strong>{tenant.fullName}</strong>
-              </div>
-              <div>
-                <small>Contact Number</small>
-                <strong>{tenant.contactNumber}</strong>
-              </div>
-              <div>
-                <small>Email Address</small>
-                <strong>{tenant.email}</strong>
-              </div>
-            </div>
-            <div className="assign-tenant-section-title assign-credentials-heading">
-              <h3>Account Credentials</h3>
-            </div>
-            <label className="assign-tenant-field">
-              Username
-              <input
-                required
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </label>
-            <label className="assign-tenant-field">
-              Initial Password
-              <input
-                required
-                type="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                  setError("");
-                }}
-                placeholder="At least 8 characters"
-              />
-            </label>
-            <label className="assign-tenant-field">
-              Confirm Password
-              <input
-                required
-                type="password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(event) => {
-                  setConfirmPassword(event.target.value);
-                  setError("");
-                }}
-                placeholder="Re-enter password"
-              />
-            </label>
-            <div className="assign-rental-summary">
-              <h3>Rental Summary</h3>
-              <div>
-                <span>Assigned Unit</span>
-                <strong>{selectedUnit?.unit}</strong>
-              </div>
-              <div>
-                <span>Monthly Rent</span>
-                <strong>₱ {money(selectedUnit?.unit_cost)}</strong>
-              </div>
-            </div>
-            {error && (
-              <p className="assign-tenant-error" role="alert">
-                {error}
-              </p>
-            )}
-            <footer className="assign-tenant-actions">
-              <button
-                type="button"
-                className="assign-tenant-back"
-                onClick={() => {
-                  setError("");
-                  setStep(2);
-                }}
-              >
-                <FontAwesomeIcon icon={faArrowLeft} /> Back
-              </button>
-              <button type="submit" className="assign-tenant-continue">
-                Create Tenant
-              </button>
-            </footer>
-          </form>
+          <AccountCredentialsModal
+            tenant={tenant}
+            selectedUnit={selectedUnit}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            error={error}
+            setError={setError}
+            onBack={() => goBack(2)}
+            onCreate={createTenant}
+          />
         )}
-        <p className="assign-tenant-footnote">
-          Interactive UI preview lamang. Sa actual implementation, gagamitin ang
-          form para gumawa ng tenant account.
-        </p>
       </section>
     </div>
   );
