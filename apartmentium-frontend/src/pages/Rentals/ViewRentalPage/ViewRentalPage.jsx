@@ -1,28 +1,13 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faCircleInfo,
-  faHouse,
-  faUser,
-  faWallet,
-} from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../../components/layout/Sidebar";
 import Header from "../../../components/layout/Header";
 import { initialRentalRecords } from "../admin-rental-contents/RentalRecords/rentalRecords";
+import AvailableUnitDetails from "./AvailableUnitDetails";
+import PaymentSummary from "./PaymentSummary";
+import RentalInformation from "./RentalInformation";
+import RentalTenantSummary from "./RentalTenantSummary";
 import "../Rentals.css";
 import "./ViewRentalPage.css";
-
-const sampleDetails = {
-  moveInDate: "October 1, 2026",
-  leaseEndDate: "September 30, 2027",
-  balance: 10000,
-  lastPayment: "Oct 5, 2026",
-};
-
-function formatMoney(value) {
-  return `\u20B1${Number(value || 0).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
 
 export default function ViewRentalPage() {
   const { unitId } = useParams();
@@ -69,155 +54,22 @@ export default function ViewRentalPage() {
                     </button>
                   </section>
                 ) : unit.isAvailable ? (
-                  <section className="view-rental-card view-rental-unit-card">
-                    <header className="view-rental-heading">
-                      <button
-                        type="button"
-                        className="view-rental-back-icon"
-                        onClick={() => backToRentals()}
-                        aria-label="Back to rentals"
-                      >
-                        <FontAwesomeIcon icon={faArrowLeft} />
-                      </button>
-                      <div>
-                        <h1>View Unit Details</h1>
-                        <p>Rentals / Unit Details</p>
-                      </div>
-                      <span className="view-rental-status available">
-                        Available
-                      </span>
-                    </header>
-                    <div className="view-rental-unit-intro">
-                      <FontAwesomeIcon icon={faHouse} />
-                      <div>
-                        <h2>{unit.unit}</h2>
-                        <p>Apartment Unit</p>
-                      </div>
-                    </div>
-                    <div className="view-rental-unit-info">
-                      <div>
-                        <span>Monthly Rent</span>
-                        <strong>{formatMoney(unit.unit_cost)}</strong>
-                      </div>
-                      <div>
-                        <span>Rental Status</span>
-                        <strong className="view-rental-available-text">
-                          Available
-                        </strong>
-                      </div>
-                    </div>
-                    <div className="view-rental-vacant-note">
-                      <strong>
-                        <FontAwesomeIcon icon={faCircleInfo} /> No Tenant
-                        Assigned
-                      </strong>
-                      <p>
-                        This unit is currently vacant. Assign a tenant to start
-                        a new rental.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="view-rental-primary-button"
-                      onClick={() => backToRentals(true)}
-                    >
-                      <FontAwesomeIcon icon={faUser} /> Assign Tenant
-                    </button>
-                    <button
-                      type="button"
-                      className="view-rental-secondary-button"
-                      onClick={() => backToRentals()}
-                    >
-                      Back to Rentals
-                    </button>
-                  </section>
+                  <AvailableUnitDetails
+                    unit={unit}
+                    onBack={() => backToRentals()}
+                    onAssignTenant={() => backToRentals(true)}
+                  />
                 ) : (
                   <>
-                    <section className="view-rental-card">
-                      <header className="view-rental-heading">
-                        <button
-                          type="button"
-                          className="view-rental-back-icon"
-                          onClick={() => backToRentals()}
-                          aria-label="Back to rentals"
-                        >
-                          <FontAwesomeIcon icon={faArrowLeft} />
-                        </button>
-                        <div>
-                          <h1>View Tenant's Rental</h1>
-                          <p>Rentals / View Rental</p>
-                        </div>
-                      </header>
-                      <div className="view-rental-tenant-summary">
-                        <div className="view-rental-avatar">
-                          {unit.tenant_profile_picture ? (
-                            <img
-                              src={unit.tenant_profile_picture}
-                              alt={`${tenantName} profile`}
-                            />
-                          ) : (
-                            <FontAwesomeIcon icon={faUser} />
-                          )}
-                        </div>
-                        <div>
-                          <h2>{tenantName}</h2>
-                          <p>{unit.tenant_email || fallbackEmail}</p>
-                          <p>{unit.tenant_contact || "0917 123 4567"}</p>
-                          <span className="view-rental-status occupied">
-                            Occupied
-                          </span>
-                        </div>
-                      </div>
-                    </section>
-                    <section className="view-rental-card">
-                      <h2 className="view-rental-section-title">
-                        <FontAwesomeIcon icon={faHouse} /> Rental Information
-                      </h2>
-                      <div className="view-rental-data-grid">
-                        <div>
-                          <span>Unit Number</span>
-                          <strong>{unit.unit}</strong>
-                        </div>
-                        <div>
-                          <span>Monthly Rent</span>
-                          <strong>{formatMoney(unit.unit_cost)}</strong>
-                        </div>
-                        <div>
-                          <span>Move-in Date</span>
-                          <strong>
-                            {unit.move_in_date || sampleDetails.moveInDate}
-                          </strong>
-                        </div>
-                        <div>
-                          <span>Lease End Date</span>
-                          <strong>
-                            {unit.lease_end_date || sampleDetails.leaseEndDate}
-                          </strong>
-                        </div>
-                      </div>
-                    </section>
-                    <section className="view-rental-card">
-                      <h2 className="view-rental-section-title">
-                        <FontAwesomeIcon icon={faWallet} /> Payment Summary
-                      </h2>
-                      <div className="view-rental-balance">
-                        <span>Total Outstanding Balance</span>
-                        <strong>
-                          {formatMoney(
-                            unit.outstanding_balance ?? sampleDetails.balance,
-                          )}
-                        </strong>
-                      </div>
-                      <div className="view-rental-last-payment">
-                        <span>Last Recorded Payment</span>
-                        <strong>
-                          {unit.last_payment || sampleDetails.lastPayment}
-                        </strong>
-                      </div>
-                      <p className="view-rental-sample-note">
-                        Sample information for UI illustration only.
-                      </p>
-                    </section>
+                    <RentalTenantSummary
+                      unit={unit}
+                      tenantName={tenantName}
+                      email={unit.tenant_email || fallbackEmail}
+                      contact={unit.tenant_contact || "0917 123 4567"}
+                      onBack={() => backToRentals()}
+                    />
+                    <RentalInformation unit={unit} />
+                    <PaymentSummary unit={unit} />
                   </>
                 )}
               </div>
