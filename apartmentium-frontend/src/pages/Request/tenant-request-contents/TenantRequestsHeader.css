@@ -1,0 +1,7 @@
+﻿.tenant-requests-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.tenant-requests-header h1 { color: #18345d; font-size: 23px; }
+.tenant-requests-header p { margin-top: 5px; color: #718198; font-size: 12px; }
+.tenant-requests-header > button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 8px; background: #2473df; color: white; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.tenant-requests-header > button:hover { background: #1e62c2; }
+.tenant-requests-header > button:focus-visible { outline: 3px solid rgba(36,115,223,.25); outline-offset: 2px; }
+@media (max-width: 520px) { .tenant-requests-header { flex-direction: column; } .tenant-requests-header > button { align-self: flex-start; } }

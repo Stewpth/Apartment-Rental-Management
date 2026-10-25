@@ -1,0 +1,3 @@
+﻿.tenant-requests-page { justify-content: center; align-items: flex-start; }
+.tenant-requests-content { width: 100%; max-width: 900px; min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid #e4ebf4; border-radius: 12px; background: #fff; box-shadow: 0 4px 15px rgba(36,75,120,.045); }
+.tenant-requests-note { color: #8190a4; font-size: 11px; }

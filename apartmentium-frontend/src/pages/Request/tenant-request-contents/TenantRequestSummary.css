@@ -1,0 +1,4 @@
+﻿.tenant-request-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.tenant-request-summary-card { display: grid; gap: 6px; padding: 13px 14px; border: 1px solid #e4ebf4; border-radius: 10px; background: #fff; }
+.tenant-request-summary-card span { color: #64758c; font-size: 11px; }
+.tenant-request-summary-card strong { color: #18345d; font-size: 20px; }
