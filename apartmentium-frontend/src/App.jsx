@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+﻿import { Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import Rentals from "./pages/Rentals/Rentals";
+import TenantRentals from "./pages/Rentals/TenantRentals";
 import Payments from "./pages/Payments/Payments";
 import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
 import Requests from "./pages/Request/Requests";
@@ -25,8 +26,10 @@ function App() {
       <Route path="/admin/announcements" element={<Announcements />} />
 
       <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+      <Route path="/tenant/rentals" element={<TenantRentals />} />
     </Routes>
   );
 }
 
 export default App;
+

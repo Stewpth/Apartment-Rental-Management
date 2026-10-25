@@ -1,0 +1,33 @@
+﻿.tenant-rentals-page { justify-content: center; align-items: flex-start; }
+.tenant-rentals-content { display: flex; flex-direction: column; gap: 22px; width: 100%; max-width: 900px; min-width: 0; padding: 22px; background: #fff; border: 1px solid #e4ebf4; border-radius: 14px; box-shadow: 0 4px 20px rgba(36, 75, 120, .045); }
+.tenant-rentals-heading h1 { color: #18345d; font-size: 26px; }
+.tenant-rentals-heading p { margin-top: 6px; color: #718198; font-size: 13px; }
+.tenant-rental-summary { padding: 20px; border: 1px solid #e4ebf4; border-radius: 12px; background: linear-gradient(145deg, #f8fbff, #fff 72%); }
+.tenant-rental-summary-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid #e8edf4; }
+.tenant-rental-eyebrow { color: #718198; font-size: 11px; letter-spacing: .04em; }
+.tenant-rental-summary h2 { margin-top: 6px; color: #173866; font-size: 24px; }
+.tenant-rental-summary-top p { margin-top: 5px; color: #62748b; font-size: 13px; }
+.tenant-rental-status { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 99px; color: #138451; background: #e2f8ed; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tenant-rental-key-details { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 18px; }
+.tenant-rental-key-details div { display: grid; gap: 8px; }
+.tenant-rental-key-details span { color: #718198; font-size: 12px; }
+.tenant-rental-key-details strong { color: #203d68; font-size: 16px; }
+.tenant-rental-information h2 { margin: 0 0 12px; color: #203b63; font-size: 17px; }
+.tenant-rental-information-list { margin: 0; padding: 0 16px; border: 1px solid #e4ebf4; border-radius: 11px; background: #fff; }
+.tenant-rental-information-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 58px; border-bottom: 1px solid #edf1f6; }
+.tenant-rental-information-row:last-child { border-bottom: 0; }
+.tenant-rental-information-row dt { color: #64758c; font-size: 13px; }
+.tenant-rental-information-row dd { margin: 0; color: #203d68; font-size: 13px; font-weight: 650; text-align: right; }
+.tenant-rental-status-inline { font-size: 10px; }
+.tenant-rentals-note { color: #8190a4; font-size: 11px; }
+@media (max-width: 600px) {
+  .tenant-rentals-content { gap: 18px; padding: 16px; }
+  .tenant-rentals-heading h1 { font-size: 23px; }
+  .tenant-rental-summary { padding: 16px; }
+  .tenant-rental-summary h2 { font-size: 21px; }
+  .tenant-rental-key-details { gap: 12px; }
+  .tenant-rental-key-details strong { font-size: 14px; }
+  .tenant-rental-information-list { padding: 0 12px; }
+  .tenant-rental-information-row { min-height: 54px; gap: 10px; }
+  .tenant-rental-information-row dt, .tenant-rental-information-row dd { font-size: 12px; }
+}
