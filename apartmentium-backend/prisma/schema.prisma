@@ -7,11 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// ==========================================
-// ENUMS
-// ==========================================
-
-enum UserRole {
+enum Role {
   ADMIN
   TENANT
 }
@@ -25,6 +21,7 @@ enum AccountStatus {
 enum UnitStatus {
   AVAILABLE
   OCCUPIED
+  MAINTENANCE
 }
 
 enum RentalStatus {
@@ -45,113 +42,117 @@ enum CreditTransactionType {
   REFUND
 }
 
-// ==========================================
-// USER
-// ==========================================
+enum RequestCategory {
+  REPAIR
+  PERMISSION
+  COMPLAINT
+}
+
+enum RequestStatus {
+  NOT_RESOLVED
+  IN_PROGRESS
+  RESOLVED
+}
 
 model User {
-  id           String        @id @default(uuid())
-  fullName     String
-  username     String        @unique
-  email        String        @unique
-  passwordHash String
-  phone        String?
-  profileImage String?
-  role         UserRole
-  status       AccountStatus @default(PENDING_ACTIVATION)
+  id             String        @id @default(uuid())
+  username       String        @unique
+  email          String        @unique
+  passwordHashed String
+  role           Role
+  status         AccountStatus @default(PENDING_ACTIVATION)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
-  // Rental relationships
-  tenantRentals Rental[] @relation("TenantRentals")
+  profile            UserProfile?
+  tenant             Tenant?
+  recordedPayments   Payment[]           @relation("PaymentRecorder")
+  creditTransactions CreditTransaction[] @relation("CreditTransactionRecorder")
+  announcements      Announcement[]      @relation("AnnouncementAuthor")
+  announcementReads  AnnouncementRead[]
+  requestUpdates     RequestUpdate[]     @relation("RequestUpdateAuthor")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  activation AccountActivation?
 
   @@index([role])
   @@index([status])
 }
 
-// ==========================================
-// UNIT
-// ==========================================
+model UserProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  fullName        String
+  phone           String?
+  profileImageUrl String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+model Tenant {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  rentals Rental[]
+}
 
 model Unit {
   id          String     @id @default(uuid())
   unitNumber  String     @unique
   description String?
-  monthlyRent Decimal    @db.Decimal(10, 2)
+  unitPrice   Decimal    @db.Decimal(10, 2)
   status      UnitStatus @default(AVAILABLE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   rentals Rental[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([status])
 }
 
-// ==========================================
-// RENTAL
-// ==========================================
-
 model Rental {
-  id String @id @default(uuid())
-
-  tenantId String
-  tenant   User   @relation("TenantRentals", fields: [tenantId], references: [id], onDelete: Restrict)
-
-  unitId String
-  unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Restrict)
-
-  // Snapshot of the agreed rent when the rental is created
-  monthlyRent Decimal @db.Decimal(10, 2)
-
-  moveInDate DateTime @db.Date
-
-  // Leaving request and actual move-out are separate events
+  id                 String       @id @default(uuid())
+  tenantId           String
+  unitId             String
+  monthlyRent        Decimal      @db.Decimal(10, 2)
+  moveInDate         DateTime     @db.Date
   leavingRequestedAt DateTime?
-  actualMoveOutDate  DateTime? @db.Date
+  endDate            DateTime?    @db.Date
+  status             RentalStatus @default(ACTIVE)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 
-  status RentalStatus @default(ACTIVE)
-
-  // Monthly billing records
+  tenant      Tenant          @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  unit        Unit            @relation(fields: [unitId], references: [id], onDelete: Restrict)
   monthlyDues MonthlyDue[]
   payments    Payment[]
-
-  tenantCredit TenantCredit?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  credit      TenantCredit?
+  requests    TenantRequest[]
 
   @@index([tenantId])
   @@index([unitId])
   @@index([status])
 }
 
-// ==========================================
-// MONTHLY DUE
-// ==========================================
-
 model MonthlyDue {
-  id String @id @default(uuid())
+  id            String           @id @default(uuid())
+  rentalId      String
+  billingPeriod DateTime         @db.Date
+  dueDate       DateTime         @db.Date
+  amountDue     Decimal          @db.Decimal(10, 2)
+  amountPaid    Decimal          @default(0) @db.Decimal(10, 2)
+  balance       Decimal          @db.Decimal(10, 2)
+  status        MonthlyDueStatus @default(UNPAID)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
-  rentalId String
-  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
-
-  // Billing period and payment deadline
-  billingPeriod DateTime @db.Date
-  dueDate       DateTime @db.Date
-
-  // Payment tracking
-  amountDue  Decimal          @db.Decimal(10, 2)
-  amountPaid Decimal          @default(0) @db.Decimal(10, 2)
-  balance    Decimal          @db.Decimal(10, 2)
-  status     MonthlyDueStatus @default(UNPAID)
-
+  rental             Rental              @relation(fields: [rentalId], references: [id], onDelete: Restrict)
   allocations        PaymentAllocation[]
   creditTransactions CreditTransaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@unique([rentalId, billingPeriod])
   @@index([rentalId])
@@ -159,89 +160,159 @@ model MonthlyDue {
   @@index([status])
 }
 
-// PAYMENT
 model Payment {
-  id String @id @default(uuid())
+  id           String   @id @default(uuid())
+  rentalId     String
+  amount       Decimal  @db.Decimal(10, 2)
+  paymentDate  DateTime @db.Date
+  reference    String?  @unique
+  note         String?  @db.VarChar(50)
+  recordedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  rentalId String
-  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
-
-  // Total amount received from the tenant
-  amount Decimal @db.Decimal(10, 2)
-
-  // Date when the landlord received the payment
-  paymentDate DateTime @db.Date
-
-  // Payment allocation records
+  rental             Rental              @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+  recordedBy         User                @relation("PaymentRecorder", fields: [recordedById], references: [id], onDelete: Restrict)
   allocations        PaymentAllocation[]
   creditTransactions CreditTransaction[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([rentalId])
   @@index([paymentDate])
+  @@index([recordedById])
 }
 
-// PAYMENT ALLOCATION
 model PaymentAllocation {
-  id String @id @default(uuid())
-
-  paymentId String
-  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
-
+  id           String   @id @default(uuid())
+  paymentId    String
   monthlyDueId String
-  monthlyDue   MonthlyDue @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
+  amount       Decimal  @db.Decimal(10, 2)
+  createdAt    DateTime @default(now())
 
-  // Amount allocated to a specific monthly due
-  amount Decimal @db.Decimal(10, 2)
+  payment    Payment    @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  monthlyDue MonthlyDue @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
 
-  createdAt DateTime @default(now())
-
-  // Prevent duplicate allocation for the same payment and bill
   @@unique([paymentId, monthlyDueId])
   @@index([monthlyDueId])
 }
 
-// TENANT CREDIT
 model TenantCredit {
-  id String @id @default(uuid())
-
-  rentalId String @unique
-  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
-
-  // Current available credit balance
-  balance Decimal @default(0) @db.Decimal(10, 2)
-
-  // Credit history
-  transactions CreditTransaction[]
-
+  id        String   @id @default(uuid())
+  rentalId  String   @unique
+  balance   Decimal  @default(0) @db.Decimal(10, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  rental       Rental              @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+  transactions CreditTransaction[]
 }
 
-// CREDIT TRANSACTION
 model CreditTransaction {
-  id String @id @default(uuid())
-
+  id             String                @id @default(uuid())
   tenantCreditId String
-  tenantCredit   TenantCredit @relation(fields: [tenantCreditId], references: [id], onDelete: Restrict)
+  type           CreditTransactionType
+  amount         Decimal               @db.Decimal(10, 2)
+  paymentId      String?
+  monthlyDueId   String?
+  recordedById   String?
+  createdAt      DateTime              @default(now())
+  notes          String?
 
-  type   CreditTransactionType
-  amount Decimal               @db.Decimal(10, 2)
-
-  // Optional references depending on transaction type
-  paymentId String?
-  payment   Payment? @relation(fields: [paymentId], references: [id], onDelete: Restrict)
-
-  monthlyDueId String?
-  monthlyDue   MonthlyDue? @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  notes     String?
+  tenantCredit TenantCredit @relation(fields: [tenantCreditId], references: [id], onDelete: Restrict)
+  payment      Payment?     @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  monthlyDue   MonthlyDue?  @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
+  recordedBy   User?        @relation("CreditTransactionRecorder", fields: [recordedById], references: [id], onDelete: Restrict)
 
   @@index([tenantCreditId])
   @@index([type])
   @@index([paymentId])
   @@index([monthlyDueId])
+  @@index([recordedById])
+}
+
+model TenantRequest {
+  id          String          @id @default(uuid())
+  reference   String?         @unique
+  rentalId    String
+  category    RequestCategory
+  status      RequestStatus   @default(NOT_RESOLVED)
+  description String          @db.VarChar(500)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  resolvedAt  DateTime?
+
+  rental      Rental              @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+  attachments RequestAttachment[]
+  updates     RequestUpdate[]
+
+  @@index([rentalId, createdAt])
+  @@index([status, createdAt])
+  @@index([category])
+}
+
+model RequestAttachment {
+  id         String   @id @default(uuid())
+  requestId  String
+  storageKey String
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  createdAt  DateTime @default(now())
+
+  request TenantRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+
+  @@index([requestId])
+}
+
+model RequestUpdate {
+  id        String         @id @default(uuid())
+  requestId String
+  authorId  String
+  status    RequestStatus?
+  message   String?
+  createdAt DateTime       @default(now())
+
+  request TenantRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  author  User          @relation("RequestUpdateAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([requestId, createdAt])
+  @@index([authorId])
+}
+
+model Announcement {
+  id          String   @id @default(uuid())
+  authorId    String
+  title       String   @db.VarChar(120)
+  content     String
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author User               @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  reads  AnnouncementRead[]
+
+  @@index([authorId])
+}
+
+model AnnouncementRead {
+  id             String   @id @default(uuid())
+  announcementId String
+  userId         String
+  readAt         DateTime @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Restrict)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([announcementId, userId])
+  @@index([userId, readAt])
+}
+
+model AccountActivation {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  otpHash    String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  lastSentAt DateTime
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 }
