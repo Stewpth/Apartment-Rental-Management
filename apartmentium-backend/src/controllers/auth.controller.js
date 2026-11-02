@@ -94,3 +94,21 @@ export async function login(req, res) {
     });
   }
 }
+
+export async function getCurrentUser(req, res) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, username: true, email: true, role: true },
+    });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User account is invalid." });
+    }
+
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Get current user error:", error);
+    return res.status(500).json({ success: false, message: "Failed to retrieve user session." });
+  }
+}

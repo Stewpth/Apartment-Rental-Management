@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import {
   faEye,
   faEyeSlash,
@@ -9,7 +11,42 @@ import {
 import "./LoginForm.css";
 
 export default function LoginForm() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+    const formData = new FormData(event.currentTarget);
+    try {
+      const user = await login(
+        formData.get("username"),
+        formData.get("password"),
+        formData.get("rememberMe") === "on",
+      );
+      const fallback =
+        user.role === "TENANT" ? "/tenant/dashboard" : "/admin/dashboard";
+      const requestedPath = location.state?.from?.pathname;
+      const intendedPathMatchesRole = requestedPath?.startsWith(
+        user.role === "TENANT" ? "/tenant/" : "/admin/",
+      );
+      navigate(intendedPathMatchesRole ? requestedPath : fallback, {
+        replace: true,
+      });
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to sign in. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <section className="login-form-container">
@@ -21,10 +58,7 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <form
-          className="login-form-inputs"
-          onSubmit={(event) => event.preventDefault()}
-        >
+        <form className="login-form-inputs" onSubmit={handleSubmit}>
           <div className="login-form-input">
             <label className="login-form-label" htmlFor="username">
               Username or Email
@@ -75,8 +109,17 @@ export default function LoginForm() {
             </label>
           </div>
 
-          <button className="login-button" type="submit">
-            <span>Login</span>
+          {error && (
+            <p className="login-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button
+            className="login-button"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            <span>{isSubmitting ? "Signing in…" : "Login"}</span>
             <FontAwesomeIcon icon={faArrowRight} />
           </button>
         </form>

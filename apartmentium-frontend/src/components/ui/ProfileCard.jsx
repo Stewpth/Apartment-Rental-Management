@@ -2,10 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 import DefaultProfileImg1 from "../../assets/images/default-profile/profile-default-img1.jpg";
+import { useAuth } from "../../hooks/useAuth";
 
 import "./ProfileCard.css";
 
 export default function ProfileCard({ isSidebarOpen, setIsSidebarOpen }) {
+  const { user, logout } = useAuth();
   return (
     <div
       className={`profile-card-container ${
@@ -32,8 +34,14 @@ export default function ProfileCard({ isSidebarOpen, setIsSidebarOpen }) {
         </button>
 
         <div className="profile-card-details">
-          <span className="profile-card-name">John Doe</span>
-          <span className="profile-card-role admin">Admin</span>
+          <span className="profile-card-name">
+            {user?.username || "Account"}
+          </span>
+          <span
+            className={`profile-card-role ${user?.role === "TENANT" ? "tenant" : "admin"}`}
+          >
+            {user?.role === "TENANT" ? "Tenant" : "Admin"}
+          </span>
         </div>
       </div>
 
@@ -43,6 +51,7 @@ export default function ProfileCard({ isSidebarOpen, setIsSidebarOpen }) {
           className="logout-button"
           aria-label="Log out"
           title="Log out"
+          onClick={() => logout()}
         >
           <FontAwesomeIcon
             icon={faRightFromBracket}

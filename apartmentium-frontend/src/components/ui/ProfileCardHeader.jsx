@@ -1,15 +1,25 @@
 import DefaultProfileImg1 from "../../assets/images/default-profile/profile-default-img1.jpg";
+import { useAuth } from "../../hooks/useAuth";
 
 import "./ProfileCardHeader.css";
 import "./ProfileCard.css";
 
 export default function ProfileCardHeader() {
+  const { user } = useAuth();
   return (
     <div className="profile-card-header">
-      <img src={DefaultProfileImg1} className="profile-card-user-img-header" />
+      <img
+        src={DefaultProfileImg1}
+        alt="Profile"
+        className="profile-card-user-img-header"
+      />
       <div className="profile-card-details">
-        <span className="profile-card-name-header admin">John Doe</span>
-        <span className="profile-card-role-header tenant">Admin</span>
+        <span className="profile-card-name-header admin">
+          {user?.username || "Account"}
+        </span>
+        <span className="profile-card-role-header tenant">
+          {user?.role === "TENANT" ? "Tenant" : "Admin"}
+        </span>
       </div>
     </div>
   );
