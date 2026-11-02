@@ -109,7 +109,8 @@ model Unit {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
-  rentals Rental[]
+  rentals              Rental[]
+  pendingRegistrations PendingTenantRegistration[]
 
   @@index([status])
 }
@@ -316,3 +317,27 @@ model AccountActivation {
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 }
+
+model PendingTenantRegistration {
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  phone        String?
+  unitId       String
+  moveInDate   DateTime @db.Date
+
+  otpHash    String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  lastSentAt DateTime
+  createdAt  DateTime @default(now())
+
+  unit Unit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@index([unitId])
+  @@index([expiresAt])
+}
+
+// TODO: If AccountActivation is not used, remove it because PendingTenantRegistration already has OTP and activation logic. Consider merging them into one model for simplicity.
