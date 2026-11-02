@@ -156,55 +156,57 @@ export default function RequestsTable({ searchTerm }) {
   }
 
   return (
-    <div className="requests-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Tenant</th>
-            <th>Status</th>
-            <th>Category</th>
-            <th>Date Created</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {displayedRequests.length > 0 ? (
-            displayedRequests.map((request) => (
-              <tr
-                key={request.id}
-                className="requests-row"
-                onClick={() => navigate(`/admin/requests/${request.id}`)}
-              >
-                <td className="request-tenant-details">
-                  <span className="request-name">{request.name}</span>
-                  <span className="request-unit">{request.unit}</span>
-                </td>
-
-                <td>
-                  <span className={`request-status ${request.status}`}>
-                    {getRequestsStatus(request.status)}
-                  </span>
-                </td>
-
-                <td>
-                  <span className={`request-category ${request.category}`}>
-                    {getRequestsCategory(request.category)}
-                  </span>
-                </td>
-
-                <td>{request.date_created}</td>
-              </tr>
-            ))
-          ) : (
+    <>
+      {" "}
+      <div className="requests-table">
+        <table>
+          <thead>
             <tr>
-              <td colSpan="4" className="requests-empty">
-                No requests found.
-              </td>
+              <th>Tenant</th>
+              <th>Status</th>
+              <th>Category</th>
+              <th>Date Created</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
 
+          <tbody>
+            {displayedRequests.length > 0 ? (
+              displayedRequests.map((request) => (
+                <tr
+                  key={request.id}
+                  className="requests-row"
+                  onClick={() => navigate(`/admin/requests/${request.id}`)}
+                >
+                  <td className="request-tenant-details">
+                    <span className="request-name">{request.name}</span>
+                    <span className="request-unit">{request.unit}</span>
+                  </td>
+
+                  <td>
+                    <span className={`request-status ${request.status}`}>
+                      {getRequestsStatus(request.status)}
+                    </span>
+                  </td>
+
+                  <td>
+                    <span className={`request-category ${request.category}`}>
+                      {getRequestsCategory(request.category)}
+                    </span>
+                  </td>
+
+                  <td>{request.date_created}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="requests-empty">
+                  No requests found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       <div className="requests-pagination">
         <span className="pagination-info">
           Showing {filteredRequests.length === 0 ? 0 : startIndex + 1} to{" "}
@@ -234,6 +236,6 @@ export default function RequestsTable({ searchTerm }) {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
