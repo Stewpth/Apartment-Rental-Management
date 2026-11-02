@@ -6,3 +6,105 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum UserRole {
+  ADMIN
+  TENANT
+}
+
+enum AccountStatus {
+  PENDING_ACTIVATION
+  ACTIVE
+  DISABLED
+}
+
+enum UnitStatus {
+  AVAILABLE
+  OCCUPIED
+}
+
+enum RentalStatus {
+  ACTIVE
+  ON_LEAVING
+  ENDED
+}
+
+// ==========================================
+// USER
+// ==========================================
+
+model User {
+  id           String        @id @default(uuid())
+  fullName     String
+  username     String        @unique
+  email        String        @unique
+  passwordHash String
+  phone        String?
+  profileImage String?
+  role         UserRole
+  status       AccountStatus @default(PENDING_ACTIVATION)
+
+  // Rental relationships
+  tenantRentals Rental[] @relation("TenantRentals")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+  @@index([status])
+}
+
+// ==========================================
+// UNIT
+// ==========================================
+
+model Unit {
+  id          String     @id @default(uuid())
+  unitNumber  String     @unique
+  description String?
+  monthlyRent Decimal    @db.Decimal(10, 2)
+  status      UnitStatus @default(AVAILABLE)
+
+  rentals Rental[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// ==========================================
+// RENTAL
+// ==========================================
+
+model Rental {
+  id String @id @default(uuid())
+
+  tenantId String
+  tenant   User   @relation("TenantRentals", fields: [tenantId], references: [id], onDelete: Restrict)
+
+  unitId String
+  unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Restrict)
+
+  // Snapshot of the agreed rent when the rental is created
+  monthlyRent Decimal @db.Decimal(10, 2)
+
+  moveInDate DateTime @db.Date
+
+  // Leaving request and actual move-out are separate events
+  leavingRequestedAt DateTime?
+  actualMoveOutDate  DateTime? @db.Date
+
+  status RentalStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([unitId])
+  @@index([status])
+}
