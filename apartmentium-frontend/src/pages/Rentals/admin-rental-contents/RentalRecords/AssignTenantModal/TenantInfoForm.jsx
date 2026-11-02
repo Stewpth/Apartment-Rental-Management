@@ -28,6 +28,7 @@ export default function TenantInfoForm({ tenant, updateTenant, error, setError, 
       <label className="assign-tenant-field">Full Name <b>*</b><input required value={tenant.fullName} onChange={(event) => updateTenant("fullName", event.target.value)} placeholder="Enter tenant's full name" /></label>
       <label className="assign-tenant-field">Email Address <b>*</b><input required type="email" value={tenant.email} onChange={(event) => updateTenant("email", event.target.value)} placeholder="e.g. maria@email.com" /><small>Gagamitin ang email na ito para sa OTP verification.</small></label>
       <label className="assign-tenant-field">Contact Number <b>*</b><input required type="tel" value={tenant.contactNumber} onChange={(event) => updateTenant("contactNumber", event.target.value)} placeholder="e.g. 09171234567" /></label>
+      <label className="assign-tenant-field">Move-in Date <b>*</b><input required type="date" value={tenant.moveInDate} onChange={(event) => updateTenant("moveInDate", event.target.value)} /></label>
       {error && <p className="assign-tenant-error" role="alert">{error}</p>}
       <footer className="assign-tenant-actions">
         <button type="button" className="assign-tenant-back" onClick={onBack}><FontAwesomeIcon icon={faArrowLeft} /> Back</button>

@@ -1,41 +1,56 @@
 import { useState } from "react";
+import api from "../../../api/axios";
 import RentalRecordsHeader from "./RentalRecords/RentalRecordsHeader";
 import SearchRecords from "./RentalRecords/SearchRecords";
 import RecordList from "./RentalRecords/RecordList";
 import AddUnitModal from "./RentalRecords/AddUnitModal";
 import AssignTenantModal from "./RentalRecords/AssignTenantModal";
 
-import { initialRentalRecords } from "./RentalRecords/rentalRecords";
 import "./RentalRecords.css";
 
-export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, setUnitUpdates, initialUnitId }) {
+export default function RentalsRecords({ units, onRefresh, initialUnitId }) {
   const [selectedFilter, setSelectedFilter] = useState("All Rentals");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
-  const [isAssignTenantOpen, setIsAssignTenantOpen] = useState(Boolean(initialUnitId));
-  const existingUnits = [...initialRentalRecords, ...newUnits].map((unit) => ({
-    ...unit,
-    ...(unitUpdates[unit.unit_id] || {}),
-  }));
-
-  function addUnit(unit) {
-    setNewUnits((currentUnits) => [...currentUnits, unit]);
-    setIsAddUnitOpen(false);
+  const [isAssignTenantOpen, setIsAssignTenantOpen] = useState(
+    Boolean(initialUnitId),
+  );
+  async function addUnit(unit) {
+    try {
+      await api.post("/admin/units", {
+        unitNumber: unit.unit.replace(/^Unit\s*/i, ""),
+        unitPrice: unit.unit_cost,
+      });
+      await onRefresh();
+      setIsAddUnitOpen(false);
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to create unit.",
+        { cause: error },
+      );
+    }
   }
 
-  function assignTenant({ unit, tenant }) {
-    setUnitUpdates((current) => ({
-      ...current,
-      [unit.unit_id]: {
-        tenant_id: `tenant-${Date.now()}`,
-        tenant_name: tenant.fullName,
-        tenant_email: tenant.email,
-        tenant_contact: tenant.contactNumber,
-        tenant_profile_picture: tenant.profilePicture,
-        isAvailable: false,
-      },
-    }));
-    setIsAssignTenantOpen(false);
+  async function assignTenant({ unit, tenant }) {
+    try {
+      await api.post("/admin/rentals/assign-tenant", {
+        fullName: tenant.fullName,
+        email: tenant.email,
+        username: tenant.username,
+        phone: tenant.contactNumber,
+        password: tenant.password,
+        confirmPassword: tenant.confirmPassword,
+        unitId: unit.unit_id,
+        moveInDate: tenant.moveInDate,
+      });
+      await onRefresh();
+      setIsAssignTenantOpen(false);
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to assign tenant.",
+        { cause: error },
+      );
+    }
   }
 
   return (
@@ -52,7 +67,7 @@ export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, set
           setSearchTerm={setSearchTerm}
         />
         <RecordList
-          units={existingUnits}
+          units={units}
           selectedFilter={selectedFilter}
           searchTerm={searchTerm}
         />
@@ -60,14 +75,14 @@ export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, set
       </section>
       {isAddUnitOpen && (
         <AddUnitModal
-          existingUnits={existingUnits}
+          existingUnits={units}
           onCancel={() => setIsAddUnitOpen(false)}
           onSave={addUnit}
         />
       )}
       {isAssignTenantOpen && (
         <AssignTenantModal
-          availableUnits={existingUnits.filter((unit) => unit.isAvailable)}
+          availableUnits={units.filter((unit) => unit.isAvailable)}
           initialUnitId={initialUnitId}
           onCancel={() => setIsAssignTenantOpen(false)}
           onCreate={assignTenant}
@@ -76,4 +91,3 @@ export default function RentalsRecords({ newUnits, setNewUnits, unitUpdates, set
     </>
   );
 }
-

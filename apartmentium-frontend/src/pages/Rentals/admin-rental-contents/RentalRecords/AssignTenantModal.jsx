@@ -35,6 +35,7 @@ export default function AssignTenantModal({
     email: "",
     contactNumber: "",
     profilePicture: "",
+    moveInDate: new Date().toISOString().slice(0, 10),
   });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -81,13 +82,17 @@ export default function AssignTenantModal({
     }
   }
 
-  function createTenant(event) {
+  async function createTenant(event) {
     event.preventDefault();
     if (!password || password.length < 8)
       return setError("Use a password with at least 8 characters.");
     if (password !== confirmPassword)
       return setError("The passwords do not match.");
-    onCreate({ unit: selectedUnit, tenant: { ...tenant, username, password } });
+    try {
+      await onCreate({ unit: selectedUnit, tenant: { ...tenant, username, password, confirmPassword } });
+    } catch (requestError) {
+      setError(requestError.message || "Failed to assign tenant.");
+    }
   }
 
   function goBack(targetStep) {

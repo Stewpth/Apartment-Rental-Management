@@ -10,16 +10,21 @@ const rentalCards = [
   { key: "active_rentals", title: "Active Rentals", counts: 16, icon: faFileLines },
 ];
 
-export default function RentalsSummary({ additionalUnits = 0, assignedTenants = 0 }) {
+export default function RentalsSummary({ units = [] }) {
+  const counts = {
+    units: units.length,
+    occupied: units.filter((unit) => !unit.isAvailable).length,
+    available: units.filter((unit) => unit.isAvailable).length,
+    active_rentals: units.filter((unit) => unit.status === "ACTIVE").length,
+  };
   return (
     <div className="rentals-summary-grid">
       {rentalCards.map((card) => {
-        const adjustment = card.key === "units" ? additionalUnits : card.key === "occupied" ? assignedTenants : card.key === "available" ? additionalUnits - assignedTenants : 0;
         return (
           <div className="rentals-summary-card" key={card.key}>
             <FontAwesomeIcon icon={card.icon} className={`rentals-card-icon ${card.key}`} />
             <span className="rentals-card-title">{card.title}</span>
-            <h2 className="rentals-card-count">{card.counts + adjustment}</h2>
+            <h2 className="rentals-card-count">{counts[card.key]}</h2>
           </div>
         );
       })}

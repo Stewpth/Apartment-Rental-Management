@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
-import { formatMoney, sampleRentalDetails } from "./rentalViewUtils";
+import { formatMoney } from "./rentalViewUtils";
 
 export default function RentalInformation({ unit }) {
   return (
@@ -19,12 +19,12 @@ export default function RentalInformation({ unit }) {
         </div>
         <div>
           <span>Move-in Date</span>
-          <strong>{unit.move_in_date || sampleRentalDetails.moveInDate}</strong>
+          <strong>{unit.move_in_date || "—"}</strong>
         </div>
         <div>
           <span>Lease End Date</span>
           <strong>
-            {unit.lease_end_date || sampleRentalDetails.leaseEndDate}
+            {unit.lease_end_date || "—"}
           </strong>
         </div>
       </div>

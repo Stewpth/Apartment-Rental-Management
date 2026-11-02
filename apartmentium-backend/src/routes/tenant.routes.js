@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
+import { getMyRental } from "../controllers/rental.controller.js";
 
 const router = Router();
 
@@ -14,5 +15,7 @@ router.get("/dashboard", (req, res) => {
     user: req.user,
   });
 });
+
+router.get("/rentals/me", getMyRental);
 
 export default router;

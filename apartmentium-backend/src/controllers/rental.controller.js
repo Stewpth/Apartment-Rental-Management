@@ -237,3 +237,96 @@ export async function assignTenant(req, res) {
     });
   }
 }
+
+export async function getRentalRecords(req, res) {
+  try {
+    const rentals = await prisma.rental.findMany({
+      where: { status: { in: ["ACTIVE", "ON_LEAVING"] } },
+      orderBy: { createdAt: "desc" },
+      include: {
+        tenant: { include: { user: { include: { profile: true } } } },
+        unit: true,
+      },
+    });
+
+    const data = rentals.map((rental) => ({
+      id: rental.id,
+      unitId: rental.unit.id,
+      tenant: {
+        id: rental.tenant.id,
+        fullName:
+          rental.tenant.user.profile?.fullName ?? rental.tenant.user.username,
+        username: rental.tenant.user.username,
+        email: rental.tenant.user.email,
+        phone: rental.tenant.user.profile?.phone ?? null,
+        profileImageUrl: rental.tenant.user.profile?.profileImageUrl ?? null,
+      },
+      unit: {
+        id: rental.unit.id,
+        unitNumber: rental.unit.unitNumber,
+        description: rental.unit.description,
+        unitPrice: rental.unit.unitPrice.toString(),
+        status: rental.unit.status,
+      },
+      monthlyRent: rental.monthlyRent.toString(),
+      moveInDate: rental.moveInDate.toISOString().slice(0, 10),
+      endDate: rental.endDate?.toISOString().slice(0, 10) ?? null,
+      status: rental.status,
+      createdAt: rental.createdAt,
+    }));
+
+    return res.status(200).json({ success: true, count: data.length, data });
+  } catch (error) {
+    console.error("Get rental records error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve rental records." });
+  }
+}
+
+export async function getMyRental(req, res) {
+  try {
+    const rental = await prisma.rental.findFirst({
+      where: {
+        tenant: { userId: req.user.id },
+        status: { in: ["ACTIVE", "ON_LEAVING"] },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        unit: true,
+        tenant: { include: { user: { include: { profile: true } } } },
+      },
+    });
+
+    if (!rental) return res.status(200).json({ success: true, data: null });
+
+    const profile = rental.tenant.user.profile;
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: rental.id,
+        status: rental.status,
+        monthlyRent: rental.monthlyRent.toString(),
+        moveInDate: rental.moveInDate.toISOString().slice(0, 10),
+        endDate: rental.endDate?.toISOString().slice(0, 10) ?? null,
+        tenant: {
+          fullName: profile?.fullName ?? rental.tenant.user.username,
+          email: rental.tenant.user.email,
+          phone: profile?.phone ?? null,
+        },
+        unit: {
+          id: rental.unit.id,
+          unitNumber: rental.unit.unitNumber,
+          description: rental.unit.description,
+          unitPrice: rental.unit.unitPrice.toString(),
+          status: rental.unit.status,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Get tenant rental error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve your rental." });
+  }
+}

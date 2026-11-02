@@ -5,7 +5,7 @@ import {
   createUnit,
   getAvailableUnits,
 } from "../controllers/unit.controller.js";
-import { assignTenant } from "../controllers/rental.controller.js";
+import { assignTenant, getRentalRecords } from "../controllers/rental.controller.js";
 import {
   requestTenantActivation,
   verifyTenantActivation,
@@ -21,6 +21,7 @@ router.post("/units", createUnit);
 router.get("/units/available", getAvailableUnits);
 
 router.post("/rentals/assign-tenant", assignTenant);
+router.get("/rentals", getRentalRecords);
 router.post("/rentals/request-tenant-activation", requestTenantActivation);
 router.post("/rentals/verify-tenant-activation", verifyTenantActivation);
 router.post("/rentals/resend-tenant-activation", resendTenantActivationOtp);

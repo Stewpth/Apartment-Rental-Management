@@ -11,6 +11,7 @@ export default function AddUnitModal({ existingUnits, onCancel, onSave }) {
   const [unitNumber, setUnitNumber] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     function closeOnEscape(event) {
@@ -32,14 +33,18 @@ export default function AddUnitModal({ existingUnits, onCancel, onSave }) {
       setError("That unit number already exists.");
       return;
     }
-    onSave({
+    const unit = {
       unit_id: `unit-${Date.now()}`,
       tenant_id: null,
       tenant_name: null,
       unit: `Unit ${normalizedUnit}`,
       unit_cost: Number(monthlyRent),
       isAvailable: true,
-    });
+    };
+    setIsSaving(true);
+    onSave(unit)
+      .catch((saveError) => setError(saveError.message))
+      .finally(() => setIsSaving(false));
   }
 
   return (
@@ -121,8 +126,8 @@ export default function AddUnitModal({ existingUnits, onCancel, onSave }) {
             >
               Cancel
             </button>
-            <button className="add-unit-save" type="submit">
-              Save Unit
+            <button className="add-unit-save" type="submit" disabled={isSaving}>
+              {isSaving ? "Saving…" : "Save Unit"}
             </button>
           </footer>
         </form>
