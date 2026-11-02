@@ -1,13 +1,13 @@
 ﻿import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCreditCard, faCalendarDays, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { formatPaymentAmount, formatPaymentDate } from "../paymentUtils";
 
-const summaryItems = [
-  { label: "Total Due", value: "₱4,500", detail: "For October 2026", icon: faCreditCard, tone: "blue" },
-  { label: "Next Due Date", value: "Nov 5, 2026", detail: "Monthly rent", icon: faCalendarDays, tone: "green" },
-  { label: "Last Payment", value: "₱4,500", detail: "Recorded on Sep 5, 2026", icon: faReceipt, tone: "purple" },
-];
-
-export default function PaymentSummaryCards() {
+export default function PaymentSummaryCards({ summary }) {
+  const summaryItems = [
+    { label: "Total Due", value: formatPaymentAmount(summary.totalDue), detail: "Outstanding balance", icon: faCreditCard, tone: "blue" },
+    { label: "Next Due Date", value: formatPaymentDate(summary.nextDueDate), detail: summary.nextDueDate ? "Oldest unpaid monthly due" : "No unpaid dues", icon: faCalendarDays, tone: "green" },
+    { label: "Last Payment", value: summary.lastPayment ? formatPaymentAmount(summary.lastPayment.amount) : "—", detail: summary.lastPayment ? `Recorded ${formatPaymentDate(summary.lastPayment.date)}` : "No payments recorded", icon: faReceipt, tone: "purple" },
+  ];
   return (
     <section className="tenant-payment-summary" aria-label="Payment summary">
       {summaryItems.map((item) => (

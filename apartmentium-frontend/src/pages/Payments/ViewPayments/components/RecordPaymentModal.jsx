@@ -18,13 +18,23 @@ export default function RecordPaymentModal({
 }) {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const numericAmount = Number(amount) || 0;
   const remaining = Math.max(totalDue - numericAmount, 0);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     if (numericAmount <= 0 || numericAmount > totalDue) return;
-    onSubmit({ amount: numericAmount, note: note.trim() });
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await onSubmit({ amount: numericAmount, note: note.trim() });
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || requestError.message || "Could not record payment.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -87,6 +97,7 @@ export default function RecordPaymentModal({
             <span>Note (Optional)</span>
             <textarea
               value={note}
+              maxLength={50}
               onChange={(event) => setNote(event.target.value)}
               placeholder="Add a note if necessary..."
               rows="3"
@@ -113,6 +124,7 @@ export default function RecordPaymentModal({
               Payment cannot exceed the current total due.
             </p>
           )}
+          {error && <p className="record-payment-error" role="alert">{error}</p>}
           <footer className="record-payment-actions">
             <button
               type="button"
@@ -124,9 +136,9 @@ export default function RecordPaymentModal({
             <button
               type="submit"
               className="record-payment-submit"
-              disabled={numericAmount <= 0 || numericAmount > totalDue}
+              disabled={isSubmitting || numericAmount <= 0 || numericAmount > totalDue}
             >
-              Record Payment
+              {isSubmitting ? "Recording…" : "Record Payment"}
             </button>
           </footer>
         </form>

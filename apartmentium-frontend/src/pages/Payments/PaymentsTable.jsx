@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import EmptyState from "../../components/ui/EmptyState";
+import { formatPaymentAmount, formatPaymentDate } from "./paymentUtils";
 import {
   faChevronDown,
   faChevronLeft,
@@ -8,83 +10,32 @@ import {
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
 
-const payments = [
-  {
-    tenant_payments_id: "tpid-1",
-    tenant: "Juan Dela Cruz",
-    dueDate: "October 5, 2026",
-    totalDue: 5000,
-  },
-  {
-    tenant_payments_id: "tpid-2",
-    tenant: "Maria Santos",
-    dueDate: "October 10, 2026",
-    totalDue: 9000,
-  },
-  {
-    tenant_payments_id: "tpid-3",
-    tenant: "Pedro Reyes",
-    dueDate: "October 15, 2026",
-    totalDue: 11000,
-  },
-  {
-    tenant_payments_id: "tpid-4",
-    tenant: "Ana Lopez",
-    dueDate: "October 5, 2026",
-    totalDue: 4500,
-  },
-  {
-    tenant_payments_id: "tpid-5",
-    tenant: "Mark Villanueva",
-    dueDate: "October 10, 2026",
-    totalDue: 6000,
-  },
-  {
-    tenant_payments_id: "tpid-6",
-    tenant: "Riza Cruz",
-    dueDate: "October 20, 2026",
-    totalDue: 5500,
-  },
-  {
-    tenant_payments_id: "tpid-7",
-    tenant: "John Lim",
-    dueDate: "October 25, 2026",
-    totalDue: 8000,
-  },
-  {
-    tenant_payments_id: "tpid-8",
-    tenant: "Erika Tan",
-    dueDate: "October 30, 2026",
-    totalDue: 4500,
-  },
-];
-
-const currency = new Intl.NumberFormat("en-PH", {
-  style: "currency",
-  currency: "PHP",
-  minimumFractionDigits: 2,
-});
-
-export default function PaymentsTable({ searchTerm = "" }) {
+export default function PaymentsTable({ searchTerm = "", payments = [] }) {
   const [sort, setSort] = useState({ key: "", direction: "asc" });
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
   const rows = useMemo(() => {
     const filtered = payments.filter((payment) =>
-      payment.tenant.toLowerCase().includes(searchTerm.trim().toLowerCase()),
+      payment.tenant.fullName.toLowerCase().includes(searchTerm.trim().toLowerCase()),
     );
     if (!sort.key) return filtered;
     return [...filtered].sort((a, b) => {
-      const left = a[sort.key];
-      const right = b[sort.key];
+      const left = sort.key === "tenantName" ? a.tenant.fullName : a[sort.key];
+      const right = sort.key === "tenantName" ? b.tenant.fullName : b[sort.key];
       const comparison =
         sort.key === "totalDue"
-          ? left - right
-          : left.localeCompare(right, "en", { numeric: true });
+          ? Number(left) - Number(right)
+          : sort.key === "dueDate"
+            ? new Date(left || 0) - new Date(right || 0)
+            : left.localeCompare(right, "en", { numeric: true });
       return sort.direction === "asc" ? comparison : -comparison;
     });
-  }, [searchTerm, sort]);
+  }, [searchTerm, sort, payments]);
 
   const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
   const visibleRows = rows.slice((page - 1) * pageSize, page * pageSize);
@@ -113,8 +64,8 @@ export default function PaymentsTable({ searchTerm = "" }) {
           <thead>
             <tr>
               <th>
-                <button type="button" onClick={() => toggleSort("tenant")}>
-                  Tenant {sortIcon("tenant")}
+                <button type="button" onClick={() => toggleSort("tenantName")}>
+                  Tenant {sortIcon("tenantName")}
                 </button>
               </th>
               <th>
@@ -133,18 +84,18 @@ export default function PaymentsTable({ searchTerm = "" }) {
           <tbody>
             {visibleRows.length ? (
               visibleRows.map((payment) => (
-                <tr key={payment.tenant_payments_id}>
-                  <td>{payment.tenant}</td>
-                  <td>{payment.dueDate}</td>
+                <tr key={payment.rentalId}>
+                  <td>{payment.tenant.fullName}<small className="payments-unit-label">{payment.unit.unitNumber}</small></td>
+                  <td>{formatPaymentDate(payment.dueDate)}</td>
                   <td className="payments-amount">
-                    {currency.format(payment.totalDue)}
+                    {formatPaymentAmount(payment.totalDue)}
                   </td>
                   <td className="payments-row-action-box">
                     <Link
                       className="payments-row-action"
                       type="button"
-                      aria-label={`Open ${payment.tenant} payment`}
-                      to={`/admin/payments/${payment.tenant_payments_id}`}
+                      aria-label={`Open ${payment.tenant.fullName} payment`}
+                      to={`/admin/payments/${payment.rentalId}`}
                     >
                       <FontAwesomeIcon icon={faChevronRight} />
                     </Link>
@@ -154,7 +105,7 @@ export default function PaymentsTable({ searchTerm = "" }) {
             ) : (
               <tr>
                 <td className="payments-empty" colSpan="4">
-                  No payments found.
+                  <EmptyState title={searchTerm ? "No matching tenants" : "No payment records"} description={searchTerm ? "Try a different search term." : "Active rental balances will appear here when monthly dues are available."} />
                 </td>
               </tr>
             )}

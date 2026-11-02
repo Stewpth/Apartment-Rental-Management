@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
 import { getMyRental } from "../controllers/rental.controller.js";
+import { getMyPayments } from "../controllers/payment.controller.js";
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.get("/dashboard", (req, res) => {
 });
 
 router.get("/rentals/me", getMyRental);
+router.get("/payments/me", getMyPayments);
 
 export default router;

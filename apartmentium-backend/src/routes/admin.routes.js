@@ -7,6 +7,11 @@ import {
 } from "../controllers/unit.controller.js";
 import { assignTenant, getRentalRecords } from "../controllers/rental.controller.js";
 import {
+  getPaymentDetails,
+  getPaymentRecords,
+  recordPayment,
+} from "../controllers/payment.controller.js";
+import {
   requestTenantActivation,
   verifyTenantActivation,
   resendTenantActivationOtp,
@@ -22,6 +27,9 @@ router.get("/units/available", getAvailableUnits);
 
 router.post("/rentals/assign-tenant", assignTenant);
 router.get("/rentals", getRentalRecords);
+router.get("/payments", getPaymentRecords);
+router.get("/payments/:rentalId", getPaymentDetails);
+router.post("/payments/:rentalId", recordPayment);
 router.post("/rentals/request-tenant-activation", requestTenantActivation);
 router.post("/rentals/verify-tenant-activation", verifyTenantActivation);
 router.post("/rentals/resend-tenant-activation", resendTenantActivationOtp);

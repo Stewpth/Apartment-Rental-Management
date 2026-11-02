@@ -54,6 +54,11 @@
   background: #0f50c7;
 }
 
+.record-payment-button:disabled {
+  background: #a9b5c7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 420px) {
   .payment-details-heading-row h1 {
     font-size: 18px;

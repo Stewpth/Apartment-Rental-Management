@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "./PaymentDetailsHeader.css";
 
-export default function PaymentDetailsHeader({ tenantName, unit, onRecordPayment }) {
+export default function PaymentDetailsHeader({ tenantName, unit, onRecordPayment, canRecordPayment = true }) {
   return (
     <header className="payment-details-header">
       <Link className="payment-back-link" to="/admin/payments">
@@ -15,7 +15,7 @@ export default function PaymentDetailsHeader({ tenantName, unit, onRecordPayment
           <h1>{tenantName}</h1>
           <p>Unit {unit}</p>
         </div>
-        <button className="record-payment-button" type="button" onClick={onRecordPayment}>Record Payment</button>
+        <button className="record-payment-button" type="button" onClick={onRecordPayment} disabled={!canRecordPayment}>Record Payment</button>
       </div>
     </header>
   );

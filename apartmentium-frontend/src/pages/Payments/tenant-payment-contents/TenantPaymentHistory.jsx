@@ -1,31 +1,17 @@
 ﻿import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
-
-const payments = [
-  ["Sep 5, 2026", "September 2026", "PAY-202609-001"],
-  ["Aug 5, 2026", "August 2026", "PAY-202608-001"],
-  ["Jul 5, 2026", "July 2026", "PAY-202607-001"],
-  ["Jun 5, 2026", "June 2026", "PAY-202606-001"],
-  ["May 5, 2026", "May 2026", "PAY-202605-001"],
-  ["Apr 5, 2026", "April 2026", "PAY-202604-001"],
-  ["Mar 5, 2026", "March 2026", "PAY-202603-001"],
-  ["Feb 5, 2026", "February 2026", "PAY-202602-001"],
-  ["Jan 5, 2026", "January 2026", "PAY-202601-001"],
-  ["Dec 5, 2025", "December 2025", "PAY-202512-001"],
-  ["Nov 5, 2025", "November 2025", "PAY-202511-001"],
-  ["Oct 5, 2025", "October 2025", "PAY-202510-001"],
-].map(([date, month, reference]) => ({ date, month, reference, amount: "₱4,500" }));
+import { formatPaymentAmount, formatPaymentDate, formatBillingPeriod } from "../paymentUtils";
 
 const pageSize = 5;
 
-export default function TenantPaymentHistory() {
+export default function TenantPaymentHistory({ payments }) {
   const [page, setPage] = useState(1);
   const [yearFilter, setYearFilter] = useState("all");
   const filteredPayments = payments.filter(
-    (payment) => yearFilter === "all" || payment.month.endsWith(yearFilter),
+    (payment) => yearFilter === "all" || payment.date.startsWith(yearFilter),
   );
-  const pageCount = Math.ceil(filteredPayments.length / pageSize);
+  const pageCount = Math.max(1, Math.ceil(filteredPayments.length / pageSize));
   const visiblePayments = filteredPayments.slice(
     (page - 1) * pageSize,
     page * pageSize,
@@ -48,8 +34,7 @@ export default function TenantPaymentHistory() {
             }}
           >
             <option value="all">All Payments</option>
-            <option value="2026">2026</option>
-            <option value="2025">2025</option>
+            {[...new Set(payments.map((payment) => payment.date.slice(0, 4)))].sort((a, b) => b.localeCompare(a)).map((year) => <option key={year} value={year}>{year}</option>)}
           </select>
         </label>
       </header>
@@ -65,15 +50,15 @@ export default function TenantPaymentHistory() {
             </tr>
           </thead>
           <tbody>
-            {visiblePayments.map((payment) => (
-              <tr key={payment.reference}>
-                <td>{payment.date}</td>
-                <td>{payment.month}</td>
-                <td className="tenant-payment-amount">{payment.amount}</td>
-                <td>{payment.reference}</td>
+            {visiblePayments.length ? visiblePayments.map((payment) => (
+              <tr key={payment.id}>
+                <td>{formatPaymentDate(payment.date)}</td>
+                <td>{payment.billingPeriods.length ? payment.billingPeriods.map(formatBillingPeriod).join(", ") : "—"}</td>
+                <td className="tenant-payment-amount">{formatPaymentAmount(payment.amount)}</td>
+                <td>{payment.reference || "—"}</td>
                 <td><span className="tenant-payment-paid">Paid</span></td>
               </tr>
-            ))}
+            )) : <tr><td colSpan="5" className="tenant-payment-empty">No payments have been recorded.</td></tr>}
           </tbody>
         </table>
       </div>

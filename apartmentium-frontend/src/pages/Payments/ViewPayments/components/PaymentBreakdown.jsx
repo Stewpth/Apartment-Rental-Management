@@ -14,13 +14,13 @@ export default function PaymentBreakdown({ items }) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.length ? items.map((item) => (
               <tr key={item.period}>
                 <td>{item.period}</td>
                 <td>{item.dueDate}</td>
                 <td className="payment-detail-amount">{item.amount}</td>
               </tr>
-            ))}
+            )) : <tr><td colSpan="3">No unpaid monthly dues.</td></tr>}
           </tbody>
         </table>
       </div>

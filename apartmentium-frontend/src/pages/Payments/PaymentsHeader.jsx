@@ -6,7 +6,7 @@ export default function PaymentsHeader({ searchTerm, setSearchTerm }) {
     <div className="payments-header">
       <div className="payments-header-details">
         <h2 className="payments-title">Payments</h2>
-        <span className="payments-description">Records the payments here</span>
+          <span className="payments-description">Review balances and record tenant payments.</span>
       </div>
       <div className="payments-search-container">
         <FontAwesomeIcon

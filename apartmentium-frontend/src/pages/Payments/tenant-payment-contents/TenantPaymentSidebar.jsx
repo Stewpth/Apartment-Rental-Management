@@ -6,8 +6,9 @@ import {
   faClock,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { formatPaymentAmount, formatPaymentDate } from "../paymentUtils";
 
-export default function TenantPaymentSidebar() {
+export default function TenantPaymentSidebar({ summary, rental }) {
   return (
     <aside className="tenant-payment-sidebar">
       <section className="tenant-payment-balance-card">
@@ -23,21 +24,25 @@ export default function TenantPaymentSidebar() {
           </em>
         </div>
         <span className="tenant-payment-balance-label">Current Balance</span>
-        <strong className="tenant-payment-balance-amount">₱4,500</strong>
+        <strong className="tenant-payment-balance-amount">{formatPaymentAmount(summary.totalDue)}</strong>
         <span className="tenant-payment-balance-note">Total amount due</span>
       </section>
       <section className="tenant-payment-due-card">
         <h2>This Month&apos;s Due</h2>
         <div className="tenant-payment-monthly-rent">
           <span>Monthly Rent</span>
-          <strong>₱4,500</strong>
+          <strong>{formatPaymentAmount(rental.monthlyRent)}</strong>
+        </div>
+        <div className="tenant-payment-monthly-rent">
+          <span>Due This Month</span>
+          <strong>{formatPaymentAmount(summary.currentMonthDue)}</strong>
         </div>
         <div className="tenant-payment-due-row">
           <span>
             <FontAwesomeIcon icon={faCalendarDays} />
             Due Date
           </span>
-          <strong>Nov 5, 2026</strong>
+          <strong>{formatPaymentDate(summary.currentMonthDueDate)}</strong>
         </div>
         <div className="tenant-payment-due-row">
           <span>
@@ -47,7 +52,7 @@ export default function TenantPaymentSidebar() {
             />
             Status
           </span>
-          <span className="tenant-payment-pending">Pending</span>
+          <span className={summary.currentMonthStatus === "PAID" ? "tenant-payment-paid" : "tenant-payment-pending"}>{summary.currentMonthStatus === "PAID" ? "Paid" : summary.currentMonthStatus === "PARTIAL" ? "Partially paid" : "Unpaid"}</span>
         </div>
       </section>
       <section className="tenant-payment-help-card">
