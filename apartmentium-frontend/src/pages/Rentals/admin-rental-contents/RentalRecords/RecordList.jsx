@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import EmptyState from "../../../../components/ui/EmptyState";
 
 function UnitStatus({ isAvailable }) {
   return (
@@ -51,7 +52,12 @@ export default function RecordList({ units, selectedFilter, searchTerm }) {
           </button>
         ))
       ) : (
-        <p className="rentals-record-empty">No rental records found.</p>
+        <EmptyState
+          title={units.length ? "No matching rentals" : "No rental records yet"}
+          description={units.length
+            ? "Try changing your search or selecting a different filter."
+            : "Units and tenant assignments will appear here once they are added."}
+        />
       )}
     </div>
   );

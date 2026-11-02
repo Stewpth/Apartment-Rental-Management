@@ -3,6 +3,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import TenantRentalSummary from "./tenant-rental-contents/TenantRentalSummary";
 import TenantRentalInformation from "./tenant-rental-contents/TenantRentalInformation";
 import LoadingState from "../../components/ui/LoadingState";
+import EmptyState from "../../components/ui/EmptyState";
 import "./TenantRentals.css";
 
 export default function TenantRentals() {
@@ -32,7 +33,7 @@ export default function TenantRentals() {
               {loading ? <LoadingState message="Loading your rental…" /> : error ? <p role="alert">{error}</p> : rental ? <>
                 <TenantRentalSummary rental={rental} />
                 <TenantRentalInformation rental={rental} />
-              </> : <section className="tenant-rental-information"><h2>No active rental</h2><p>There is no active rental linked to this account.</p></section>}
+              </> : <EmptyState title="No active rental" description="There is no active rental linked to this account. Contact your property manager if you believe this is incorrect." />}
             </div>
           </div>
         </main>

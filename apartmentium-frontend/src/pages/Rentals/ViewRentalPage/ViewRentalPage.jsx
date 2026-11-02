@@ -7,6 +7,7 @@ import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
 import RentalTenantSummary from "./RentalTenantSummary";
 import LoadingState from "../../../components/ui/LoadingState";
+import EmptyState from "../../../components/ui/EmptyState";
 import "../Rentals.css";
 import "./ViewRentalPage.css";
 
@@ -65,16 +66,12 @@ export default function ViewRentalPage() {
                 ) : error ? (
                   <p role="alert">{error}</p>
                 ) : !unit ? (
-                  <section className="view-rental-card">
-                    <h1>Rental record not found</h1>
-                    <button
-                      type="button"
-                      className="view-rental-secondary-button"
-                      onClick={() => navigate("/admin/rentals")}
-                    >
-                      Back to Rentals
-                    </button>
-                  </section>
+                  <EmptyState
+                    title="Rental record not found"
+                    description="This unit may have been removed or is no longer available. Return to the rentals list to view current records."
+                    actionLabel="Back to Rentals"
+                    onAction={() => navigate("/admin/rentals")}
+                  />
                 ) : unit.isAvailable ? (
                   <AvailableUnitDetails
                     unit={unit}
