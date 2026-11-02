@@ -6,7 +6,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import RentalsHeader from "./admin-rental-contents/RentalsHeader";
 import RentalsSummary from "./admin-rental-contents/RentalsSummary";
 import RentalsRecords from "./admin-rental-contents/RentalRecords";
-import { getRentalUnits } from "./rentalApi";
+import { getRentalUnits } from "../../api/rentalApi";
 import LoadingState from "../../components/ui/LoadingState";
 import "./Rentals.css";
 

@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
-import { formatMoney } from "./rentalViewUtils";
+import { formatMoney } from "../../../utils/rentalViewUtils";
 
 export default function RentalInformation({ unit }) {
   return (

@@ -5,7 +5,7 @@ import {
   faHouse,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { formatMoney } from "./rentalViewUtils";
+import { formatMoney } from "../../../utils/rentalViewUtils";
 
 export default function AvailableUnitDetails({ unit, onBack, onAssignTenant }) {
   return (

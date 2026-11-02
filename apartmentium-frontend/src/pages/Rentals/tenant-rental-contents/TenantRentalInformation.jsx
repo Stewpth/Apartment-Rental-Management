@@ -6,7 +6,7 @@
   { label: "Move-in Date", value: "June 1, 2026" },
 ];
 
-import { formatMoney } from "../ViewRentalPage/rentalViewUtils";
+import { formatMoney } from "../../../utils/rentalViewUtils";
 
 export default function TenantRentalInformation({ rental }) {
   const rentalInformation = [

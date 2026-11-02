@@ -6,7 +6,7 @@
   status: "Active",
 };
 
-import { formatMoney } from "../ViewRentalPage/rentalViewUtils";
+import { formatMoney } from "../../../utils/rentalViewUtils";
 
 export default function TenantRentalSummary({ rental }) {
   const unitName = rental.unit?.unitNumber

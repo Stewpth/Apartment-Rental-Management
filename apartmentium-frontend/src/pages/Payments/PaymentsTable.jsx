@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmptyState from "../../components/ui/EmptyState";
-import { formatPaymentAmount, formatPaymentDate } from "./paymentUtils";
+import { formatPaymentAmount, formatPaymentDate } from "../../utils/paymentUtils";
 import {
   faChevronDown,
   faChevronLeft,

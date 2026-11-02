@@ -10,7 +10,7 @@ import PaymentHistory from "./components/PaymentHistory";
 import RecordPaymentModal from "./components/RecordPaymentModal";
 import LoadingState from "../../../components/ui/LoadingState";
 import EmptyState from "../../../components/ui/EmptyState";
-import { formatPaymentAmount, formatPaymentDate, formatBillingPeriod } from "../paymentUtils";
+import { formatPaymentAmount, formatPaymentDate, formatBillingPeriod } from "../../../utils/paymentUtils";
 
 import "./ViewPayments.css";
 

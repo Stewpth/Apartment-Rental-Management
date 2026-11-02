@@ -6,7 +6,7 @@ import {
   faClock,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
-import { formatPaymentAmount, formatPaymentDate } from "../paymentUtils";
+import { formatPaymentAmount, formatPaymentDate } from "../../../utils/paymentUtils";
 
 export default function TenantPaymentSidebar({ summary, rental }) {
   return (

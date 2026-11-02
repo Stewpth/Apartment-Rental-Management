@@ -1,4 +1,4 @@
-import api from "../../api/axios";
+import api from "./axios";
 
 function displayUnitNumber(unitNumber) {
   return unitNumber.toLowerCase().startsWith("unit ")
@@ -6,7 +6,7 @@ function displayUnitNumber(unitNumber) {
     : `Unit ${unitNumber}`;
 }
 
-export function mapRentalToUnit(rental) {
+function mapRentalToUnit(rental) {
   return {
     unit_id: rental.unitId,
     rental_id: rental.id,
