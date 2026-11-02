@@ -6,6 +6,7 @@ import { getRentalUnits } from "../rentalApi";
 import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
 import RentalTenantSummary from "./RentalTenantSummary";
+import LoadingState from "../../../components/ui/LoadingState";
 import "../Rentals.css";
 import "./ViewRentalPage.css";
 
@@ -60,7 +61,7 @@ export default function ViewRentalPage() {
             <div className="rentals-container">
               <div className="rentals-contents view-rental-contents">
                 {loading ? (
-                  <p>Loading rental details…</p>
+                  <LoadingState message="Loading rental details…" />
                 ) : error ? (
                   <p role="alert">{error}</p>
                 ) : !unit ? (

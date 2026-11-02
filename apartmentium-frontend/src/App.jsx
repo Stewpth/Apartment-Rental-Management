@@ -16,10 +16,11 @@ import SecuritySettingsPage from "./pages/Account/SecuritySettingsPage";
 import Login from "./pages/Login";
 import { useAuth } from "./hooks/useAuth";
 import { HomeRedirect, ProtectedRoute } from "./auth/ProtectedRoute";
+import LoadingState from "./components/ui/LoadingState";
 
 function LoginRoute() {
   const { user, isLoading } = useAuth();
-  if (isLoading) return <div className="auth-loading" role="status">Checking your session…</div>;
+  if (isLoading) return <LoadingState message="Checking your session…" />;
   if (user) return <HomeRedirect />;
   return <Login />;
 }

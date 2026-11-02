@@ -7,6 +7,7 @@ import RentalsHeader from "./admin-rental-contents/RentalsHeader";
 import RentalsSummary from "./admin-rental-contents/RentalsSummary";
 import RentalsRecords from "./admin-rental-contents/RentalRecords";
 import { getRentalUnits } from "./rentalApi";
+import LoadingState from "../../components/ui/LoadingState";
 import "./Rentals.css";
 
 export default function Rentals() {
@@ -43,7 +44,7 @@ export default function Rentals() {
                 <RentalsHeader />
                 <RentalsSummary units={units} />
                 {error && <p className="rentals-error" role="alert">{error}</p>}
-                {loading ? <p>Loading rental records…</p> : <RentalsRecords units={units} onRefresh={loadUnits} initialUnitId={location.state?.assignUnitId} />}
+                {loading ? <LoadingState message="Loading rental records…" /> : <RentalsRecords units={units} onRefresh={loadUnits} initialUnitId={location.state?.assignUnitId} />}
               </div>
             </div>
           </div>
