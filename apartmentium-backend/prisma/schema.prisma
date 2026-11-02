@@ -33,6 +33,18 @@ enum RentalStatus {
   ENDED
 }
 
+enum MonthlyDueStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum CreditTransactionType {
+  CREDIT_CREATED
+  CREDIT_APPLIED
+  REFUND
+}
+
 // ==========================================
 // USER
 // ==========================================
@@ -101,10 +113,135 @@ model Rental {
 
   status RentalStatus @default(ACTIVE)
 
+  // Monthly billing records
+  monthlyDues MonthlyDue[]
+  payments    Payment[]
+
+  tenantCredit TenantCredit?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([tenantId])
   @@index([unitId])
   @@index([status])
+}
+
+// ==========================================
+// MONTHLY DUE
+// ==========================================
+
+model MonthlyDue {
+  id String @id @default(uuid())
+
+  rentalId String
+  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+
+  // Billing period and payment deadline
+  billingPeriod DateTime @db.Date
+  dueDate       DateTime @db.Date
+
+  // Payment tracking
+  amountDue  Decimal          @db.Decimal(10, 2)
+  amountPaid Decimal          @default(0) @db.Decimal(10, 2)
+  balance    Decimal          @db.Decimal(10, 2)
+  status     MonthlyDueStatus @default(UNPAID)
+
+  allocations        PaymentAllocation[]
+  creditTransactions CreditTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([rentalId, billingPeriod])
+  @@index([rentalId])
+  @@index([dueDate])
+  @@index([status])
+}
+
+// PAYMENT
+model Payment {
+  id String @id @default(uuid())
+
+  rentalId String
+  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+
+  // Total amount received from the tenant
+  amount Decimal @db.Decimal(10, 2)
+
+  // Date when the landlord received the payment
+  paymentDate DateTime @db.Date
+
+  // Payment allocation records
+  allocations        PaymentAllocation[]
+  creditTransactions CreditTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rentalId])
+  @@index([paymentDate])
+}
+
+// PAYMENT ALLOCATION
+model PaymentAllocation {
+  id String @id @default(uuid())
+
+  paymentId String
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  monthlyDueId String
+  monthlyDue   MonthlyDue @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
+
+  // Amount allocated to a specific monthly due
+  amount Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  // Prevent duplicate allocation for the same payment and bill
+  @@unique([paymentId, monthlyDueId])
+  @@index([monthlyDueId])
+}
+
+// TENANT CREDIT
+model TenantCredit {
+  id String @id @default(uuid())
+
+  rentalId String @unique
+  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+
+  // Current available credit balance
+  balance Decimal @default(0) @db.Decimal(10, 2)
+
+  // Credit history
+  transactions CreditTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// CREDIT TRANSACTION
+model CreditTransaction {
+  id String @id @default(uuid())
+
+  tenantCreditId String
+  tenantCredit   TenantCredit @relation(fields: [tenantCreditId], references: [id], onDelete: Restrict)
+
+  type   CreditTransactionType
+  amount Decimal               @db.Decimal(10, 2)
+
+  // Optional references depending on transaction type
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  monthlyDueId String?
+  monthlyDue   MonthlyDue? @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  notes     String?
+
+  @@index([tenantCreditId])
+  @@index([type])
+  @@index([paymentId])
+  @@index([monthlyDueId])
 }
