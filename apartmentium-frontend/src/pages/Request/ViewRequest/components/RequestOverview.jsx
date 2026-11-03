@@ -108,7 +108,7 @@ export default function RequestOverview({ request }) {
           <h2>
             <FontAwesomeIcon icon={faPaperclip} /> Attachments
           </h2>
-          <ul>
+          <ul className="view-request-attachments-row">
             {request.attachments.map((file) => (
               <li key={file.id}>
                 <RequestAttachmentLink file={file} />

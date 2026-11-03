@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TenantRequestModal.css";
@@ -38,15 +38,20 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
   const [reason, setReason] = useState("");
   const [requestedMoveOutDate, setRequestedMoveOutDate] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const previewUrls = useRef([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  useEffect(
+    () => () => previewUrls.current.forEach((url) => URL.revokeObjectURL(url)),
+    [],
+  );
   useEffect(() => {
     function close(event) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && !saving) onClose();
     }
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
-  }, [onClose]);
+  }, [onClose, saving]);
   async function submit(event) {
     event.preventDefault();
     setError("");
@@ -59,7 +64,7 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
     }
     if (
       selectedFiles.some(
-        (file) =>
+        ({ file }) =>
           !["image/jpeg", "image/png"].includes(file.type) ||
           file.size > 5 * 1024 * 1024,
       )
@@ -75,7 +80,9 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
         description: description.trim(),
         reason: reason.trim(),
         requestedMoveOutDate,
-        attachments: await Promise.all(selectedFiles.map(fileData)),
+        attachments: await Promise.all(
+          selectedFiles.map(({ file }) => fileData(file)),
+        ),
       });
     } catch (e) {
       setError(e.response?.data?.message || "Unable to submit request.");
@@ -83,10 +90,42 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
       setSaving(false);
     }
   }
+  function selectImages(event) {
+    const files = Array.from(event.target.files ?? []);
+    const remainingSlots = 3 - selectedFiles.length;
+    event.target.value = "";
+    if (files.length > remainingSlots) {
+      setError(
+        remainingSlots === 0
+          ? "You can attach up to 3 images. Remove an image before adding another."
+          : `You can attach up to 3 images. Only ${remainingSlots} more ${remainingSlots === 1 ? "image is" : "images are"} allowed.`,
+      );
+      return;
+    }
+    const selected = files.map((file) => {
+      const previewUrl = URL.createObjectURL(file);
+      previewUrls.current.push(previewUrl);
+      return { file, previewUrl };
+    });
+    setSelectedFiles((current) => [...current, ...selected]);
+    setError("");
+  }
+  function removeImage(previewUrl) {
+    URL.revokeObjectURL(previewUrl);
+    previewUrls.current = previewUrls.current.filter(
+      (url) => url !== previewUrl,
+    );
+    setSelectedFiles((files) =>
+      files.filter((item) => item.previewUrl !== previewUrl),
+    );
+    setError("");
+  }
   return (
     <div
       className="tenant-request-modal-overlay"
-      onClick={(event) => event.target === event.currentTarget && onClose()}
+      onClick={(event) =>
+        !saving && event.target === event.currentTarget && onClose()
+      }
     >
       <section
         className="tenant-request-modal"
@@ -110,7 +149,12 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
               )}
             </div>
           </div>
-          <button type="button" aria-label="Close" onClick={onClose}>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            disabled={saving}
+          >
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </header>
@@ -150,28 +194,24 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
               )}
             </div>
 
-            <div className="tenant-request-label-container">
-              {request.adminNotes && (
-                <p className="tenant-request-label-admin-notes">
-                  Admin note:{" "}
-                  <span className="tenant-request-reply admin">
-                    {request.adminNotes}
-                  </span>
-                </p>
-              )}
-            </div>
+            <section className="tenant-request-admin-note">
+              <h3>Admin Note</h3>
+              <p>{request.adminNotes?.trim() || "No admin note yet."}</p>
+            </section>
+
+            {!!request.attachments.length && (
+              <div className="tenant-request-log-attachments">
+                {request.attachments.map((file) => (
+                  <div key={file.id} className="tenant-request-attachment">
+                    <RequestAttachmentLink file={file} />
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="tenant-request-logs">
               <p className="tenant-request-log-title">REQUEST LOGS</p>
-              {!!request.attachments.length && (
-                <div className="tenant-request-log-attachments">
-                  {request.attachments.map((file) => (
-                    <div key={file.id} className="tenant-request-attachment">
-                      <RequestAttachmentLink file={file} />
-                    </div>
-                  ))}
-                </div>
-              )}
+
               <RequestTimeline updates={request.updates} />
             </div>
           </div>
@@ -248,33 +288,50 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
               <div className="tenant-request-form-field">
                 <span>Attach images (Optional, up to 3)</span>
                 <label
-                  className="tenant-request-upload"
+                  className={`tenant-request-upload${selectedFiles.length >= 3 ? " disabled" : ""}`}
                   htmlFor="tenant-request-images"
+                  aria-disabled={selectedFiles.length >= 3}
                 >
                   <FontAwesomeIcon icon={faImage} />
-                  <strong>Choose pictures</strong>
-                  <small>PNG or JPG, max 5 MB each</small>
+                  <strong>
+                    {selectedFiles.length >= 3
+                      ? "Image limit reached"
+                      : "Choose pictures"}
+                  </strong>
+                  <small>
+                    {selectedFiles.length}/3 selected · PNG or JPG, max 5 MB
+                    each
+                  </small>
                   <input
                     id="tenant-request-images"
                     type="file"
                     accept="image/png,image/jpeg"
                     multiple
-                    onChange={(event) =>
-                      setSelectedFiles(
-                        Array.from(event.target.files ?? []).slice(0, 4),
-                      )
-                    }
+                    disabled={selectedFiles.length >= 3}
+                    onChange={selectImages}
                   />
                 </label>
                 {selectedFiles.length > 0 && (
-                  <ul>
-                    {selectedFiles.map((file) => (
-                      <li key={`${file.name}-${file.lastModified}`}>
-                        {file.name}
-                      </li>
+                  <div className="tenant-request-image-previews">
+                    {selectedFiles.map(({ file, previewUrl }) => (
+                      <figure key={previewUrl}>
+                        <img src={previewUrl} alt={`Preview: ${file.name}`} />
+                        <figcaption title={file.name}>{file.name}</figcaption>
+                        <button
+                          type="button"
+                          aria-label={`Remove ${file.name}`}
+                          onClick={() => removeImage(previewUrl)}
+                        >
+                          <FontAwesomeIcon icon={faXmark} />
+                        </button>
+                      </figure>
                     ))}
-                  </ul>
+                  </div>
                 )}
+                <small className="tenant-request-upload-note">
+                  Images upload when you submit. Canceling keeps them off the
+                  server.
+                </small>
               </div>
             )}
             {error && (
@@ -283,7 +340,12 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
               </p>
             )}
             <footer>
-              <button type="button" className="secondary" onClick={onClose}>
+              <button
+                type="button"
+                className="secondary"
+                onClick={onClose}
+                disabled={saving}
+              >
                 Cancel
               </button>
               <button type="submit" className="primary" disabled={saving}>

@@ -113,6 +113,26 @@
   background-color: #dbeafe;
 }
 
+.view-request-attachments-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0 0 4px;
+  list-style: none;
+}
+
+.view-request-attachments-row > li {
+  box-sizing: border-box;
+  flex: 0 0 180px;
+  min-width: 0;
+}
+
+.view-request-attachments-row .request-attachment-preview {
+  width: 100%;
+}
+
 /* Request description and attachments */
 .request-description-section {
   display: flex;

@@ -1,6 +1,10 @@
 import "dotenv/config";
 import app from "./app.js";
 import prisma from "./config/prisma.js";
+import {
+  checkRequestAttachmentStorage,
+  requestAttachmentsBucket,
+} from "./config/supabase.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -8,6 +12,20 @@ async function startServer() {
   try {
     await prisma.$connect();
     console.log("Database connected successfully!");
+
+    try {
+      const bucket = await checkRequestAttachmentStorage();
+      console.log(
+        `Supabase Storage connected; bucket "${bucket.name}" is available.`,
+      );
+    } catch (error) {
+      console.error(
+        `Supabase Storage check failed for bucket "${requestAttachmentsBucket}": ${error.message}`,
+      );
+      console.error(
+        "Request image uploads are unavailable until Supabase Storage access and the bucket are configured.",
+      );
+    }
 
     const server = app.listen(PORT, () => {
       console.log(`Apartmentium API running at http://localhost:${PORT}`);

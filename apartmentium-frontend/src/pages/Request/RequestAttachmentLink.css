@@ -1,0 +1,37 @@
+.request-attachment-preview {
+  width: min(100%, 220px);
+  overflow: hidden;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.request-attachment-preview a {
+  display: grid;
+  color: #2865b2;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.request-attachment-preview img {
+  display: block;
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
+  background: #f3f6fa;
+}
+
+.request-attachment-preview a > span,
+.request-attachment-message {
+  overflow: hidden;
+  padding: 8px 10px;
+  color: #52647c;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.request-attachment-preview a:hover > span {
+  color: #1e62c2;
+  text-decoration: underline;
+}

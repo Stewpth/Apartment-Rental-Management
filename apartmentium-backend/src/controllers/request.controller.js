@@ -1,14 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile, unlink, readFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import prisma from "../config/prisma.js";
+import supabase, {
+  requestAttachmentsBucket,
+} from "../config/supabase.js";
 import { ensureMonthlyDues } from "./payment.controller.js";
 
-const uploadRoot = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "../../uploads/requests",
-);
 const imageTypes = new Set(["image/jpeg", "image/png"]);
 const validCategories = new Set([
   "REPAIR",
@@ -141,8 +137,13 @@ async function persistAttachments(files) {
         throw new Error("INVALID_ATTACHMENT");
       const extension = file.mimeType === "image/png" ? ".png" : ".jpg";
       const storageKey = `${randomUUID()}${extension}`;
-      await mkdir(uploadRoot, { recursive: true });
-      await writeFile(join(uploadRoot, storageKey), buffer, { flag: "wx" });
+      const { error } = await supabase.storage
+        .from(requestAttachmentsBucket)
+        .upload(storageKey, buffer, {
+          contentType: file.mimeType,
+          upsert: false,
+        });
+      if (error) throw error;
       stored.push({
         storageKey,
         fileName: String(file.fileName || "image")
@@ -154,13 +155,17 @@ async function persistAttachments(files) {
     }
     return stored;
   } catch (error) {
-    await Promise.all(
-      stored.map((file) =>
-        unlink(join(uploadRoot, file.storageKey)).catch(() => {}),
-      ),
-    );
+    await removeStoredAttachments(stored);
     throw error;
   }
+}
+
+async function removeStoredAttachments(files) {
+  if (!files.length) return;
+  const { error } = await supabase.storage
+    .from(requestAttachmentsBucket)
+    .remove(files.map((file) => file.storageKey));
+  if (error) console.error("Unable to clean up request attachments:", error);
 }
 
 export async function createTenantRequest(req, res) {
@@ -280,11 +285,7 @@ export async function createTenantRequest(req, res) {
       .status(201)
       .json({ success: true, data: publicRequest(created) });
   } catch (error) {
-    await Promise.all(
-      stored.map((file) =>
-        unlink(join(uploadRoot, file.storageKey)).catch(() => {}),
-      ),
-    );
+    await removeStoredAttachments(stored);
     if (
       [
         "INVALID_ATTACHMENTS",
@@ -423,7 +424,14 @@ export async function getRequestAttachment(req, res) {
       return res
         .status(404)
         .json({ success: false, message: "Attachment not found." });
-    const bytes = await readFile(join(uploadRoot, attachment.storageKey));
+    const { data, error } = await supabase.storage
+      .from(requestAttachmentsBucket)
+      .download(attachment.storageKey);
+    if (error || !data)
+      return res
+        .status(404)
+        .json({ success: false, message: "Attachment not found." });
+    const bytes = Buffer.from(await data.arrayBuffer());
     res.setHeader("Content-Type", attachment.mimeType);
     res.setHeader(
       "Content-Disposition",
@@ -432,10 +440,6 @@ export async function getRequestAttachment(req, res) {
     res.setHeader("Cache-Control", "private, no-store");
     return res.send(bytes);
   } catch (error) {
-    if (error.code === "ENOENT")
-      return res
-        .status(404)
-        .json({ success: false, message: "Attachment not found." });
     console.error("Get request attachment error:", error);
     return res
       .status(500)
