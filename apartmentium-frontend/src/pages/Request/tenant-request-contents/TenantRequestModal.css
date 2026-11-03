@@ -1,4 +1,10 @@
-﻿.tenant-request-modal-overlay {
+﻿.tenant-request-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tenant-request-modal-overlay {
   position: fixed;
   z-index: 1200;
   inset: 0;
@@ -197,11 +203,67 @@
   font-size: 10px;
 }
 .tenant-request-modal-details p {
-  margin-top: 16px;
   color: #52647c;
   font-size: 13px;
   line-height: 1.6;
 }
+
+.tenant-request-label-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 8px;
+}
+
+.tenant-request-reply {
+  font-weight: 300;
+}
+
+.tenant-request-reply.tenant {
+  color: #0c5b13;
+}
+
+.tenant-request-reply.admin {
+  color: #947110;
+}
+
+.tenant-request-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 8px;
+}
+
+.tenant-request-log-title {
+  color: black;
+  font-weight: 700;
+}
+
+.tenant-request-logs p {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.tenant-request-update.submitted {
+  color: #2e417f;
+}
+
+.tenant-request-update.rejected {
+  color: #dc4b61;
+}
+
+.tenant-request-update.accepted {
+  color: #94740b;
+}
+
+.tenant-request-update.resolved {
+  color: #088b1a;
+}
+
 @media (max-width: 600px) {
   .tenant-request-modal-overlay {
     padding: 12px;

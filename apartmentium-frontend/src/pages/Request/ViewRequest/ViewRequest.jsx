@@ -97,8 +97,8 @@ export default function ViewRequest() {
         <main className="page-main">
           <Header />
           <div className="page-content">
-            <div className="request-container">
-              <div className="request-contents">
+            <div className="request-container view-request-container">
+              <div className="request-contents view-request-contents">
                 <Link to="/admin/requests" className="request-back-link">
                   <FontAwesomeIcon icon={faArrowLeft} />{" "}
                   <span>Back to Requests</span>

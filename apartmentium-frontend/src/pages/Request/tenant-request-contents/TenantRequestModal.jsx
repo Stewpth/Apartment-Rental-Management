@@ -115,31 +115,71 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
         </header>
         {request ? (
           <div className="tenant-request-modal-details">
-            <span
-              className={`tenant-request-status ${request.status.toLowerCase()}`}
-            >
-              {statusLabels[request.status]}
-            </span>
-            <p>{request.description}</p>
-            {request.reason && <p>Reason: {request.reason}</p>}
-            {request.requestedMoveOutDate && (
-              <p>Requested move-out date: {request.requestedMoveOutDate}</p>
-            )}
-            {request.adminNotes && <p>Admin note: {request.adminNotes}</p>}
-            {request.attachments.map((file) => (
-              <p key={file.id}>
-                <RequestAttachmentLink file={file} />
+            <div className="tenant-request-status-container">
+              <span
+                className={`tenant-request-status ${request.status.toLowerCase()}`}
+              >
+                {statusLabels[request.status]}
+              </span>
+            </div>
+
+            <div className="tenant-request-label-container">
+              <p className="tenant-request-label-description">
+                Your description:{" "}
+                <span className="tenant-request-reply tenant">
+                  {request.description}
+                </span>
               </p>
-            ))}
-            {request.updates.map((update) => (
-              <p key={update.id}>
-                {update.message}{" "}
-                <small>
-                  {update.createdAt &&
-                    new Date(update.createdAt).toLocaleString()}
-                </small>
-              </p>
-            ))}
+
+              {request.reason && (
+                <p className="tenant-request-label-reason">
+                  Reason:{" "}
+                  <span className="tenant-request-reply admin">
+                    {request.reason}
+                  </span>
+                </p>
+              )}
+              {request.requestedMoveOutDate && (
+                <p className="tenant-request-label-move-out-date">
+                  Requested move-out date:{" "}
+                  <span className="tenant-request-reply tenant">
+                    {request.requestedMoveOutDate}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            <div className="tenant-request-label-container">
+              {request.adminNotes && (
+                <p className="tenant-request-label-admin-notes">
+                  Admin note:{" "}
+                  <span className="tenant-request-reply admin">
+                    {request.adminNotes}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            <div className="tenant-request-logs">
+              <p className="tenant-request-log-title">REQUEST LOGS</p>
+              {request.attachments.map((file) => (
+                <p key={file.id} className="tenant-request-attachment">
+                  <RequestAttachmentLink file={file} />
+                </p>
+              ))}
+              {request.updates.map((update) => (
+                <p
+                  key={update.id}
+                  className={`tenant-request-update ${update.message.replace(/\.$/, "")}`}
+                >
+                  {update.message}{" "}
+                  <small>
+                    {update.createdAt &&
+                      new Date(update.createdAt).toLocaleString()}
+                  </small>
+                </p>
+              ))}
+            </div>
           </div>
         ) : (
           <form onSubmit={submit}>
