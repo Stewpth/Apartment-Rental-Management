@@ -1,5 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaperclip,
+  faCalendarDays,
+  faHashtag,
+  faHouse,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import RequestAttachmentLink from "../../RequestAttachmentLink";
 import { categories, statuses } from "./requestDisplay";
 import RequestTimeline from "./RequestTimeline";
@@ -21,14 +27,28 @@ export default function RequestOverview({ request }) {
   return (
     <>
       <section className="view-request-header">
-        <span className={`request-category ${request.category.toLowerCase()}`}>
-          {categoryIcon && <FontAwesomeIcon icon={categoryIcon} />}{" "}
-          {categoryLabel}
-        </span>
+        <div className="view-request-header-topline">
+          <div className="view-request-header-category">
+            <span className={`view-request-header-icon ${request.category.toLowerCase()}`}>
+              {categoryIcon && <FontAwesomeIcon icon={categoryIcon} />}
+            </span>
+            <div>
+              <span className="view-request-header-kicker">REQUEST OVERVIEW</span>
+              <span className="view-request-header-category-label">{categoryLabel}</span>
+            </div>
+          </div>
+          <span className={`view-request-header-status ${request.status.toLowerCase()}`}>
+            {statusIcon && <FontAwesomeIcon icon={statusIcon} />}
+            {statusLabel}
+          </span>
+        </div>
         <h1>{request.title}</h1>
-        <p>
-          {request.reference} · {formatDate(request.createdAt)}
-        </p>
+        <div className="view-request-header-meta">
+          <span><FontAwesomeIcon icon={faHashtag} />{request.reference}</span>
+          <span><FontAwesomeIcon icon={faCalendarDays} />Submitted {formatDate(request.createdAt, { dateStyle: "medium" })}</span>
+          <span><FontAwesomeIcon icon={faUser} />{request.tenant.fullName}</span>
+          <span><FontAwesomeIcon icon={faHouse} />Unit {request.tenant.unitNumber}</span>
+        </div>
       </section>
 
       <section className="request-info-container">

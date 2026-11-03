@@ -36,8 +36,10 @@ export default function ViewRequest() {
     try {
       await api.patch(`/admin/requests/${id}`, payload);
       await load();
+      return true;
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Unable to update request.");
+      return false;
     } finally {
       setSaving(false);
     }
