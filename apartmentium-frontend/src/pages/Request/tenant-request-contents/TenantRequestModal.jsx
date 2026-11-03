@@ -197,6 +197,7 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
                 Title <b>*</b>
               </span>
               <input
+                className="tenant-request-form-field-input title-input"
                 required
                 maxLength={120}
                 value={title}

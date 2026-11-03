@@ -93,7 +93,8 @@
   color: #dc4b61;
 }
 .tenant-request-form-field select,
-.tenant-request-form-field textarea {
+.tenant-request-form-field textarea,
+.tenant-request-form-field input {
   box-sizing: border-box;
   width: 100%;
   border: 1px solid #dce5f0;
@@ -107,13 +108,20 @@
   height: 38px;
   padding: 0 12px;
 }
+
+.tenant-request-form-field input {
+  height: 38px;
+  padding: 0 12px;
+}
+
 .tenant-request-form-field textarea {
   min-height: 90px;
   padding: 11px 12px;
   resize: vertical;
 }
 .tenant-request-form-field select:focus,
-.tenant-request-form-field textarea:focus {
+.tenant-request-form-field textarea:focus,
+.tenant-request-form-field input:focus {
   outline: 0;
   border-color: #3975dc;
   box-shadow: 0 0 0 3px rgba(57, 117, 220, 0.12);
@@ -244,7 +252,7 @@
   color: #385679;
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
 }
 
 .tenant-request-log-attachments {
@@ -263,7 +271,9 @@
   font-size: 11px;
   text-decoration: none;
 }
-.tenant-request-attachment a:hover { text-decoration: underline; }
+.tenant-request-attachment a:hover {
+  text-decoration: underline;
+}
 
 @media (max-width: 600px) {
   .tenant-request-modal-overlay {
