@@ -435,101 +435,6 @@
 .view-request-contents .request-description-container li a:hover {
   text-decoration: underline;
 }
-.view-request-update-list {
-  position: relative;
-  display: grid;
-  gap: 12px;
-  padding-left: 22px;
-}
-.view-request-update-list::before {
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  left: 6px;
-  width: 2px;
-  border-radius: 2px;
-  background: linear-gradient(#b9d2f2, #e8eff8);
-  content: "";
-}
-.view-request-update {
-  position: relative;
-  min-width: 0;
-  padding: 13px 15px;
-  border: 1px solid #e6edf6;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #fff, #f9fbfe);
-  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-.view-request-update:hover {
-  transform: translateY(-1px);
-  border-color: #cdddf1;
-  box-shadow: 0 5px 14px rgba(36, 75, 120, .07);
-}
-.view-request-update-marker {
-  position: absolute;
-  top: 16px;
-  left: -23px;
-  display: grid;
-  width: 18px;
-  height: 18px;
-  place-items: center;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  background: #3978c8;
-  box-shadow: 0 0 0 1px #cdddf1;
-  color: #fff;
-  font-size: 8px;
-}
-.view-request-update-marker.resolved { background: #168454; }
-.view-request-update-marker.rejected { background: #c3443e; }
-.view-request-update-marker.pending { background: #c58019; }
-.view-request-update-marker.note { background: #71839b; }
-.view-request-update-content { min-width: 0; }
-.view-request-update-content > header,
-.view-request-update-author {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.view-request-update-content > header {
-  justify-content: space-between;
-}
-.view-request-update-author { flex-wrap: wrap; min-width: 0; }
-.view-request-update-author strong {
-  color: #25466f;
-  font-size: 12px;
-  font-weight: 700;
-}
-.view-request-update-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 8px;
-  border-radius: 99px;
-  background: #eaf2fd;
-  color: #2c64a8;
-  font-size: 10px;
-  font-weight: 650;
-}
-.view-request-update-status.pending { background: #fff2dc; color: #9b5d0a; }
-.view-request-update-status.resolved { background: #e3f6ec; color: #16784b; }
-.view-request-update-status.rejected { background: #fdebea; color: #ad3935; }
-.view-request-update-status.note { background: #eef1f5; color: #66768b; }
-.view-request-update-content time {
-  flex: 0 0 auto;
-  color: #8795a8;
-  font-size: 10px;
-  white-space: nowrap;
-}
-.view-request-update-content > p {
-  margin: 10px 0 0 !important;
-  padding-top: 9px;
-  border-top: 1px solid #edf1f6;
-  color: #566b85 !important;
-  font-size: 12px !important;
-  line-height: 1.55 !important;
-  overflow-wrap: anywhere;
-}
 .view-request-contents .request-description-container form {
   display: grid;
   gap: 12px;
@@ -639,8 +544,6 @@
     bottom: 7px;
     padding: 9px;
   }
-  .view-request-update-content > header { align-items: flex-start; flex-direction: column; gap: 7px; }
-  .view-request-update { padding: 12px; }
   .view-request-contents .request-btn {
     flex: 1;
     padding: 9px 10px;

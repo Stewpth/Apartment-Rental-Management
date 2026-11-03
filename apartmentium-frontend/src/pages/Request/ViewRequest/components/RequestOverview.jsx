@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import RequestAttachmentLink from "../../RequestAttachmentLink";
 import { categories, statuses } from "./requestDisplay";
+import RequestTimeline from "./RequestTimeline";
 
 function formatDate(value, options = { dateStyle: "long" }) {
   return new Intl.DateTimeFormat("en-PH", options).format(new Date(value));
@@ -100,40 +101,7 @@ export default function RequestOverview({ request }) {
       {!!request.updates.length && (
         <section className="request-description-container">
           <h2>Updates</h2>
-          <div className="view-request-update-list">
-            {request.updates.map((update) => {
-              const [updateLabel, updateIcon] = statuses[update.status] ?? [
-                "Note",
-                null,
-              ];
-              const statusClass = update.status?.toLowerCase() ?? "note";
-              return (
-                <article className="view-request-update" key={update.id}>
-                  <span className={`view-request-update-marker ${statusClass}`} aria-hidden="true">
-                    {updateIcon && <FontAwesomeIcon icon={updateIcon} />}
-                  </span>
-                  <div className="view-request-update-content">
-                    <header>
-                      <div className="view-request-update-author">
-                        <strong>{update.authorName}</strong>
-                        <span className={`view-request-update-status ${statusClass}`}>
-                          {updateIcon && <FontAwesomeIcon icon={updateIcon} />}
-                          {updateLabel}
-                        </span>
-                      </div>
-                      <time>
-                        {formatDate(update.createdAt, {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </time>
-                    </header>
-                    {update.message && <p>{update.message}</p>}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+          <RequestTimeline updates={request.updates} />
         </section>
       )}
     </>

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TenantRequestModal.css";
 import RequestAttachmentLink from "../RequestAttachmentLink";
+import RequestTimeline from "../ViewRequest/components/RequestTimeline";
 
 const labels = {
   REPAIR: "Repair",
@@ -162,23 +163,16 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
 
             <div className="tenant-request-logs">
               <p className="tenant-request-log-title">REQUEST LOGS</p>
-              {request.attachments.map((file) => (
-                <p key={file.id} className="tenant-request-attachment">
-                  <RequestAttachmentLink file={file} />
-                </p>
-              ))}
-              {request.updates.map((update) => (
-                <p
-                  key={update.id}
-                  className={`tenant-request-update ${update.message.replace(/\.$/, "")}`}
-                >
-                  {update.message}{" "}
-                  <small>
-                    {update.createdAt &&
-                      new Date(update.createdAt).toLocaleString()}
-                  </small>
-                </p>
-              ))}
+              {!!request.attachments.length && (
+                <div className="tenant-request-log-attachments">
+                  {request.attachments.map((file) => (
+                    <div key={file.id} className="tenant-request-attachment">
+                      <RequestAttachmentLink file={file} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <RequestTimeline updates={request.updates} />
             </div>
           </div>
         ) : (
