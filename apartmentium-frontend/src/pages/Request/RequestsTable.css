@@ -108,6 +108,15 @@
   background-color: #d1fae5;
 }
 
+.request-status.pending {
+  color: #a75a08;
+  background-color: #fff1d6;
+}
+.request-status.rejected {
+  color: #b42318;
+  background-color: #fee4e2;
+}
+
 /* Category styles */
 
 .request-category {
@@ -130,6 +139,15 @@
 .request-category.permission {
   color: #1d4ed8;
   background-color: #dbeafe;
+}
+
+.request-category.complaint {
+  color: #7c3aed;
+  background-color: #f1eafe;
+}
+.request-category.moving_out {
+  color: #0f766e;
+  background-color: #d7f5f0;
 }
 
 /*Request Paginations*/

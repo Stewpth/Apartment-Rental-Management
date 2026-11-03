@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
 
-const ACTIVE_RENTAL_STATUSES = ["ACTIVE", "ON_LEAVING"];
+const PAYMENT_RENTAL_STATUSES = ["ACTIVE", "ON_LEAVING", "ENDED"];
 
 function dateOnly(date) {
   return date ? new Date(date).toISOString().slice(0, 10) : null;
@@ -15,7 +15,8 @@ function dueDateForPeriod(moveInDate, year, month) {
   return new Date(Date.UTC(dueYear, dueMonth, Math.min(day, lastDay)));
 }
 
-async function ensureMonthlyDues(rental) {
+export async function ensureMonthlyDues(rental) {
+  if (rental.status !== "ACTIVE") return;
   const moveInDate = new Date(rental.moveInDate);
   const now = new Date();
   if (moveInDate > now) return;
@@ -52,9 +53,9 @@ async function ensureMonthlyDues(rental) {
   await Promise.all(operations);
 }
 
-async function findActiveRental(rentalId) {
+async function findPaymentRental(rentalId) {
   return prisma.rental.findFirst({
-    where: { id: rentalId, status: { in: ACTIVE_RENTAL_STATUSES } },
+    where: { id: rentalId, status: { in: PAYMENT_RENTAL_STATUSES } },
     include: {
       unit: true,
       tenant: { include: { user: { include: { profile: true } } } },
@@ -91,9 +92,9 @@ function summarizeDues(dues) {
 
 async function getRentalWithCurrentDues(where) {
   const rentals = await prisma.rental.findMany({
-    where: { ...where, status: { in: ACTIVE_RENTAL_STATUSES } },
+    where: { ...where, status: { in: PAYMENT_RENTAL_STATUSES } },
     orderBy: { createdAt: "desc" },
-    select: { id: true, moveInDate: true, monthlyRent: true },
+    select: { id: true, moveInDate: true, monthlyRent: true, status: true },
   });
   await Promise.all(rentals.map(ensureMonthlyDues));
   return rentals;
@@ -103,7 +104,7 @@ export async function getPaymentRecords(req, res) {
   try {
     await getRentalWithCurrentDues({});
     const rentals = await prisma.rental.findMany({
-      where: { status: { in: ACTIVE_RENTAL_STATUSES } },
+      where: { status: { in: PAYMENT_RENTAL_STATUSES } },
       orderBy: { createdAt: "desc" },
       include: {
         unit: true,
@@ -128,7 +129,7 @@ export async function getPaymentRecords(req, res) {
 
 export async function getPaymentDetails(req, res) {
   try {
-    const rental = await findActiveRental(req.params.rentalId);
+    const rental = await findPaymentRental(req.params.rentalId);
     if (!rental) {
       return res.status(404).json({ success: false, message: "Payment record not found." });
     }
@@ -189,7 +190,7 @@ export async function recordPayment(req, res) {
       return res.status(400).json({ success: false, message: "Payment notes must be 50 characters or fewer." });
     }
 
-    const rental = await findActiveRental(req.params.rentalId);
+    const rental = await findPaymentRental(req.params.rentalId);
     if (!rental) {
       return res.status(404).json({ success: false, message: "Payment record not found." });
     }
@@ -254,6 +255,7 @@ export async function recordPayment(req, res) {
       },
     });
   } catch (error) {
+    if (error.code === "P2034") return res.status(409).json({ success: false, message: "The outstanding balance changed. Refresh and record the payment again." });
     if (error.message === "PAYMENT_EXCEEDS_BALANCE") {
       return res.status(409).json({ success: false, message: "Payment cannot exceed the outstanding balance." });
     }
@@ -266,7 +268,7 @@ export async function getMyPayments(req, res) {
   try {
     const rentalRef = await getRentalWithCurrentDues({ tenant: { userId: req.user.id } });
     const rental = rentalRef[0]
-      ? await findActiveRental(rentalRef[0].id)
+      ? await findPaymentRental(rentalRef[0].id)
       : null;
     if (!rental) return res.status(200).json({ success: true, data: null });
 

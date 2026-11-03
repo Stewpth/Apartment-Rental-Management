@@ -46,12 +46,14 @@ enum RequestCategory {
   REPAIR
   PERMISSION
   COMPLAINT
+  MOVING_OUT
 }
 
 enum RequestStatus {
-  NOT_RESOLVED
+  PENDING
   IN_PROGRESS
   RESOLVED
+  REJECTED
 }
 
 model User {
@@ -71,6 +73,9 @@ model User {
   announcements      Announcement[]      @relation("AnnouncementAuthor")
   announcementReads  AnnouncementRead[]
   requestUpdates     RequestUpdate[]     @relation("RequestUpdateAuthor")
+  confirmedSettlements FinalSettlement[]
+  settlementAdjustments SettlementAdjustment[]
+  settlementRefunds SettlementRefund[]
 
   activation AccountActivation?
 
@@ -133,6 +138,7 @@ model Rental {
   payments    Payment[]
   credit      TenantCredit?
   requests    TenantRequest[]
+  settlement  FinalSettlement?
 
   @@index([tenantId])
   @@index([unitId])
@@ -154,6 +160,7 @@ model MonthlyDue {
   rental             Rental              @relation(fields: [rentalId], references: [id], onDelete: Restrict)
   allocations        PaymentAllocation[]
   creditTransactions CreditTransaction[]
+  settlementSnapshots SettlementDueSnapshot[]
 
   @@unique([rentalId, billingPeriod])
   @@index([rentalId])
@@ -235,8 +242,13 @@ model TenantRequest {
   reference   String?         @unique
   rentalId    String
   category    RequestCategory
-  status      RequestStatus   @default(NOT_RESOLVED)
+  status      RequestStatus   @default(PENDING)
+  title       String          @default("Request") @db.VarChar(120)
   description String          @db.VarChar(500)
+  requestedMoveOutDate DateTime? @db.Date
+  reason      String?         @db.VarChar(500)
+  priority    String?         @db.VarChar(20)
+  adminNotes  String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   resolvedAt  DateTime?
@@ -248,6 +260,75 @@ model TenantRequest {
   @@index([rentalId, createdAt])
   @@index([status, createdAt])
   @@index([category])
+  @@index([rentalId, category, status])
+  settlement FinalSettlement?
+}
+
+model FinalSettlement {
+  id                  String   @id @default(uuid())
+  rentalId            String   @unique
+  requestId           String   @unique
+  confirmedById       String
+  confirmedAt         DateTime @default(now())
+  unpaidDues          Decimal  @db.Decimal(10, 2)
+  unusedRentCredit    Decimal  @db.Decimal(10, 2)
+  existingTenantCredit Decimal  @db.Decimal(10, 2)
+  tenantCreditRefund  Decimal  @default(0) @db.Decimal(10, 2)
+  approvedCharges     Decimal  @default(0) @db.Decimal(10, 2)
+  creditsApplied      Decimal  @db.Decimal(10, 2)
+  originalBalance     Decimal  @db.Decimal(10, 2)
+  amountOwed          Decimal  @db.Decimal(10, 2)
+  refundDue           Decimal  @db.Decimal(10, 2)
+  rental              Rental   @relation(fields: [rentalId], references: [id], onDelete: Restrict)
+  request             TenantRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  confirmedBy         User     @relation(fields: [confirmedById], references: [id], onDelete: Restrict)
+  adjustments         SettlementAdjustment[]
+  refunds             SettlementRefund[]
+  dueSnapshots        SettlementDueSnapshot[]
+
+  @@index([confirmedAt])
+}
+
+model SettlementDueSnapshot {
+  id            String   @id @default(uuid())
+  settlementId  String
+  monthlyDueId  String
+  billingPeriod DateTime @db.Date
+  dueDate       DateTime @db.Date
+  amountDue     Decimal  @db.Decimal(10, 2)
+  amountPaid    Decimal  @db.Decimal(10, 2)
+  balance       Decimal  @db.Decimal(10, 2)
+  settlement    FinalSettlement @relation(fields: [settlementId], references: [id], onDelete: Restrict)
+  monthlyDue    MonthlyDue @relation(fields: [monthlyDueId], references: [id], onDelete: Restrict)
+
+  @@unique([settlementId, monthlyDueId])
+  @@index([settlementId, billingPeriod])
+}
+
+model SettlementAdjustment {
+  id           String   @id @default(uuid())
+  settlementId String
+  amount       Decimal  @db.Decimal(10, 2)
+  reason       String   @db.VarChar(500)
+  recordedById String
+  createdAt    DateTime @default(now())
+  settlement   FinalSettlement @relation(fields: [settlementId], references: [id], onDelete: Restrict)
+  recordedBy   User @relation(fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@index([settlementId, createdAt])
+}
+
+model SettlementRefund {
+  id           String   @id @default(uuid())
+  settlementId String
+  amount       Decimal  @db.Decimal(10, 2)
+  processedAt  DateTime @default(now())
+  recordedById String
+  note         String?  @db.VarChar(500)
+  settlement   FinalSettlement @relation(fields: [settlementId], references: [id], onDelete: Restrict)
+  recordedBy   User @relation(fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@index([settlementId, processedAt])
 }
 
 model RequestAttachment {

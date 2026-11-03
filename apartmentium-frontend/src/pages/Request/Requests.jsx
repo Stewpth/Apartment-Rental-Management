@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api/axios";
 
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
@@ -9,6 +10,18 @@ import "./Requests.css";
 
 export default function Requests() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [requests, setRequests] = useState([]);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    api
+      .get("/admin/requests")
+      .then(({ data }) => setRequests(data.data))
+      .catch((requestError) =>
+        setError(
+          requestError.response?.data?.message || "Unable to load requests.",
+        ),
+      );
+  }, []);
 
   return (
     <>
@@ -28,7 +41,12 @@ export default function Requests() {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                 />
-                <RequestsTable searchTerm={searchTerm} />
+                {error && (
+                  <p role="alert" className="payments-error">
+                    {error}
+                  </p>
+                )}
+                <RequestsTable searchTerm={searchTerm} requests={requests} />
               </div>
             </div>
           </div>

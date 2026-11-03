@@ -1,43 +1,37 @@
-﻿import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
+import api from "../../api/axios";
 import TenantRequestsHeader from "./tenant-request-contents/TenantRequestsHeader";
 import TenantRequestSummary from "./tenant-request-contents/TenantRequestSummary";
 import TenantRequestList from "./tenant-request-contents/TenantRequestList";
 import TenantRequestModal from "./tenant-request-contents/TenantRequestModal";
-import { initialTenantRequests } from "./tenant-request-contents/tenantRequestData";
 import "./TenantRequests.css";
 
-function formatRequestDate(date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
-
 export default function TenantRequests() {
-  const [requests, setRequests] = useState(initialTenantRequests);
+  const [requests, setRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeRequest, setActiveRequest] = useState(null);
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
-
-  function handleCreateRequest(formValues) {
-    const newRequest = {
-      id: `tenant-request-${Date.now()}`,
-      ...formValues,
-      title:
-        formValues.description.length > 55
-          ? `${formValues.description.slice(0, 52).trim()}...`
-          : formValues.description,
-      submitted: formatRequestDate(new Date()),
-      status: "not_resolved",
-    };
-    setRequests((currentRequests) => [newRequest, ...currentRequests]);
+  const [error, setError] = useState("");
+  const load = useCallback(async () => {
+    try {
+      const { data } = await api.get("/tenant/requests/me");
+      setRequests(data.data);
+      setError("");
+    } catch (e) {
+      setError(e.response?.data?.message || "Unable to load your requests.");
+    }
+  }, []);
+  useEffect(() => {
+    load();
+  }, [load]);
+  async function handleCreateRequest(formValues) {
+    await api.post("/tenant/requests", formValues);
+    await load();
     setCurrentPage(1);
     setIsNewRequestOpen(false);
   }
-
   return (
     <>
       <title>My Requests</title>
@@ -50,6 +44,11 @@ export default function TenantRequests() {
               <TenantRequestsHeader
                 onNewRequest={() => setIsNewRequestOpen(true)}
               />
+              {error && (
+                <p role="alert" className="payments-error">
+                  {error}
+                </p>
+              )}
               <TenantRequestSummary requests={requests} />
               <TenantRequestList
                 requests={requests}

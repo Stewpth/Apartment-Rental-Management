@@ -3,6 +3,11 @@ import { Router } from "express";
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
 import { getMyRental } from "../controllers/rental.controller.js";
 import { getMyPayments } from "../controllers/payment.controller.js";
+import {
+  createTenantRequest,
+  getRequestDetails,
+  getTenantRequests,
+} from "../controllers/request.controller.js";
 
 const router = Router();
 
@@ -19,5 +24,8 @@ router.get("/dashboard", (req, res) => {
 
 router.get("/rentals/me", getMyRental);
 router.get("/payments/me", getMyPayments);
+router.get("/requests/me", getTenantRequests);
+router.post("/requests", createTenantRequest);
+router.get("/requests/:id", getRequestDetails);
 
 export default router;

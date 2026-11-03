@@ -31,6 +31,14 @@
   color: #8749db;
   background: #f2eaff;
 }
+.tenant-request-icon.complaint {
+  color: #7c3aed;
+  background: #f1eafe;
+}
+.tenant-request-icon.moving_out {
+  color: #0f766e;
+  background: #d7f5f0;
+}
 .tenant-request-details {
   min-width: 0;
 }
@@ -69,6 +77,18 @@
 .tenant-request-status.not_resolved {
   color: #b45309;
   background: #fff3df;
+}
+.tenant-request-status.pending {
+  color: #a75a08;
+  background: #fff1d6;
+}
+.tenant-request-status.in_progress {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+.tenant-request-status.rejected {
+  color: #b42318;
+  background: #fee4e2;
 }
 .tenant-request-view {
   align-self: end;

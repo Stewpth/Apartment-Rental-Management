@@ -31,9 +31,20 @@ async function request(method, path, body) {
   return { data, status: response.status };
 }
 
+async function requestFile(path) {
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await fetch(`${baseURL}${path}`, { headers });
+  if (!response.ok) throw new Error("Unable to load attachment.");
+  return response.blob();
+}
+
 const api = {
   get: (path) => request("GET", path),
   post: (path, body) => request("POST", path, body),
+  patch: (path, body) => request("PATCH", path, body),
+  getFile: requestFile,
 };
 
 export default api;
