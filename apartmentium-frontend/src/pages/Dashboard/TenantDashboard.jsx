@@ -1,5 +1,7 @@
-﻿import Header from "../../components/layout/Header";
+import { useEffect, useState } from "react";
+import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
+import api from "../../api/axios";
 import DashboardWelcome from "./Tenant-Dashboard-Contents/DashboardWelcome";
 import SummaryCards from "./Tenant-Dashboard-Contents/SummaryCards";
 import {
@@ -17,6 +19,21 @@ import {
 import "./TenantDashboard.css";
 
 export default function TenantDashboard() {
+  const [dashboard, setDashboard] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api
+      .get("/tenant/dashboard/summary")
+      .then(({ data }) => setDashboard(data.data))
+      .catch((requestError) =>
+        setError(
+          requestError.response?.data?.message ||
+            "Unable to load dashboard data.",
+        ),
+      );
+  }, []);
+
   return (
     <>
       <title>Dashboard</title>
@@ -25,22 +42,36 @@ export default function TenantDashboard() {
         <main className="page-main">
           <Header />
           <div className="page-content tenant-dashboard">
-            <div className="tenant-dashboard-main">
-              <DashboardWelcome />
-              <SummaryCards />
-              <div className="tenant-feature-grid">
-                <RentalOverview />
-                <PaymentOverview />
-              </div>
-              <div className="tenant-lower-grid">
-                <RecentRequests />
-                <RecentPayments />
-              </div>
-            </div>
-            <aside className="tenant-dashboard-aside">
-              <LatestAnnouncements />
-              <TenantHelpCard />
-            </aside>
+            {error && (
+              <p className="dashboard-load-error" role="alert">
+                {error}
+              </p>
+            )}
+            {!dashboard && !error && (
+              <p className="dashboard-load-state" role="status">
+                Loading dashboard…
+              </p>
+            )}
+            {dashboard && (
+              <>
+                <div className="tenant-dashboard-main">
+                  <DashboardWelcome tenantName={dashboard.tenantName} />
+                  <SummaryCards dashboard={dashboard} />
+                  <div className="tenant-feature-grid">
+                    <RentalOverview rental={dashboard.rental} />
+                    <PaymentOverview dashboard={dashboard} />
+                  </div>
+                  <div className="tenant-lower-grid">
+                    <RecentRequests requests={dashboard.requests} />
+                    <RecentPayments payments={dashboard.payments} />
+                  </div>
+                </div>
+                <aside className="tenant-dashboard-aside">
+                  <LatestAnnouncements />
+                  <TenantHelpCard />
+                </aside>
+              </>
+            )}
           </div>
         </main>
       </div>

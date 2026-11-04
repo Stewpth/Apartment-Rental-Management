@@ -7,96 +7,105 @@ import {
 
 import TenantPanel from "./TenantPanel";
 import "./RecentActivity.css";
+import { NavLink } from "react-router-dom";
 
-const requests = [
-  {
-    id: "req-1",
-    icon: faDroplet,
-    title: "Leaking faucet",
-    type: "Repair",
-    date: "Oct 18, 2026",
-    status: "Ongoing",
-  },
-  {
-    id: "req-2",
-    icon: faScrewdriverWrench,
-    title: "Request for early check-in",
-    type: "Permission",
-    date: "Oct 10, 2026",
-    status: "Resolved",
-  },
-  {
-    id: "req-3",
-    icon: faDroplet,
-    title: "Bathroom drain issue",
-    type: "Repair",
-    date: "Oct 8, 2026",
-    status: "Ongoing",
-  },
-];
+const formatDate = (value) =>
+  value
+    ? new Intl.DateTimeFormat("en-PH", { dateStyle: "medium" }).format(
+        new Date(value),
+      )
+    : "—";
+const categoryLabels = {
+  REPAIR: "Repair",
+  PERMISSION: "Permission",
+  COMPLAINT: "Complaint",
+  MOVING_OUT: "Moving out",
+};
+const statusLabels = {
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  RESOLVED: "Resolved",
+  REJECTED: "Rejected",
+};
 
-const payments = [
-  { id: "pmt-11052026", date: "Oct 5, 2026", amount: "₱4,500" },
-  { id: "pmt-21052026", date: "Sep 5, 2026", amount: "₱4,500" },
-  { id: "pmt-31052026", date: "Aug 5, 2026", amount: "₱4,500" },
-];
-
-export function RecentRequests() {
-  const recentRequests = requests.slice(0, 3);
-
+export function RecentRequests({ requests = [] }) {
   return (
     <TenantPanel title="Recent requests" icon={faScrewdriverWrench}>
       <div className="tenant-list">
-        {recentRequests.map((request) => (
-          <article className="tenant-list-row" key={request.id}>
+        {requests.map((request) => (
+          <NavLink
+            className="tenant-list-row tenant-dashboard-link"
+            key={request.id}
+            to="/tenant/requests"
+          >
             <span className="tenant-row-icon">
-              <FontAwesomeIcon icon={request.icon} />
+              <FontAwesomeIcon
+                icon={
+                  request.category === "COMPLAINT"
+                    ? faDroplet
+                    : faScrewdriverWrench
+                }
+              />
             </span>
 
             <div className="tenant-row-copy">
               <strong title={request.title}>{request.title}</strong>
-              <span>{request.type}</span>
-              <small>{request.date}</small>
+              <span>
+                {categoryLabels[request.category] || request.category}
+              </span>
+              <small>{formatDate(request.createdAt)}</small>
             </div>
 
             <span
               className={`tenant-status ${
-                request.status === "Resolved" ? "active" : "ongoing"
+                request.status === "RESOLVED"
+                  ? "active"
+                  : request.status === "REJECTED"
+                    ? "rejected"
+                    : "ongoing"
               }`}
             >
-              {request.status}
+              {statusLabels[request.status] || request.status}
             </span>
-          </article>
+          </NavLink>
         ))}
+        {requests.length === 0 && (
+          <p className="tenant-dashboard-empty">No requests yet.</p>
+        )}
       </div>
     </TenantPanel>
   );
 }
 
-export function RecentPayments() {
-  const recentPayments = payments.slice(0, 3);
-
+export function RecentPayments({ payments = [] }) {
   return (
     <TenantPanel title="Recent payments" icon={faCreditCard}>
       <div className="tenant-payment-list">
-        {recentPayments.map((payment) => (
-          <div className="tenant-payment-row" key={payment.id}>
+        {payments.map((payment) => (
+          <NavLink
+            className="tenant-payment-row tenant-dashboard-link"
+            key={payment.id}
+            to="/tenant/payments"
+          >
             <div className="tenant-payment-details-dashboard">
               <span className="tenant-payment-details-label id">
-                {payment.id}
+                {payment.reference || `Payment ${payment.id.slice(0, 8)}`}
               </span>
 
               <span className="tenant-payment-details-label date">
-                {payment.date}
+                {formatDate(payment.date)}
               </span>
             </div>
 
             <div className="tenant-payment-stats-dashboard">
-              <strong>{payment.amount}</strong>
+              <strong>₱{Number(payment.amount).toLocaleString("en-PH")}</strong>
               <span className="tenant-status active">Recorded</span>
             </div>
-          </div>
+          </NavLink>
         ))}
+        {payments.length === 0 && (
+          <p className="tenant-dashboard-empty">No payments recorded yet.</p>
+        )}
       </div>
     </TenantPanel>
   );

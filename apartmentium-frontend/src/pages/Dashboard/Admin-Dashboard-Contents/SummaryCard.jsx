@@ -1,77 +1,65 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserGroup,
-  faArrowUp,
-  faArrowDown,
   faBuilding,
   faFile,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "./SummaryCard.css";
+import { NavLink } from "react-router-dom";
 
-export default function SummaryCard() {
+export default function SummaryCard({ summary = {} }) {
+  const cards = [
+    {
+      title: "Total Tenants",
+      value: summary.tenants ?? 0,
+      detail: "Registered tenants",
+      icon: faUserGroup,
+      tone: "tenant",
+      path: "/admin/rentals",
+    },
+    {
+      title: "Total Units",
+      value: summary.units ?? 0,
+      detail: "All units",
+      icon: faBuilding,
+      tone: "units",
+      path: "/admin/rentals",
+    },
+    {
+      title: "Occupied Units",
+      value: summary.occupied ?? 0,
+      detail: "Currently occupied",
+      icon: faFile,
+      tone: "occupied-units",
+      path: "/admin/rentals",
+    },
+    {
+      title: "Payments",
+      value: summary.paymentsThisMonth ?? 0,
+      detail: "Recorded this month",
+      icon: faCreditCard,
+      tone: "payments",
+      path: "/admin/payments",
+    },
+  ];
   return (
     <section className="summary-card-container">
-      <div className="summary-total-card">
-        <div className="summary-total-icon-box tenant">
-          <FontAwesomeIcon icon={faUserGroup} className="summary-total-icon" />
-        </div>
-        <h4 className="summary-total-title">Total Tenants</h4>
-        <h2 className="summary-total-count">48</h2>
-        <p className="summary-result-text">
-          <FontAwesomeIcon
-            icon={faArrowUp}
-            className="result-arrow-icon positive"
-          />
-          <span className="result-percent-label positive">6%</span> from last
-          month
-        </p>
-      </div>
-
-      <div className="summary-total-card">
-        <div className="summary-total-icon-box units">
-          <FontAwesomeIcon icon={faBuilding} className="summary-total-icon" />
-        </div>
-        <h4 className="summary-total-title">Total Units</h4>
-        <h2 className="summary-total-count">24</h2>
-        <p className="summary-result-text">
-          <FontAwesomeIcon
-            icon={faArrowUp}
-            className="result-arrow-icon positive"
-          />
-          <span className="result-percent-label positive">0%</span> from last
-          month
-        </p>
-      </div>
-
-      <div className="summary-total-card">
-        <div className="summary-total-icon-box occupied-units">
-          <FontAwesomeIcon icon={faFile} className="summary-total-icon" />
-        </div>
-        <h4 className="summary-total-title">Occupied Units</h4>
-        <h2 className="summary-total-count">20</h2>
-        <p className="summary-result-text">
-          <span className="result-percent-label neutral">83%</span> from last
-          month
-        </p>
-      </div>
-
-      <div className="summary-total-card">
-        <div className="summary-total-icon-box payments">
-          <FontAwesomeIcon icon={faCreditCard} className="summary-total-icon" />
-        </div>
-        <h4 className="summary-total-title">Payments</h4>
-        <h2 className="summary-total-count">3</h2>
-        <p className="summary-result-text">
-          <FontAwesomeIcon
-            icon={faArrowDown}
-            className="result-arrow-icon negative"
-          />
-          <span className="result-percent-label negative">50%</span> from last
-          month
-        </p>
-      </div>
+      {cards.map((card) => (
+        <NavLink
+          className="summary-total-card summary-total-link"
+          to={card.path}
+          key={card.title}
+        >
+          <div className={`summary-total-icon-box ${card.tone}`}>
+            <FontAwesomeIcon icon={card.icon} className="summary-total-icon" />
+          </div>
+          <h4 className="summary-total-title">{card.title}</h4>
+          <h2 className="summary-total-count">{card.value}</h2>
+          <p className="summary-result-text">{card.detail}</p>
+        </NavLink>
+      ))}
     </section>
   );
 }

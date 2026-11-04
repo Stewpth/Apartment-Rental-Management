@@ -1,41 +1,20 @@
 import "./UpcomingEvents.css";
+import { NavLink } from "react-router-dom";
 
-const upcomingEvents = [
-  {
-    month: "OCT",
-    day: "15",
-    title: "Payment Due",
-    detail: "Unit 3A · ₱8,500",
-    note: "Due in 3 days",
-    icon: "◷",
-  },
-  {
-    month: "OCT",
-    day: "18",
-    title: "Unit Inspection",
-    detail: "Unit 4B",
-    note: "10:00 AM - 12:00 PM",
-    icon: "◷",
-  },
-  {
-    month: "OCT",
-    day: "25",
-    title: "Building Maintenance",
-    detail: "Common Areas",
-    note: "All day",
-    icon: "◷",
-  },
-  {
-    month: "NOV",
-    day: "01",
-    title: "Lease Renewal",
-    detail: "Unit 2B - Maria Santos",
-    note: "Due in 19 days",
-    icon: "◷",
-  },
-];
+const formatDateParts = (date) => {
+  const value = new Date(`${date}T00:00:00Z`);
+  return {
+    month: new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" })
+      .format(value)
+      .toUpperCase(),
+    day: new Intl.DateTimeFormat("en", {
+      day: "2-digit",
+      timeZone: "UTC",
+    }).format(value),
+  };
+};
 
-export default function UpcomingEvents() {
+export default function UpcomingEvents({ events = [] }) {
   return (
     <section
       className="upcoming-events-card"
@@ -43,28 +22,42 @@ export default function UpcomingEvents() {
     >
       <header className="upcoming-events-header">
         <h2 id="upcoming-events-title">Upcoming Events</h2>
-        <button className="upcoming-events-view-all" type="button">
+        <NavLink className="upcoming-events-view-all" to="/admin/payments">
           View all
-        </button>
+        </NavLink>
       </header>
 
       <ul className="upcoming-events-list">
-        {upcomingEvents.map((event) => (
-          <li className="upcoming-event" key={`${event.month}-${event.day}`}>
-            <time className="upcoming-event-date">
-              <span>{event.month}</span>
-              <strong>{event.day}</strong>
-            </time>
-            <div className="upcoming-event-details">
-              <strong>{event.title}</strong>
-              <span>{event.detail}</span>
-              <span className="upcoming-event-note">
-                <span aria-hidden="true">{event.icon}</span>
-                {event.note}
-              </span>
-            </div>
-          </li>
-        ))}
+        {events.map((event) => {
+          const { month, day } = formatDateParts(event.dueDate);
+          return (
+            <li className="upcoming-event" key={event.id}>
+              <time className="upcoming-event-date" dateTime={event.dueDate}>
+                <span>{month}</span>
+                <strong>{day}</strong>
+              </time>
+              <div className="upcoming-event-details">
+                <NavLink to={event.path}>
+                  <strong>{event.title}</strong>
+                </NavLink>
+                <span>
+                  {event.detail} · ₱
+                  {Number(event.amount).toLocaleString("en-PH")}
+                </span>
+                <span className="upcoming-event-note">
+                  Due{" "}
+                  {new Intl.DateTimeFormat("en-PH", {
+                    dateStyle: "medium",
+                    timeZone: "UTC",
+                  }).format(new Date(`${event.dueDate}T00:00:00Z`))}
+                </span>
+              </div>
+            </li>
+          );
+        })}
+        {events.length === 0 && (
+          <li className="upcoming-events-empty">No upcoming rent dues.</li>
+        )}
       </ul>
     </section>
   );

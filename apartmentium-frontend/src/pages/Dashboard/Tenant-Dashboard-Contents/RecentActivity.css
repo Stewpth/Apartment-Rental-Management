@@ -122,3 +122,24 @@
     font-size: 8px;
   }
 }
+.tenant-dashboard-link {
+  color: inherit;
+  text-decoration: none;
+}
+.tenant-dashboard-link:hover {
+  background: #f7faff;
+}
+.tenant-dashboard-link:focus-visible {
+  outline: 3px solid rgba(51, 103, 193, 0.28);
+  outline-offset: -2px;
+}
+.tenant-dashboard-empty {
+  margin: 0;
+  padding: 16px;
+  color: #718198;
+  font-size: 12px;
+}
+.tenant-status.rejected {
+  background-color: #ffebed;
+  color: #b63542;
+}

@@ -2,8 +2,17 @@
 import TenantPanel from "./TenantPanel";
 
 import "./RentalOverview.css";
+import { NavLink } from "react-router-dom";
 
-export function RentalOverview() {
+const formatDate = (date) =>
+  date
+    ? new Intl.DateTimeFormat("en-PH", {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }).format(new Date(`${date}T00:00:00Z`))
+    : "—";
+
+export function RentalOverview({ rental }) {
   return (
     <TenantPanel title="My rental" icon={faHouse} className="rental-panel">
       <div className="tenant-rental">
@@ -16,35 +25,61 @@ export function RentalOverview() {
           </div>
         </div>
         <div className="tenant-rental-details">
-          <span className="tenant-muted">Unit</span>
-          <strong>101</strong>
-          <span className="tenant-muted">Rental status</span>
-          <span className="tenant-status active">Active</span>
-          <span className="tenant-muted">Monthly rent</span>
-          <strong>₱4,500</strong>
-          <span className="tenant-muted">Move-in date</span>
-          <strong>Jan 15, 2025</strong>
+          {rental ? (
+            <>
+              <span className="tenant-muted">Unit</span>
+              <strong>{rental.unitNumber}</strong>
+              <span className="tenant-muted">Rental status</span>
+              <span
+                className={`tenant-status ${rental.status === "ACTIVE" ? "active" : "ongoing"}`}
+              >
+                {rental.status === "ACTIVE" ? "Active" : "On leaving"}
+              </span>
+              <span className="tenant-muted">Monthly rent</span>
+              <strong>
+                ₱{Number(rental.monthlyRent).toLocaleString("en-PH")}
+              </strong>
+              <span className="tenant-muted">Move-in date</span>
+              <strong>{formatDate(rental.moveInDate)}</strong>
+            </>
+          ) : (
+            <>
+              <span className="tenant-muted">No current rental</span>
+              <NavLink to="/tenant/rentals">View rental information</NavLink>
+            </>
+          )}
         </div>
       </div>
     </TenantPanel>
   );
 }
 
-export function PaymentOverview() {
+export function PaymentOverview({ dashboard = {} }) {
+  const dueDate = dashboard.nextDueDate;
+  const isOverdue =
+    dueDate &&
+    new Date(`${dueDate}T00:00:00Z`) <
+      new Date(new Date().toISOString().slice(0, 10));
   return (
     <TenantPanel
       title="Payment overview"
       icon={faCreditCard}
       className="payment-overview"
     >
-      <p className="tenant-muted">Next rent payment</p>
-      <strong className="tenant-balance">₱4,500</strong>
+      <p className="tenant-muted">Outstanding balance</p>
+      <strong className="tenant-balance">
+        ₱{Number(dashboard.totalDue || 0).toLocaleString("en-PH")}
+      </strong>
       <div className="tenant-due">
         <span>
           <small>Due date</small>
-          <strong>Nov 5, 2026</strong>
+          <strong>{formatDate(dueDate)}</strong>
         </span>
-        <span className="tenant-status due">Upcoming</span>
+        <span
+          className={`tenant-status ${isOverdue ? "overdue" : dueDate ? "due" : "active"}`}
+        >
+          {isOverdue ? "Overdue" : dueDate ? "Outstanding" : "Paid"}
+        </span>
       </div>
     </TenantPanel>
   );

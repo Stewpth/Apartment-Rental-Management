@@ -1,21 +1,25 @@
 import "./RecentTenants.css";
+import { NavLink } from "react-router-dom";
 
-const tenants = [
-  { initials: "MS", name: "Maria Santos", unit: "2B", status: "Active", moveInDate: "Jan 15, 2025" },
-  { initials: "JD", name: "Juan Dela Cruz", unit: "1C", status: "Active", moveInDate: "Feb 03, 2025" },
-  { initials: "AL", name: "Ana Lopez", unit: "3A", status: "Active", moveInDate: "Mar 12, 2025" },
-  { initials: "RB", name: "Ramon Bautista", unit: "4B", status: "Pending", moveInDate: "Oct 01, 2025" },
-  { initials: "CP", name: "Celeste Reyes", unit: "2A", status: "Active", moveInDate: "Apr 20, 2025" },
-];
+const formatDate = (date) =>
+  date
+    ? new Intl.DateTimeFormat("en-PH", {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }).format(new Date(`${date}T00:00:00Z`))
+    : "—";
 
-export default function RecentTenants() {
+export default function RecentTenants({ tenants = [] }) {
   return (
-    <section className="recent-tenants-card" aria-labelledby="recent-tenants-title">
+    <section
+      className="recent-tenants-card"
+      aria-labelledby="recent-tenants-title"
+    >
       <header className="recent-tenants-header">
         <h2 id="recent-tenants-title">Recent Tenants</h2>
-        <button className="recent-tenants-view-all" type="button">
+        <NavLink className="recent-tenants-view-all" to="/admin/rentals">
           View all
-        </button>
+        </NavLink>
       </header>
 
       <div className="recent-tenants-table-wrapper">
@@ -32,33 +36,46 @@ export default function RecentTenants() {
             </tr>
           </thead>
           <tbody>
+            {tenants.length === 0 && (
+              <tr>
+                <td colSpan="5">No active rentals yet.</td>
+              </tr>
+            )}
             {tenants.map((tenant) => (
-              <tr key={tenant.name}>
+              <tr key={tenant.id}>
                 <td>
-                  <span className="recent-tenant-name">
+                  <NavLink
+                    className="recent-tenant-name"
+                    to={`/admin/rentals/${tenant.unitId}`}
+                  >
                     <span className="recent-tenant-avatar" aria-hidden="true">
-                      {tenant.initials}
+                      {tenant.name
+                        .split(/\s+/)
+                        .map((part) => part[0])
+                        .join("")
+                        .slice(0, 2)
+                        .toUpperCase()}
                     </span>
                     {tenant.name}
-                  </span>
+                  </NavLink>
                 </td>
                 <td>{tenant.unit}</td>
                 <td>
                   <span
-                    className={`recent-tenant-status ${tenant.status.toLowerCase()}`}
+                    className={`recent-tenant-status ${tenant.status === "ACTIVE" ? "active" : "pending"}`}
                   >
-                    {tenant.status}
+                    {tenant.status === "ON_LEAVING" ? "Leaving" : "Active"}
                   </span>
                 </td>
-                <td>{tenant.moveInDate}</td>
+                <td>{formatDate(tenant.moveInDate)}</td>
                 <td>
-                  <button
+                  <NavLink
                     className="recent-tenant-actions"
-                    type="button"
-                    aria-label={`Actions for ${tenant.name}`}
+                    to={`/admin/rentals/${tenant.unitId}`}
+                    aria-label={`View ${tenant.name}'s rental`}
                   >
-                    &hellip;
-                  </button>
+                    ›
+                  </NavLink>
                 </td>
               </tr>
             ))}

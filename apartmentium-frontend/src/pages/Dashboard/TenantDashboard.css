@@ -51,3 +51,12 @@
     grid-template-columns: 1fr;
   }
 }
+.dashboard-load-error,
+.dashboard-load-state {
+  margin: 0;
+  padding: 18px;
+  color: #526783;
+}
+.dashboard-load-error {
+  color: #a4262c;
+}

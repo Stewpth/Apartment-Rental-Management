@@ -12,6 +12,7 @@ import {
   getLatestTenantAnnouncements,
   markAnnouncementRead,
 } from "../controllers/announcement.controller.js";
+import { getTenantDashboard } from "../controllers/dashboard.controller.js";
 
 const router = Router();
 
@@ -31,6 +32,7 @@ router.get("/payments/me", getMyPayments);
 router.get("/requests/me", getTenantRequests);
 router.get("/announcements/latest", getLatestTenantAnnouncements);
 router.post("/announcements/:id/read", markAnnouncementRead);
+router.get("/dashboard/summary", getTenantDashboard);
 router.post("/requests", createTenantRequest);
 router.get("/requests/:id", getRequestDetails);
 

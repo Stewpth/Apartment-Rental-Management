@@ -11,23 +11,9 @@ import {
 
 import "./RentalOverview.css";
 
-// this is just a sample data to display, i will create a table at database for this soon.
-const rentalData = [
-  { month: "Jan", collected: 80000, pending: 12000 },
-  { month: "Feb", collected: 95000, pending: 15000 },
-  { month: "Mar", collected: 120000, pending: 14000 },
-  { month: "Apr", collected: 130000, pending: 18000 },
-  { month: "May", collected: 115000, pending: 32000 },
-  { month: "Jun", collected: 108000, pending: 30000 },
-  { month: "Jul", collected: 120000, pending: 30000 },
-  { month: "Aug", collected: 125000, pending: 12000 },
-  { month: "Sep", collected: 150000, pending: 20000 },
-  { month: "Oct", collected: 160000, pending: 18000 },
-];
+const formatCurrency = (value) => `₱${Number(value).toLocaleString("en-PH")}`;
 
-const formatCurrency = (value) => `₱${value.toLocaleString("en-PH")}`;
-
-export default function RentalOverview() {
+export default function RentalOverview({ data = [] }) {
   return (
     <section className="rental-overview-card">
       <div className="rental-overview-header">
@@ -52,7 +38,7 @@ export default function RentalOverview() {
       <div className="rental-overview-chart">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={rentalData}
+            data={data}
             margin={{
               top: 12,
               right: 8,
@@ -79,8 +65,7 @@ export default function RentalOverview() {
             />
 
             <YAxis
-              domain={[0, 200000]}
-              ticks={[0, 50000, 100000, 150000, 200000]}
+              domain={[0, "auto"]}
               axisLine={false}
               tickLine={false}
               tick={{
@@ -88,7 +73,7 @@ export default function RentalOverview() {
                 fontSize: 10,
               }}
               tickFormatter={(value) =>
-                value === 0 ? "0" : `${value / 1000},000`
+                value === 0 ? "0" : `${Math.round(value / 1000)}k`
               }
               width={48}
             />

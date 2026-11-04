@@ -33,6 +33,10 @@ import {
   getAnnouncements,
   updateAnnouncement,
 } from "../controllers/announcement.controller.js";
+import {
+  getAdminDashboard,
+  getAdminDashboardActivities,
+} from "../controllers/dashboard.controller.js";
 
 const router = Router();
 
@@ -60,6 +64,8 @@ router.post("/rentals/resend-tenant-activation", resendTenantActivationOtp);
 router.get("/announcements", getAnnouncements);
 router.post("/announcements", createAnnouncement);
 router.patch("/announcements/:id", updateAnnouncement);
+router.get("/dashboard/summary", getAdminDashboard);
+router.get("/dashboard/activities", getAdminDashboardActivities);
 
 router.get("/dashboard", (req, res) => {
   res.status(200).json({
