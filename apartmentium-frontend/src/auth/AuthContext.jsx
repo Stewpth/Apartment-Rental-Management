@@ -76,7 +76,7 @@ export function AuthProvider({ children }) {
     otherStorage.removeItem("token");
     otherStorage.removeItem("user");
     storage.setItem("token", data.token);
-    storage.setItem("user", JSON.stringify(data.user));
+    persistUser(data.user);
     setUser(data.user);
     return data.user;
   }, []);

@@ -27,6 +27,18 @@ function profileFromUser(user) {
   };
 }
 
+function readImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () =>
+      reject(
+        new Error("Unable to read this image. Please choose another file."),
+      );
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
   const role = user?.role === "TENANT" ? "Tenant" : "Admin";
@@ -38,6 +50,13 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [pictureError, setPictureError] = useState("");
+  const [pictureFile, setPictureFile] = useState(null);
+  const [picturePreviewUrl, setPicturePreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (!picturePreviewUrl) return undefined;
+    return () => URL.revokeObjectURL(picturePreviewUrl);
+  }, [picturePreviewUrl]);
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -69,6 +88,8 @@ export default function ProfilePage() {
 
   function startEditing() {
     setDraft(profile);
+    setPictureFile(null);
+    setPicturePreviewUrl("");
     setSaved(false);
     setError("");
     setPictureError("");
@@ -77,6 +98,8 @@ export default function ProfilePage() {
 
   function cancelEditing() {
     setDraft(profile);
+    setPictureFile(null);
+    setPicturePreviewUrl("");
     setIsEditing(false);
     setSaved(false);
     setError("");
@@ -96,19 +119,11 @@ export default function ProfilePage() {
       event.target.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setDraft((current) => ({
-        ...current,
-        picture: String(reader.result || ""),
-      }));
-      setSaved(false);
-      setPictureError("");
-      setError("");
-    };
-    reader.onerror = () =>
-      setPictureError("Unable to read this image. Please choose another file.");
-    reader.readAsDataURL(file);
+    setPictureFile(file);
+    setPicturePreviewUrl(URL.createObjectURL(file));
+    setSaved(false);
+    setPictureError("");
+    setError("");
     event.target.value = "";
   }
 
@@ -117,17 +132,21 @@ export default function ProfilePage() {
     setSaving(true);
     setError("");
     try {
-      const { data } = await api.patch("/auth/me/profile", {
+      // Keep the selected file local until Save Changes is submitted.
+      const payload = {
         fullName: draft.fullName,
         username: draft.username,
         email: draft.email,
         phone: draft.contact,
-        profileImageUrl: draft.picture || null,
-      });
+      };
+      if (pictureFile) payload.profileImage = await readImageFile(pictureFile);
+      const { data } = await api.patch("/auth/me/profile", payload);
       const nextProfile = profileFromUser(data.user);
       updateUser(data.user);
       setProfile(nextProfile);
       setDraft(nextProfile);
+      setPictureFile(null);
+      setPicturePreviewUrl("");
       setIsEditing(false);
       setSaved(true);
     } catch (requestError) {
@@ -174,9 +193,9 @@ export default function ProfilePage() {
                 <>
                   <div className="profile-identity">
                     <span className="profile-avatar">
-                      {draft.picture ? (
+                      {picturePreviewUrl || draft.picture ? (
                         <img
-                          src={draft.picture}
+                          src={picturePreviewUrl || draft.picture}
                           alt={`${draft.fullName} profile`}
                         />
                       ) : (
@@ -189,7 +208,7 @@ export default function ProfilePage() {
                       {isEditing && (
                         <label className="profile-picture-upload">
                           <FontAwesomeIcon icon={faCamera} />
-                          {draft.picture
+                          {picturePreviewUrl || draft.picture
                             ? "Change Profile Picture"
                             : "Add Profile Picture"}
                           <input
@@ -198,6 +217,12 @@ export default function ProfilePage() {
                             onChange={handlePictureChange}
                           />
                         </label>
+                      )}
+                      {isEditing && (
+                        <small className="profile-picture-help">
+                          Preview only. The photo is saved when you click Save
+                          Changes.
+                        </small>
                       )}
                     </div>
                   </div>
