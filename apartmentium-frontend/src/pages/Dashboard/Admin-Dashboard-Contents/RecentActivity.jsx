@@ -37,11 +37,12 @@ export default function RecentActivity({ activities = [] }) {
 
   useEffect(() => {
     if (!isModalOpen) return;
+    const trigger = triggerRef.current;
     document.body.classList.add("activities-modal-open");
     closeRef.current?.focus();
     return () => {
       document.body.classList.remove("activities-modal-open");
-      triggerRef.current?.focus();
+      trigger?.focus();
     };
   }, [isModalOpen]);
 
