@@ -32,3 +32,53 @@
   .payment-summary-card { padding: 10px; }
   .payment-summary-card strong { font-size: 18px; }
 }
+
+.payment-summary {
+  gap: 16px;
+}
+
+.payment-summary-card {
+  min-height: 112px;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 22px;
+  border-color: #e5eaf1;
+  border-radius: 15px;
+  background: #f9fbfe;
+}
+
+.payment-summary-card span {
+  color: #708098;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.payment-summary-card strong {
+  color: #203b63;
+  font-size: 27px;
+  letter-spacing: -0.5px;
+}
+
+.payment-summary-card:first-child {
+  border-color: #d7e5f8;
+  background: linear-gradient(135deg, #f2f7ff 0%, #f9fbff 100%);
+}
+
+.payment-summary-card:first-child strong {
+  color: #245cae;
+}
+
+@media (max-width: 500px) {
+  .payment-summary {
+    gap: 10px;
+  }
+
+  .payment-summary-card {
+    min-height: 94px;
+    padding: 15px;
+  }
+
+  .payment-summary-card strong {
+    font-size: 21px;
+  }
+}

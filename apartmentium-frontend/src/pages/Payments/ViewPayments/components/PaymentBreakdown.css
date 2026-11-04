@@ -50,3 +50,54 @@
 .payment-detail-table .payment-detail-amount {
   text-align: right;
 }
+
+.payment-detail-section {
+  gap: 10px;
+}
+
+.payment-detail-section h2 {
+  color: #203b63;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.payment-detail-table-wrap {
+  border-color: #e5eaf1;
+  border-radius: 12px;
+}
+
+.payment-detail-table {
+  color: #40536e;
+  font-size: 12px;
+}
+
+.payment-detail-table thead {
+  background: #f6f8fb;
+}
+
+.payment-detail-table th,
+.payment-detail-table td {
+  height: 43px;
+  padding: 0 14px;
+  border-bottom-color: #edf1f6;
+}
+
+.payment-detail-table th {
+  color: #78879b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+}
+
+.payment-detail-table tbody tr:hover {
+  background: #fafcff;
+}
+
+@media (max-width: 520px) {
+  .payment-detail-table th,
+  .payment-detail-table td {
+    padding: 0 10px;
+    font-size: 10px;
+  }
+}

@@ -5,8 +5,9 @@ export default function PaymentsHeader({ searchTerm, setSearchTerm }) {
   return (
     <div className="payments-header">
       <div className="payments-header-details">
+        <span className="payments-eyebrow">FINANCIAL MANAGEMENT</span>
         <h2 className="payments-title">Payments</h2>
-          <span className="payments-description">Review balances and record tenant payments.</span>
+        <span className="payments-description">Review balances and record tenant payments.</span>
       </div>
       <div className="payments-search-container">
         <FontAwesomeIcon

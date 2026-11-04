@@ -68,3 +68,62 @@
     font-size: 11px;
   }
 }
+
+.payment-details-header {
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.payment-back-link {
+  gap: 8px;
+  color: #57708f;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.payment-back-link:hover {
+  color: #245cae;
+  text-decoration: none;
+}
+
+.payment-details-heading-row h1 {
+  margin: 5px 0 0;
+  color: #203b63;
+  font-size: 24px;
+  letter-spacing: -0.45px;
+}
+
+.payment-details-eyebrow {
+  color: #8290a3;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.payment-details-heading-row .payment-details-unit {
+  display: inline-flex;
+  margin-top: 8px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #f0f5fc;
+  color: #4f6c94;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.record-payment-button {
+  padding: 11px 17px;
+  border: 1px solid #245cae;
+  border-radius: 11px;
+  background: #245cae;
+  box-shadow: 0 4px 10px rgb(36 92 174 / 18%);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.record-payment-button:hover:not(:disabled) {
+  background: #1d4d92;
+  transform: translateY(-1px);
+}
