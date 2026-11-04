@@ -71,7 +71,7 @@ export default function RentalsRecords({ units, onRefresh, initialUnitId }) {
           selectedFilter={selectedFilter}
           searchTerm={searchTerm}
         />
-        <div className="rental-records-footer">Check the records</div>
+        <div className="rental-records-footer">Select a unit to view its rental details.</div>
       </section>
       {isAddUnitOpen && (
         <AddUnitModal

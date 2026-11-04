@@ -160,6 +160,209 @@
   transition: background-color 0.3s ease;
 }
 
+.rentals-records-container {
+  gap: 17px;
+  padding: 22px;
+  border: 1px solid #e4eaf2;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(29 55 91 / 5%);
+}
+
+.rental-records-header {
+  gap: 14px;
+}
+
+.rental-records-title {
+  color: #203b63;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.rental-records-actions {
+  gap: 8px;
+}
+
+.rental-action-button {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid #245cae;
+  border-radius: 10px;
+  background: #245cae;
+  box-shadow: 0 3px 8px rgb(36 92 174 / 12%);
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.rental-action-button:hover {
+  background: #1d4d92;
+  transform: translateY(-1px);
+}
+
+.rental-records-icons {
+  font-size: 13px;
+}
+
+.search-records-container {
+  max-width: 450px;
+}
+
+.search-records-icon {
+  top: 13px;
+  left: 13px;
+  color: #8a98ab;
+  font-size: 14px;
+}
+
+.search-record-input {
+  height: 42px;
+  padding-left: 38px;
+  border-color: #e1e8f1;
+  border-radius: 10px;
+  background: #fbfcfe;
+  font-size: 12px;
+}
+
+.search-record-input:focus {
+  border-color: #7da5e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgb(57 117 220 / 10%);
+}
+
+.search-records-container:focus-within .search-records-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-records-container:focus-within .search-record-input {
+  padding-left: 38px;
+  color: #334b6d;
+}
+
+.search-records-filter-box {
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.search-records-filter-btn {
+  padding: 8px 12px;
+  border: 1px solid #e5eaf1;
+  border-radius: 9px;
+  background: #fff;
+  color: #718198;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.search-records-filter-btn:hover {
+  background: #f6f9fd;
+}
+
+.search-records-filter-btn.selected {
+  border-color: #cddcf1;
+  background: #eef4fd;
+  color: #245cae;
+}
+
+.rentals-record-list {
+  min-height: 0;
+  max-height: 430px;
+  overflow-y: auto;
+  border: 1px solid #e6ebf2;
+  border-radius: 12px;
+  background: #fff;
+  scrollbar-color: #c9d5e4 transparent;
+  scrollbar-width: thin;
+}
+
+.rentals-record-unit {
+  min-height: 66px;
+  padding: 12px 16px;
+  border-bottom-color: #edf1f6;
+  transition: background 140ms ease;
+}
+
+.rentals-record-unit:hover {
+  background: #f7faff;
+}
+
+.rentals-record-unit:focus-visible {
+  position: relative;
+  outline: 2px solid #7da5e5;
+  outline-offset: -2px;
+}
+
+.rentals-unit-details {
+  gap: 5px;
+}
+
+.unit-tenant-name {
+  color: #203b63;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.unit-tenant-room-details {
+  color: #8290a3;
+  font-size: 10px;
+}
+
+.rentals-unit-status {
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.rentals-unit-status.available {
+  background: #fff4df;
+  color: #a66a12;
+}
+
+.rentals-unit-status.occupied {
+  background: #e5f7ef;
+  color: #138a55;
+}
+
+.rental-records-footer {
+  padding: 2px 2px 0;
+  color: #8996a8;
+  font-size: 10px;
+}
+
+@media (max-width: 600px) {
+  .rentals-records-container {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .rental-records-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rental-records-actions {
+    width: 100%;
+  }
+
+  .rental-action-button {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 8px;
+  }
+
+  .rental-records-action-name {
+    font-size: 10px;
+  }
+
+  .rentals-record-list {
+    max-height: 390px;
+  }
+}
+
 .rentals-record-unit:hover {
   background-color: rgb(226, 226, 226);
 }

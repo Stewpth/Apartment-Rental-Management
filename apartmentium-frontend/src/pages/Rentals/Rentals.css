@@ -16,3 +16,22 @@
   min-width: 0;
   max-width: 900px;
 }
+
+.rentals-container {
+  padding: 4px 0 28px;
+}
+
+.rentals-contents {
+  max-width: 1080px;
+  gap: 20px;
+}
+
+.rentals-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #f2c8cc;
+  border-radius: 10px;
+  background: #fff6f6;
+  color: #a4262c;
+  font-size: 12px;
+}

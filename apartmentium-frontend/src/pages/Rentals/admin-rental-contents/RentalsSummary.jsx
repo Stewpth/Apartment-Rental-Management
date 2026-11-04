@@ -7,7 +7,12 @@ const rentalCards = [
   { key: "units", title: "Total Units", counts: 24, icon: faBuilding },
   { key: "occupied", title: "Occupied", counts: 20, icon: faUserGroup },
   { key: "available", title: "Available", counts: 4, icon: faDoorOpen },
-  { key: "active_rentals", title: "Active Rentals", counts: 16, icon: faFileLines },
+  {
+    key: "active_rentals",
+    title: "Active Rentals",
+    counts: 16,
+    icon: faFileLines,
+  },
 ];
 
 export default function RentalsSummary({ units = [] }) {
@@ -22,9 +27,14 @@ export default function RentalsSummary({ units = [] }) {
       {rentalCards.map((card) => {
         return (
           <div className="rentals-summary-card" key={card.key}>
-            <FontAwesomeIcon icon={card.icon} className={`rentals-card-icon ${card.key}`} />
-            <span className="rentals-card-title">{card.title}</span>
-            <h2 className="rentals-card-count">{counts[card.key]}</h2>
+            <FontAwesomeIcon
+              icon={card.icon}
+              className={`rentals-card-icon ${card.key}`}
+            />
+            <div className="rentals-summary-card-labels">
+              <span className="rentals-card-title">{card.title}</span>
+              <h2 className="rentals-card-count">{counts[card.key]}</h2>
+            </div>
           </div>
         );
       })}
