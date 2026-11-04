@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LoadingState from "../../../components/ui/LoadingState";
 import {
   faBullhorn,
   faHouse,
@@ -77,9 +78,7 @@ export function LatestAnnouncements() {
       >
         <div className="tenant-announcements">
           {loading ? (
-            <p className="tenant-announcement-state" role="status">
-              Loading announcements…
-            </p>
+            <LoadingState variant="inline" message="Loading announcements…" />
           ) : announcements.length === 0 ? (
             <p
               className="tenant-announcement-state"

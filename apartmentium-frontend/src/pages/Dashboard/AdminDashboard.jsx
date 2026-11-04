@@ -10,6 +10,7 @@ import UnitStatus from "./Admin-Dashboard-Contents/UnitStatus";
 import UpcomingEvents from "./Admin-Dashboard-Contents/UpcomingEvents";
 import QuickActions from "./Admin-Dashboard-Contents/QuickActions";
 import RecentActivity from "./Admin-Dashboard-Contents/RecentActivity";
+import LoadingState from "../../components/ui/LoadingState";
 
 import "./AdminDashboard.css";
 
@@ -46,9 +47,7 @@ export default function AdminDashboard() {
               </p>
             )}
             {!dashboard && !error && (
-              <p className="dashboard-load-state" role="status">
-                Loading dashboard…
-              </p>
+              <LoadingState variant="page" message="Loading your dashboard…" />
             )}
             {dashboard && (
               <>

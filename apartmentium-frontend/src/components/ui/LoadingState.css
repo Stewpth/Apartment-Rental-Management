@@ -27,6 +27,47 @@
   font-size: 13px;
 }
 
+.loading-state-page {
+  min-height: min(52vh, 420px);
+  border-color: transparent;
+  background: transparent;
+}
+
+.loading-state-compact {
+  min-height: 92px;
+  flex-direction: row;
+  gap: 11px;
+  padding: 16px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.loading-state-compact .loading-state-spinner {
+  width: 22px;
+  height: 22px;
+  border-width: 2px;
+}
+
+.loading-state-inline {
+  min-height: 48px;
+  flex-direction: row;
+  gap: 9px;
+  padding: 12px 16px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.loading-state-inline .loading-state-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.loading-state-inline .loading-state-message,
+.loading-state-compact .loading-state-message {
+  font-size: 11px;
+}
+
 @keyframes loading-state-spin {
   to { transform: rotate(360deg); }
 }

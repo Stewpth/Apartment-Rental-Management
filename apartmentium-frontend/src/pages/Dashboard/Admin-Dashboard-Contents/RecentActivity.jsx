@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LoadingState from "../../../components/ui/LoadingState";
 import {
   faChevronLeft,
   faChevronRight,
@@ -184,9 +185,7 @@ export default function RecentActivity({ activities = [] }) {
               </header>
               <div className="activities-modal-list" aria-live="polite">
                 {loading ? (
-                  <p className="activities-modal-state" role="status">
-                    Loading activities...
-                  </p>
+                  <LoadingState variant="compact" message="Loading activities…" />
                 ) : error ? (
                   <p className="activities-modal-state error" role="alert">
                     {error}

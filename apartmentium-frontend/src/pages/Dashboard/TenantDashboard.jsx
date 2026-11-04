@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingState from "../../components/ui/LoadingState";
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
 import api from "../../api/axios";
@@ -48,9 +49,7 @@ export default function TenantDashboard() {
               </p>
             )}
             {!dashboard && !error && (
-              <p className="dashboard-load-state" role="status">
-                Loading dashboard…
-              </p>
+              <LoadingState variant="page" message="Loading your dashboard…" />
             )}
             {dashboard && (
               <>

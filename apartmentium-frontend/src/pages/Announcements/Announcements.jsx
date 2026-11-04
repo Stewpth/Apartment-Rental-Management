@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import CreateAnnouncement from "./CreateAnnouncement";
 import api from "../../api/axios";
+import LoadingState from "../../components/ui/LoadingState";
 
 import "./Announcements.css";
 
@@ -104,9 +105,7 @@ export default function Announcements() {
                   </p>
                 )}
                 {loading ? (
-                  <p className="announcement-loading" role="status">
-                    Loading announcements…
-                  </p>
+                  <LoadingState message="Loading announcements…" />
                 ) : announcements.length === 0 ? (
                   <section
                     className="announcements-empty-state"

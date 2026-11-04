@@ -6,21 +6,30 @@ import Sidebar from "../../components/layout/Sidebar";
 import RequestsHeader from "./RequestsHeader";
 import SearchRequests from "./SearchRequests";
 import RequestsTable from "./RequestsTable";
+import LoadingState from "../../components/ui/LoadingState";
 import "./Requests.css";
 
 export default function Requests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    let active = true;
     api
       .get("/admin/requests")
-      .then(({ data }) => setRequests(data.data))
+      .then(({ data }) => {
+        if (active) setRequests(data.data);
+      })
       .catch((requestError) =>
-        setError(
+        active && setError(
           requestError.response?.data?.message || "Unable to load requests.",
         ),
-      );
+      )
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -46,7 +55,11 @@ export default function Requests() {
                     {error}
                   </p>
                 )}
-                <RequestsTable searchTerm={searchTerm} requests={requests} />
+                {loading ? (
+                  <LoadingState message="Loading requests…" />
+                ) : !error ? (
+                  <RequestsTable searchTerm={searchTerm} requests={requests} />
+                ) : null}
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
+import { faPaperclip, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import api from "../../api/axios";
 import "./RequestAttachmentLink.css";
 
@@ -46,7 +46,8 @@ export default function RequestAttachmentLink({ file }) {
           </span>
         </a>
       ) : (
-        <span className="request-attachment-message" role="status">
+        <span className="request-attachment-message is-loading" role="status">
+          <FontAwesomeIcon className="request-attachment-spinner" icon={faSpinner} />
           Loading {file.fileName}…
         </span>
       )}

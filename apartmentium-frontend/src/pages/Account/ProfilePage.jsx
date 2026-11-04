@@ -4,6 +4,7 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
+import LoadingState from "../../components/ui/LoadingState";
 import api from "../../api/axios";
 import { useAuth } from "../../hooks/useAuth";
 import "./AccountPages.css";
@@ -173,9 +174,7 @@ export default function ProfilePage() {
                 <p>View and manage your personal information.</p>
               </header>
               {loading ? (
-                <p className="account-form-status" role="status">
-                  Loading profile...
-                </p>
+                <LoadingState variant="compact" message="Loading profile…" />
               ) : error && !isEditing ? (
                 <>
                   <p className="account-form-error" role="alert">
