@@ -1,37 +1,76 @@
-﻿import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
+import api from "../../api/axios";
+import { useAuth } from "../../hooks/useAuth";
 import "./AccountPages.css";
 
 const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
+const EMPTY_PROFILE = {
+  fullName: "",
+  username: "",
+  email: "",
+  contact: "",
+  picture: "",
+};
+
+function profileFromUser(user) {
+  return {
+    fullName: user.profile?.fullName || user.username || "",
+    username: user.username || "",
+    email: user.email || "",
+    contact: user.profile?.phone || "",
+    picture: user.profile?.profileImageUrl || "",
+  };
+}
 
 export default function ProfilePage() {
-  const location = useLocation();
-  const isTenant = location.pathname.startsWith("/tenant/");
-  const role = isTenant ? "Tenant" : "Admin";
-  const [profile, setProfile] = useState({
-    fullName: isTenant ? "Maria Santos" : "John Doe",
-    email: isTenant ? "maria@example.com" : "john@example.com",
-    contact: "09XX XXX XXXX",
-    picture: "",
-  });
-  const [draft, setDraft] = useState(profile);
+  const { user, updateUser } = useAuth();
+  const role = user?.role === "TENANT" ? "Tenant" : "Admin";
+  const [profile, setProfile] = useState(EMPTY_PROFILE);
+  const [draft, setDraft] = useState(EMPTY_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const [pictureError, setPictureError] = useState("");
+
+  const loadProfile = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get("/auth/me");
+      const nextProfile = profileFromUser(data.user);
+      updateUser(data.user);
+      setProfile(nextProfile);
+      setDraft(nextProfile);
+      setError("");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message || "Unable to load your profile.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [updateUser]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   function updateField(field, value) {
     setDraft((current) => ({ ...current, [field]: value }));
     setSaved(false);
+    setError("");
   }
 
   function startEditing() {
     setDraft(profile);
     setSaved(false);
+    setError("");
     setPictureError("");
     setIsEditing(true);
   }
@@ -40,39 +79,65 @@ export default function ProfilePage() {
     setDraft(profile);
     setIsEditing(false);
     setSaved(false);
+    setError("");
     setPictureError("");
   }
 
   function handlePictureChange(event) {
     const file = event.target.files?.[0];
     if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setPictureError("Pumili ng image file para sa profile picture.");
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      setPictureError("Choose a PNG, JPEG, or WebP image.");
       event.target.value = "";
       return;
     }
     if (file.size > MAX_PROFILE_IMAGE_SIZE) {
-      setPictureError("Hanggang 5 MB lamang ang profile picture.");
+      setPictureError("Profile pictures must be 5 MB or smaller.");
       event.target.value = "";
       return;
     }
-
     const reader = new FileReader();
     reader.onload = () => {
-      setDraft((current) => ({ ...current, picture: reader.result }));
+      setDraft((current) => ({
+        ...current,
+        picture: String(reader.result || ""),
+      }));
       setSaved(false);
       setPictureError("");
+      setError("");
     };
+    reader.onerror = () =>
+      setPictureError("Unable to read this image. Please choose another file.");
     reader.readAsDataURL(file);
     event.target.value = "";
   }
 
-  function saveProfile(event) {
+  async function saveProfile(event) {
     event.preventDefault();
-    setProfile(draft);
-    setIsEditing(false);
-    setSaved(true);
+    setSaving(true);
+    setError("");
+    try {
+      const { data } = await api.patch("/auth/me/profile", {
+        fullName: draft.fullName,
+        username: draft.username,
+        email: draft.email,
+        phone: draft.contact,
+        profileImageUrl: draft.picture || null,
+      });
+      const nextProfile = profileFromUser(data.user);
+      updateUser(data.user);
+      setProfile(nextProfile);
+      setDraft(nextProfile);
+      setIsEditing(false);
+      setSaved(true);
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to save profile changes.",
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -88,115 +153,154 @@ export default function ProfilePage() {
                 <h1>My Profile</h1>
                 <p>View and manage your personal information.</p>
               </header>
-              <div className="profile-identity">
-                <span className="profile-avatar">
-                  {draft.picture ? (
-                    <img
-                      src={draft.picture}
-                      alt={`${draft.fullName} profile`}
-                    />
-                  ) : (
-                    <FontAwesomeIcon icon={faUser} />
+              {loading ? (
+                <p className="account-form-status" role="status">
+                  Loading profile...
+                </p>
+              ) : error && !isEditing ? (
+                <>
+                  <p className="account-form-error" role="alert">
+                    {error}
+                  </p>
+                  <button
+                    type="button"
+                    className="account-secondary-button"
+                    onClick={loadProfile}
+                  >
+                    Try again
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="profile-identity">
+                    <span className="profile-avatar">
+                      {draft.picture ? (
+                        <img
+                          src={draft.picture}
+                          alt={`${draft.fullName} profile`}
+                        />
+                      ) : (
+                        <FontAwesomeIcon icon={faUser} />
+                      )}
+                    </span>
+                    <div className="profile-identity-details">
+                      <strong>{draft.fullName}</strong>
+                      <span>{role}</span>
+                      {isEditing && (
+                        <label className="profile-picture-upload">
+                          <FontAwesomeIcon icon={faCamera} />
+                          {draft.picture
+                            ? "Change Profile Picture"
+                            : "Add Profile Picture"}
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            onChange={handlePictureChange}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                  {pictureError && (
+                    <p
+                      className="account-form-error profile-picture-error"
+                      role="alert"
+                    >
+                      {pictureError}
+                    </p>
                   )}
-                </span>
-                <div className="profile-identity-details">
-                  <strong>{draft.fullName}</strong>
-                  <span>{role}</span>
-                  {isEditing && (
-                    <label className="profile-picture-upload">
-                      <FontAwesomeIcon icon={faCamera} />
-                      {draft.picture
-                        ? "Change Profile Picture"
-                        : "Add Profile Picture"}
+                  {error && isEditing && (
+                    <p className="account-form-error" role="alert">
+                      {error}
+                    </p>
+                  )}
+                  <form className="profile-form" onSubmit={saveProfile}>
+                    <label>
+                      Full Name
                       <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePictureChange}
+                        required
+                        maxLength={120}
+                        disabled={!isEditing || saving}
+                        value={draft.fullName}
+                        onChange={(event) =>
+                          updateField("fullName", event.target.value)
+                        }
                       />
                     </label>
-                  )}
-                </div>
-              </div>
-              {pictureError && (
-                <p
-                  className="account-form-error profile-picture-error"
-                  role="alert"
-                >
-                  {pictureError}
-                </p>
+                    <label>
+                      Username
+                      <input
+                        required
+                        maxLength={120}
+                        disabled={!isEditing || saving}
+                        value={draft.username}
+                        onChange={(event) =>
+                          updateField("username", event.target.value)
+                        }
+                      />
+                    </label>
+                    <label>
+                      Email Address
+                      <input
+                        required
+                        maxLength={254}
+                        disabled={!isEditing || saving}
+                        type="email"
+                        value={draft.email}
+                        onChange={(event) =>
+                          updateField("email", event.target.value)
+                        }
+                      />
+                    </label>
+                    <label>
+                      Contact Number
+                      <input
+                        maxLength={30}
+                        disabled={!isEditing || saving}
+                        type="tel"
+                        value={draft.contact}
+                        onChange={(event) =>
+                          updateField("contact", event.target.value)
+                        }
+                      />
+                    </label>
+                    <footer>
+                      {saved && !isEditing && (
+                        <span className="account-form-success" role="status">
+                          Profile changes saved.
+                        </span>
+                      )}
+                      {isEditing ? (
+                        <>
+                          <button
+                            className="account-secondary-button"
+                            type="button"
+                            disabled={saving}
+                            onClick={cancelEditing}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="account-primary-button"
+                            type="submit"
+                            disabled={saving}
+                          >
+                            {saving ? "Saving..." : "Save Changes"}
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="account-primary-button"
+                          type="button"
+                          onClick={startEditing}
+                        >
+                          Change Information
+                        </button>
+                      )}
+                    </footer>
+                  </form>
+                </>
               )}
-              <form className="profile-form" onSubmit={saveProfile}>
-                <label>
-                  Full Name
-                  <input
-                    required
-                    disabled={!isEditing}
-                    value={draft.fullName}
-                    onChange={(event) =>
-                      updateField("fullName", event.target.value)
-                    }
-                  />
-                </label>
-                <label>
-                  Email Address
-                  <input
-                    required
-                    disabled={!isEditing}
-                    type="email"
-                    value={draft.email}
-                    onChange={(event) =>
-                      updateField("email", event.target.value)
-                    }
-                  />
-                </label>
-                <label>
-                  Contact Number
-                  <input
-                    disabled={!isEditing}
-                    type="tel"
-                    value={draft.contact}
-                    onChange={(event) =>
-                      updateField("contact", event.target.value)
-                    }
-                  />
-                </label>
-                <div className="profile-role-field">
-                  <span>Account Role</span>
-                  <span className={`profile-page-role ${role.toLowerCase()}`}>
-                    {role}
-                  </span>
-                  <small>Your role cannot be changed from this page.</small>
-                </div>
-                <footer>
-                  {saved && !isEditing && (
-                    <span className="account-form-success">
-                      Profile changes saved for this preview.
-                    </span>
-                  )}
-                  {isEditing ? (
-                    <>
-                      <button
-                        className="account-secondary-button"
-                        type="button"
-                        onClick={cancelEditing}
-                      >
-                        Cancel
-                      </button>
-                      <button className="account-primary-button" type="submit">
-                        Save Changes
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="account-primary-button"
-                      type="button"
-                      onClick={startEditing}
-                    >
-                      Change Information
-                    </button>
-                  )}
-                </footer>
-              </form>
             </section>
           </div>
         </main>

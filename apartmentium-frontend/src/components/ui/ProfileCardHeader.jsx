@@ -9,13 +9,17 @@ export default function ProfileCardHeader() {
   return (
     <div className="profile-card-header">
       <img
-        src={DefaultProfileImg1}
-        alt="Profile"
+        src={user?.profile?.profileImageUrl || DefaultProfileImg1}
+        alt={
+          user?.profile?.fullName
+            ? `${user.profile.fullName} profile`
+            : "Profile"
+        }
         className="profile-card-user-img-header"
       />
       <div className="profile-card-details">
         <span className="profile-card-name-header admin">
-          {user?.username || "Account"}
+          {user?.profile?.fullName || user?.username || "Account"}
         </span>
         <span className="profile-card-role-header tenant">
           {user?.role === "TENANT" ? "Tenant" : "Admin"}

@@ -27,15 +27,19 @@ export default function ProfileCard({ isSidebarOpen, setIsSidebarOpen }) {
           title={isSidebarOpen ? "Profile picture" : "Expand sidebar"}
         >
           <img
-            src={DefaultProfileImg1}
-            alt="Default Profile"
+            src={user?.profile?.profileImageUrl || DefaultProfileImg1}
+            alt={
+              user?.profile?.fullName
+                ? `${user.profile.fullName} profile`
+                : "Default Profile"
+            }
             className="profile-card-user-img"
           />
         </button>
 
         <div className="profile-card-details">
           <span className="profile-card-name">
-            {user?.username || "Account"}
+            {user?.profile?.fullName || user?.username || "Account"}
           </span>
           <span
             className={`profile-card-role ${user?.role === "TENANT" ? "tenant" : "admin"}`}

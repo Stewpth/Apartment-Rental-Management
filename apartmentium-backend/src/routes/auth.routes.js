@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { getCurrentUser, login } from "../controllers/auth.controller.js";
+import {
+  changePassword,
+  getCurrentUser,
+  login,
+  updateMyProfile,
+} from "../controllers/auth.controller.js";
 import { authenticate, authorize } from "../middleware/auth.middleware.js";
 import {
   resendActivationOtp,
@@ -10,6 +15,8 @@ const router = Router();
 
 router.post("/login", login);
 router.get("/me", authenticate, getCurrentUser);
+router.patch("/me/profile", authenticate, updateMyProfile);
+router.patch("/me/password", authenticate, changePassword);
 
 router.post("/activate/resend", resendActivationOtp);
 

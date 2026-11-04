@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/layout/Header";
 import Sidebar from "../../components/layout/Sidebar";
+import api from "../../api/axios";
 import "./AccountPages.css";
 
 const initialPasswords = { current: "", next: "", confirm: "" };
@@ -16,6 +17,7 @@ export default function SecuritySettingsPage() {
   const [visibleFields, setVisibleFields] = useState({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   function updatePassword(field, value) {
     setPasswords((current) => ({ ...current, [field]: value }));
@@ -23,7 +25,7 @@ export default function SecuritySettingsPage() {
     setError("");
   }
 
-  function submitPassword(event) {
+  async function submitPassword(event) {
     event.preventDefault();
     if (passwords.next.length < 8) {
       setError("Use at least 8 characters for your new password.");
@@ -33,10 +35,21 @@ export default function SecuritySettingsPage() {
       setError("The new password and confirmation do not match.");
       return;
     }
-    setPasswords(initialPasswords);
-    setMessage(
-      "Password form validated. Connect account security to save this change.",
-    );
+    setSaving(true);
+    try {
+      const { data } = await api.patch("/auth/me/password", {
+        currentPassword: passwords.current,
+        newPassword: passwords.next,
+      });
+      setPasswords(initialPasswords);
+      setMessage(data.message || "Password updated successfully.");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message || "Unable to update password.",
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   const fields = [
@@ -87,7 +100,9 @@ export default function SecuritySettingsPage() {
                     <span className="security-input-wrap">
                       <input
                         required
+                        disabled={saving}
                         minLength={field.key === "current" ? undefined : 8}
+                        maxLength={field.key === "current" ? undefined : 72}
                         autoComplete={field.autocomplete}
                         type={visibleFields[field.key] ? "text" : "password"}
                         placeholder={field.placeholder}
@@ -98,6 +113,7 @@ export default function SecuritySettingsPage() {
                       />
                       <button
                         type="button"
+                        disabled={saving}
                         aria-label={
                           visibleFields[field.key]
                             ? `Hide ${field.label.toLowerCase()}`
@@ -128,8 +144,12 @@ export default function SecuritySettingsPage() {
                   </p>
                 )}
                 <footer>
-                  <button className="account-primary-button" type="submit">
-                    Update Password
+                  <button
+                    className="account-primary-button"
+                    type="submit"
+                    disabled={saving}
+                  >
+                    {saving ? "Updating..." : "Update Password"}
                   </button>
                 </footer>
               </form>

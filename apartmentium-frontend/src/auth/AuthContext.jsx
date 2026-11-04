@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import AuthContext from "./auth-context";
@@ -13,6 +8,15 @@ function clearStoredSession() {
   localStorage.removeItem("user");
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
+}
+
+function persistUser(user) {
+  const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
+  const storedUser = {
+    ...user,
+    profile: user.profile ? { ...user.profile, profileImageUrl: null } : null,
+  };
+  storage.setItem("user", JSON.stringify(storedUser));
 }
 
 export function AuthProvider({ children }) {
@@ -44,10 +48,7 @@ export function AuthProvider({ children }) {
       .then(({ data }) => {
         if (!active) return;
         setUser(data.user);
-        const storage = localStorage.getItem("token")
-          ? localStorage
-          : sessionStorage;
-        storage.setItem("user", JSON.stringify(data.user));
+        persistUser(data.user);
       })
       .catch(() => {
         if (active) logout(false);
@@ -80,10 +81,14 @@ export function AuthProvider({ children }) {
     return data.user;
   }, []);
 
+  const updateUser = useCallback((nextUser) => {
+    setUser(nextUser);
+    persistUser(nextUser);
+  }, []);
+
   const value = useMemo(
-    () => ({ user, isLoading, login, logout }),
-    [user, isLoading, login, logout],
+    () => ({ user, isLoading, login, logout, updateUser }),
+    [user, isLoading, login, logout, updateUser],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
