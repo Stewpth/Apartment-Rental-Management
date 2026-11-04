@@ -1,5 +1,9 @@
 import prisma from "../config/prisma.js";
-import { includeRequest, publicRequest, validDate } from "../services/request-data.js";
+import {
+  includeRequest,
+  publicRequest,
+  validDate,
+} from "../services/request-data.js";
 
 function dateAtUtc(date) {
   return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -14,21 +18,17 @@ export async function confirmMoveOut(req, res) {
   try {
     const actualMoveOutDate = validDate(req.body.actualMoveOutDate);
     if (!actualMoveOutDate)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Enter a valid actual move-out date.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid actual move-out date.",
+      });
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     if (actualMoveOutDate > today)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Actual move-out date cannot be in the future.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Actual move-out date cannot be in the future.",
+      });
     const result = await prisma.$transaction(
       async (tx) => {
         const request = await tx.tenantRequest.findUnique({
@@ -226,13 +226,11 @@ export async function confirmMoveOut(req, res) {
     });
   } catch (error) {
     if (error.code === "P2034")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message:
-            "Rental financial data changed during settlement. Refresh and retry.",
-        });
+      return res.status(409).json({
+        success: false,
+        message:
+          "Rental financial data changed during settlement. Refresh and retry.",
+      });
     if (
       [
         "MOVING_REQUEST_NOT_FOUND",
@@ -240,22 +238,18 @@ export async function confirmMoveOut(req, res) {
         "INVALID_MOVE_OUT_DATE",
       ].includes(error.message)
     )
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message:
-            error.message === "INVALID_MOVE_OUT_DATE"
-              ? "Move-out date cannot be before move-in."
-              : "An approved moving-out request is required.",
-        });
-    console.error("Confirm move-out error:", error);
-    return res
-      .status(500)
-      .json({
+      return res.status(409).json({
         success: false,
-        message: "Failed to confirm move-out and create settlement.",
+        message:
+          error.message === "INVALID_MOVE_OUT_DATE"
+            ? "Move-out date cannot be before move-in."
+            : "An approved moving-out request is required.",
       });
+    console.error("Confirm move-out error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to confirm move-out and create settlement.",
+    });
   }
 }
 
@@ -266,12 +260,10 @@ export async function markUnitReady(req, res) {
       select: { unitId: true, status: true },
     });
     if (!rental || rental.status !== "ENDED")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "Only an ended rental can have its unit marked ready.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "Only an ended rental can have its unit marked ready.",
+      });
     await prisma.unit.update({
       where: { id: rental.unitId },
       data: { status: "AVAILABLE" },
@@ -295,12 +287,10 @@ export async function recordSettlementRefund(req, res) {
       Math.round(amount * 100) !== amount * 100 ||
       note.length > 500
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Enter a valid refund amount and note.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid refund amount and note.",
+      });
     const result = await prisma.$transaction(
       async (tx) => {
         const settlement = await tx.finalSettlement.findUnique({
@@ -369,12 +359,10 @@ export async function recordSettlementRefund(req, res) {
         .status(404)
         .json({ success: false, message: "Settlement not found." });
     if (error.message === "REFUND_EXCEEDS_DUE")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "Refund cannot exceed the remaining refund due.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "Refund cannot exceed the remaining refund due.",
+      });
     console.error("Record settlement refund error:", error);
     return res
       .status(500)
@@ -394,13 +382,11 @@ export async function recordSettlementAdjustment(req, res) {
       !reason ||
       reason.length > 500
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Enter a non-zero adjustment amount and a reason of 500 characters or fewer.",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Enter a non-zero adjustment amount and a reason of 500 characters or fewer.",
+      });
     const adjustment = await prisma.settlementAdjustment.create({
       data: {
         settlementId: req.params.id,
@@ -416,11 +402,9 @@ export async function recordSettlementAdjustment(req, res) {
         .status(404)
         .json({ success: false, message: "Settlement not found." });
     console.error("Record settlement adjustment error:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to record settlement adjustment.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to record settlement adjustment.",
+    });
   }
 }

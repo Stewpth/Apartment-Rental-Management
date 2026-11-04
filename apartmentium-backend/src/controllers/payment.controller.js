@@ -27,27 +27,33 @@ export async function ensureMonthlyDues(rental) {
   const endMonth = now.getUTCMonth();
   const operations = [];
 
-  for (let year = startYear, month = startMonth;
+  for (
+    let year = startYear, month = startMonth;
     year < endYear || (year === endYear && month <= endMonth);
-    month += 1) {
+    month += 1
+  ) {
     if (month > 11) {
       year += 1;
       month = 0;
     }
     const billingPeriod = new Date(Date.UTC(year, month, 1));
-    operations.push(prisma.monthlyDue.upsert({
-      where: { rentalId_billingPeriod: { rentalId: rental.id, billingPeriod } },
-      create: {
-        rentalId: rental.id,
-        billingPeriod,
-        dueDate: dueDateForPeriod(moveInDate, year, month),
-        amountDue: rental.monthlyRent,
-        amountPaid: 0,
-        balance: rental.monthlyRent,
-        status: "UNPAID",
-      },
-      update: { dueDate: dueDateForPeriod(moveInDate, year, month) },
-    }));
+    operations.push(
+      prisma.monthlyDue.upsert({
+        where: {
+          rentalId_billingPeriod: { rentalId: rental.id, billingPeriod },
+        },
+        create: {
+          rentalId: rental.id,
+          billingPeriod,
+          dueDate: dueDateForPeriod(moveInDate, year, month),
+          amountDue: rental.monthlyRent,
+          amountPaid: 0,
+          balance: rental.monthlyRent,
+          status: "UNPAID",
+        },
+        update: { dueDate: dueDateForPeriod(moveInDate, year, month) },
+      }),
+    );
   }
 
   await Promise.all(operations);
@@ -84,9 +90,9 @@ function unitSummary(rental) {
 function summarizeDues(dues) {
   const unpaid = dues.filter((due) => Number(due.balance) > 0);
   const totalDue = unpaid.reduce((sum, due) => sum + Number(due.balance), 0);
-  const dueDate = unpaid
-    .map((due) => due.dueDate)
-    .sort((left, right) => left - right)[0] ?? null;
+  const dueDate =
+    unpaid.map((due) => due.dueDate).sort((left, right) => left - right)[0] ??
+    null;
   return { totalDue: totalDue.toFixed(2), dueDate: dateOnly(dueDate) };
 }
 
@@ -123,7 +129,9 @@ export async function getPaymentRecords(req, res) {
     return res.status(200).json({ success: true, count: data.length, data });
   } catch (error) {
     console.error("Get payment records error:", error);
-    return res.status(500).json({ success: false, message: "Failed to retrieve payment records." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve payment records." });
   }
 }
 
@@ -131,7 +139,9 @@ export async function getPaymentDetails(req, res) {
   try {
     const rental = await findPaymentRental(req.params.rentalId);
     if (!rental) {
-      return res.status(404).json({ success: false, message: "Payment record not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Payment record not found." });
     }
     await ensureMonthlyDues(rental);
 
@@ -175,7 +185,9 @@ export async function getPaymentDetails(req, res) {
     });
   } catch (error) {
     console.error("Get payment details error:", error);
-    return res.status(500).json({ success: false, message: "Failed to retrieve payment details." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve payment details." });
   }
 }
 
@@ -183,65 +195,90 @@ export async function recordPayment(req, res) {
   try {
     const amount = Number(req.body.amount);
     const note = typeof req.body.note === "string" ? req.body.note.trim() : "";
-    if (!Number.isFinite(amount) || amount <= 0 || Math.abs(amount * 100 - Math.round(amount * 100)) > 0.00001) {
-      return res.status(400).json({ success: false, message: "Enter a valid payment amount with up to two decimal places." });
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
+      Math.abs(amount * 100 - Math.round(amount * 100)) > 0.00001
+    ) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "Enter a valid payment amount with up to two decimal places.",
+        });
     }
     if (note.length > 50) {
-      return res.status(400).json({ success: false, message: "Payment notes must be 50 characters or fewer." });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Payment notes must be 50 characters or fewer.",
+        });
     }
 
     const rental = await findPaymentRental(req.params.rentalId);
     if (!rental) {
-      return res.status(404).json({ success: false, message: "Payment record not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Payment record not found." });
     }
     await ensureMonthlyDues(rental);
 
     const amountCents = Math.round(amount * 100);
-    const payment = await prisma.$transaction(async (tx) => {
-      const dues = await tx.monthlyDue.findMany({
-        where: { rentalId: rental.id, balance: { gt: 0 } },
-        orderBy: [{ billingPeriod: "asc" }, { dueDate: "asc" }],
-      });
-      const totalDueCents = dues.reduce((sum, due) => sum + Math.round(Number(due.balance) * 100), 0);
-      if (amountCents > totalDueCents) throw new Error("PAYMENT_EXCEEDS_BALANCE");
+    const payment = await prisma.$transaction(
+      async (tx) => {
+        const dues = await tx.monthlyDue.findMany({
+          where: { rentalId: rental.id, balance: { gt: 0 } },
+          orderBy: [{ billingPeriod: "asc" }, { dueDate: "asc" }],
+        });
+        const totalDueCents = dues.reduce(
+          (sum, due) => sum + Math.round(Number(due.balance) * 100),
+          0,
+        );
+        if (amountCents > totalDueCents)
+          throw new Error("PAYMENT_EXCEEDS_BALANCE");
 
-      const createdPayment = await tx.payment.create({
-        data: {
-          rentalId: rental.id,
-          amount,
-          paymentDate: new Date(),
-          reference: `PAY-${Date.now()}-${randomUUID().slice(0, 8)}`,
-          note: note || null,
-          recordedById: req.user.id,
-        },
-      });
-
-      let remainingCents = amountCents;
-      for (const due of dues) {
-        if (remainingCents <= 0) break;
-        const dueBalanceCents = Math.round(Number(due.balance) * 100);
-        const allocatedCents = Math.min(remainingCents, dueBalanceCents);
-        const amountPaid = Math.round(Number(due.amountPaid) * 100) + allocatedCents;
-        const balance = dueBalanceCents - allocatedCents;
-        await tx.paymentAllocation.create({
+        const createdPayment = await tx.payment.create({
           data: {
-            paymentId: createdPayment.id,
-            monthlyDueId: due.id,
-            amount: allocatedCents / 100,
+            rentalId: rental.id,
+            amount,
+            paymentDate: new Date(),
+            reference: `PAY-${Date.now()}-${randomUUID().slice(0, 8)}`,
+            note: note || null,
+            recordedById: req.user.id,
           },
         });
-        await tx.monthlyDue.update({
-          where: { id: due.id },
-          data: {
-            amountPaid: amountPaid / 100,
-            balance: balance / 100,
-            status: balance === 0 ? "PAID" : "PARTIAL",
-          },
-        });
-        remainingCents -= allocatedCents;
-      }
-      return createdPayment;
-    }, { isolationLevel: "Serializable" });
+
+        let remainingCents = amountCents;
+        for (const due of dues) {
+          if (remainingCents <= 0) break;
+          const dueBalanceCents = Math.round(Number(due.balance) * 100);
+          const allocatedCents = Math.min(remainingCents, dueBalanceCents);
+          const amountPaid =
+            Math.round(Number(due.amountPaid) * 100) + allocatedCents;
+          const balance = dueBalanceCents - allocatedCents;
+          await tx.paymentAllocation.create({
+            data: {
+              paymentId: createdPayment.id,
+              monthlyDueId: due.id,
+              amount: allocatedCents / 100,
+            },
+          });
+          await tx.monthlyDue.update({
+            where: { id: due.id },
+            data: {
+              amountPaid: amountPaid / 100,
+              balance: balance / 100,
+              status: balance === 0 ? "PAID" : "PARTIAL",
+            },
+          });
+          remainingCents -= allocatedCents;
+        }
+        return createdPayment;
+      },
+      { isolationLevel: "Serializable" },
+    );
 
     return res.status(201).json({
       success: true,
@@ -255,35 +292,63 @@ export async function recordPayment(req, res) {
       },
     });
   } catch (error) {
-    if (error.code === "P2034") return res.status(409).json({ success: false, message: "The outstanding balance changed. Refresh and record the payment again." });
+    if (error.code === "P2034")
+      return res
+        .status(409)
+        .json({
+          success: false,
+          message:
+            "The outstanding balance changed. Refresh and record the payment again.",
+        });
     if (error.message === "PAYMENT_EXCEEDS_BALANCE") {
-      return res.status(409).json({ success: false, message: "Payment cannot exceed the outstanding balance." });
+      return res
+        .status(409)
+        .json({
+          success: false,
+          message: "Payment cannot exceed the outstanding balance.",
+        });
     }
     console.error("Record payment error:", error);
-    return res.status(500).json({ success: false, message: "Failed to record payment." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to record payment." });
   }
 }
 
 export async function getMyPayments(req, res) {
   try {
-    const rentalRef = await getRentalWithCurrentDues({ tenant: { userId: req.user.id } });
+    const rentalRef = await getRentalWithCurrentDues({
+      tenant: { userId: req.user.id },
+    });
     const rental = rentalRef[0]
       ? await findPaymentRental(rentalRef[0].id)
       : null;
     if (!rental) return res.status(200).json({ success: true, data: null });
 
     const [dues, payments] = await Promise.all([
-      prisma.monthlyDue.findMany({ where: { rentalId: rental.id }, orderBy: { billingPeriod: "desc" } }),
+      prisma.monthlyDue.findMany({
+        where: { rentalId: rental.id },
+        orderBy: { billingPeriod: "desc" },
+      }),
       prisma.payment.findMany({
         where: { rentalId: rental.id },
         orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
-        include: { allocations: { include: { monthlyDue: { select: { billingPeriod: true } } } } },
+        include: {
+          allocations: {
+            include: { monthlyDue: { select: { billingPeriod: true } } },
+          },
+        },
       }),
     ]);
     const summary = summarizeDues(dues);
     const now = new Date();
-    const currentPeriod = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-    const currentDue = dues.find((due) => new Date(due.billingPeriod).getTime() === currentPeriod.getTime());
+    const currentPeriod = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
+    );
+    const currentDue = dues.find(
+      (due) =>
+        new Date(due.billingPeriod).getTime() === currentPeriod.getTime(),
+    );
 
     return res.status(200).json({
       success: true,
@@ -300,10 +365,12 @@ export async function getMyPayments(req, res) {
           currentMonthDue: currentDue?.balance.toString() ?? "0.00",
           currentMonthDueDate: currentDue ? dateOnly(currentDue.dueDate) : null,
           currentMonthStatus: currentDue?.status ?? "PAID",
-          lastPayment: payments[0] ? {
-            amount: payments[0].amount.toString(),
-            date: dateOnly(payments[0].paymentDate),
-          } : null,
+          lastPayment: payments[0]
+            ? {
+                amount: payments[0].amount.toString(),
+                date: dateOnly(payments[0].paymentDate),
+              }
+            : null,
         },
         dues: dues.map((due) => ({
           id: due.id,
@@ -318,13 +385,21 @@ export async function getMyPayments(req, res) {
           amount: payment.amount.toString(),
           reference: payment.reference,
           note: payment.note,
-          billingPeriods: [...new Set(payment.allocations.map((allocation) => dateOnly(allocation.monthlyDue.billingPeriod)))],
+          billingPeriods: [
+            ...new Set(
+              payment.allocations.map((allocation) =>
+                dateOnly(allocation.monthlyDue.billingPeriod),
+              ),
+            ),
+          ],
           status: "PAID",
         })),
       },
     });
   } catch (error) {
     console.error("Get tenant payments error:", error);
-    return res.status(500).json({ success: false, message: "Failed to retrieve your payments." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve your payments." });
   }
 }

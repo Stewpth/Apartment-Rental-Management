@@ -155,12 +155,10 @@ export async function updateMyProfile(req, res) {
     phone.length > 30 ||
     (submittedImage && !newImage)
   ) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Enter valid profile information and use an image up to 5 MB.",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Enter valid profile information and use an image up to 5 MB.",
+    });
   }
 
   let uploadedStorageKey = null;
@@ -232,22 +230,18 @@ export async function updateMyProfile(req, res) {
   } catch (error) {
     if (uploadedStorageKey) await removeProfileImage(uploadedStorageKey);
     if (error.code === "P2002") {
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "That username or email is already in use.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "That username or email is already in use.",
+      });
     }
     if (uploadAttempted && !uploadedStorageKey) {
       console.error("Update profile error:", error);
-      return res
-        .status(502)
-        .json({
-          success: false,
-          message:
-            "Unable to upload your profile photo to Supabase. Please try again.",
-        });
+      return res.status(502).json({
+        success: false,
+        message:
+          "Unable to upload your profile photo to Supabase. Please try again.",
+      });
     }
     console.error("Update profile error:", error);
     return res
@@ -265,13 +259,11 @@ export async function changePassword(req, res) {
     newPassword.length < 8 ||
     Buffer.byteLength(newPassword, "utf8") > 72
   ) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message:
-          "Enter your current password and a new password between 8 and 72 bytes.",
-      });
+    return res.status(400).json({
+      success: false,
+      message:
+        "Enter your current password and a new password between 8 and 72 bytes.",
+    });
   }
   try {
     const user = await prisma.user.findUnique({

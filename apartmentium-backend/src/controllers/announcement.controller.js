@@ -72,13 +72,20 @@ export async function updateAnnouncement(req, res) {
       where: { id: req.params.id },
       data: { title, content },
     });
-    return res.json({ success: true, data: serializeAnnouncement(announcement) });
+    return res.json({
+      success: true,
+      data: serializeAnnouncement(announcement),
+    });
   } catch (error) {
     if (error.code === "P2025") {
-      return res.status(404).json({ success: false, message: "Announcement not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Announcement not found." });
     }
     console.error("Update announcement error:", error);
-    return res.status(500).json({ success: false, message: "Failed to update announcement." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update announcement." });
   }
 }
 

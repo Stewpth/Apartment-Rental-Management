@@ -1,8 +1,6 @@
 import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
-import supabase, {
-  requestAttachmentsBucket,
-} from "../config/supabase.js";
+import supabase, { requestAttachmentsBucket } from "../config/supabase.js";
 import { ensureMonthlyDues } from "./payment.controller.js";
 import {
   includeRequest,
@@ -94,20 +92,15 @@ export async function createTenantRequest(req, res) {
         .status(400)
         .json({ success: false, message: "Choose a valid request category." });
     if (!title || title.length > 120)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Title is required and must be 120 characters or fewer.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Title is required and must be 120 characters or fewer.",
+      });
     if (!description || description.length > 500)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Description is required and must be 500 characters or fewer.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Description is required and must be 500 characters or fewer.",
+      });
     if (
       (category === "REPAIR" || category === "COMPLAINT") &&
       attachments.length > 3
@@ -116,24 +109,20 @@ export async function createTenantRequest(req, res) {
         .status(400)
         .json({ success: false, message: "You can attach up to 3 images." });
     if (category !== "REPAIR" && category !== "COMPLAINT" && attachments.length)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Attachments are only allowed for repair and complaint requests.",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Attachments are only allowed for repair and complaint requests.",
+      });
     if (
       category === "MOVING_OUT" &&
       (!validDate(req.body.requestedMoveOutDate) || reason.length > 500)
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Enter a valid requested move-out date and a reason of 500 characters or fewer.",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Enter a valid requested move-out date and a reason of 500 characters or fewer.",
+      });
 
     const rental = await prisma.rental.findFirst({
       where: {
@@ -143,12 +132,10 @@ export async function createTenantRequest(req, res) {
       orderBy: { createdAt: "desc" },
     });
     if (!rental)
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "An active rental is required to create a request.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "An active rental is required to create a request.",
+      });
     if (category === "MOVING_OUT") {
       const activeRequest = await prisma.tenantRequest.findFirst({
         where: {
@@ -158,12 +145,10 @@ export async function createTenantRequest(req, res) {
         },
       });
       if (activeRequest || rental.status === "ON_LEAVING")
-        return res
-          .status(409)
-          .json({
-            success: false,
-            message: "A moving-out request is already active for this rental.",
-          });
+        return res.status(409).json({
+          success: false,
+          message: "A moving-out request is already active for this rental.",
+        });
     }
     stored = await persistAttachments(attachments);
     const created = await prisma.tenantRequest.create({
@@ -201,20 +186,16 @@ export async function createTenantRequest(req, res) {
         "INVALID_ATTACHMENT",
       ].includes(error.message)
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Attachments must be up to 3 PNG or JPEG images, each no larger than 5 MB.",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Attachments must be up to 3 PNG or JPEG images, each no larger than 5 MB.",
+      });
     if (error.code === "P2002")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "A moving-out request is already active for this rental.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "A moving-out request is already active for this rental.",
+      });
     console.error("Create tenant request error:", error);
     return res
       .status(500)
@@ -392,33 +373,27 @@ export async function updateRequest(req, res) {
       adminNotes !== undefined &&
       (typeof adminNotes !== "string" || adminNotes.length > 2000)
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Admin notes must be 2,000 characters or fewer.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Admin notes must be 2,000 characters or fewer.",
+      });
     if (
       status !== undefined &&
       !nextStatus(request.category, request.status, status)
     )
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "That status transition is not allowed for this request.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "That status transition is not allowed for this request.",
+      });
     if (
       request.category === "MOVING_OUT" &&
       status === "IN_PROGRESS" &&
       request.rental.status !== "ACTIVE"
     )
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "Only an active rental can be approved to move out.",
-        });
+      return res.status(409).json({
+        success: false,
+        message: "Only an active rental can be approved to move out.",
+      });
     if (request.category === "MOVING_OUT" && status === "IN_PROGRESS")
       await ensureMonthlyDues(request.rental);
     const updated = await prisma.$transaction(
@@ -469,13 +444,11 @@ export async function updateRequest(req, res) {
     return res.json({ success: true, data: publicRequest(updated) });
   } catch (error) {
     if (error.code === "P2034")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message:
-            "This request changed while you were updating it. Refresh and try again.",
-        });
+      return res.status(409).json({
+        success: false,
+        message:
+          "This request changed while you were updating it. Refresh and try again.",
+      });
     console.error("Update request error:", error);
     return res
       .status(500)
