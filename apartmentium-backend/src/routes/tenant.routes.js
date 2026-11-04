@@ -12,7 +12,7 @@ import {
   getLatestTenantAnnouncements,
   markAnnouncementRead,
 } from "../controllers/announcement.controller.js";
-import { getTenantDashboard } from "../controllers/dashboard.controller.js";
+import { getTenantDashboard } from "../controllers/tenant-dashboard.controller.js";
 
 const router = Router();
 

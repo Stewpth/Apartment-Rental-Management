@@ -20,14 +20,16 @@ import {
   resendTenantActivationOtp,
 } from "../controllers/pending-tenant.controller.js";
 import {
-  confirmMoveOut,
   getAdminRequests,
   getRequestDetails,
-  markUnitReady,
-  recordSettlementRefund,
-  recordSettlementAdjustment,
   updateRequest,
 } from "../controllers/request.controller.js";
+import {
+  confirmMoveOut,
+  markUnitReady,
+  recordSettlementAdjustment,
+  recordSettlementRefund,
+} from "../controllers/settlement.controller.js";
 import {
   createAnnouncement,
   getAnnouncements,
@@ -36,7 +38,7 @@ import {
 import {
   getAdminDashboard,
   getAdminDashboardActivities,
-} from "../controllers/dashboard.controller.js";
+} from "../controllers/admin-dashboard.controller.js";
 
 const router = Router();
 
