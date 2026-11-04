@@ -230,3 +230,145 @@
     padding: 14px 16px;
   }
 }
+
+.requests-table {
+  min-height: 0;
+  overflow-x: auto;
+  border-color: #e5eaf1;
+  border-radius: 13px;
+  box-shadow: 0 4px 16px rgb(29 55 91 / 3%);
+}
+
+.requests-table table {
+  min-width: 720px;
+}
+
+.requests-table thead {
+  background: #f6f8fb;
+}
+
+.requests-table th {
+  padding: 15px 18px;
+  color: #78879b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+}
+
+.requests-table td {
+  height: 62px;
+  padding: 11px 18px;
+  color: #52647c;
+  font-size: 12px;
+}
+
+.requests-row {
+  transition: background-color 140ms ease;
+}
+
+.requests-row:hover {
+  background: #f7faff;
+}
+
+.requests-row:focus-visible {
+  outline: 2px solid #7da5e5;
+  outline-offset: -2px;
+}
+
+.request-name {
+  color: #203b63;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.request-unit {
+  color: #8996a8;
+  font-size: 10px;
+}
+
+.request-status,
+.request-category {
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.request-status.in_progress {
+  background: #eaf1ff;
+  color: #315fae;
+}
+
+.request-status.resolved {
+  background: #e5f7ef;
+  color: #138a55;
+}
+
+.request-status.pending {
+  background: #fff5df;
+  color: #a66a12;
+}
+
+.request-status.rejected {
+  background: #fff0ef;
+  color: #b42318;
+}
+
+.request-category {
+  border-radius: 20px;
+}
+
+.requests-pagination {
+  min-height: 54px;
+  padding: 0 14px;
+  border: 1px solid #e5eaf1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.pagination-info {
+  color: #7e8da3;
+  font-size: 11px;
+}
+
+.pagination-buttons {
+  gap: 9px;
+}
+
+.pagination-buttons button {
+  padding: 8px 12px;
+  border-color: #e1e8f1;
+  border-radius: 9px;
+  color: #405978;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+  border-color: #c7d7ee;
+  background: #f4f8fe;
+}
+
+.pagination-buttons span {
+  color: #7e8da3;
+  font-size: 10px;
+}
+
+.requests-empty {
+  height: 100px;
+  color: #7e8da3;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .requests-pagination {
+    align-items: center;
+    padding: 12px;
+  }
+
+  .pagination-buttons {
+    justify-content: flex-start;
+  }
+}

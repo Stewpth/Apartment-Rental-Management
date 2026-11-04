@@ -38,6 +38,38 @@
   border-color: rgb(52, 120, 229);
 }
 
+.search-requests-icon {
+  top: 14px;
+  left: 14px;
+  color: #8a98ab;
+  font-size: 14px;
+}
+
+.search-requests-input {
+  height: 44px;
+  padding-left: 40px;
+  border-color: #e1e8f1;
+  border-radius: 11px;
+  background: #fbfcfe;
+  font-size: 12px;
+}
+
+.search-requests-input:focus {
+  border-color: #7da5e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgb(57 117 220 / 10%);
+}
+
+.search-requests-container:focus-within .search-requests-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-requests-container:focus-within .search-requests-input {
+  padding-left: 40px;
+  color: #334b6d;
+}
+
 .search-requests-container:focus-within .search-requests-icon {
   opacity: 0;
   visibility: hidden;

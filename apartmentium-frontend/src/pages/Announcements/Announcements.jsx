@@ -84,6 +84,7 @@ export default function Announcements() {
               <div className="announcements-contents">
                 <div className="announcements-heading">
                   <div>
+                    <span className="announcements-eyebrow">COMMUNITY UPDATES</span>
                     <h1>Announcements</h1>
                     <p>View and manage announcements for your community</p>
                   </div>

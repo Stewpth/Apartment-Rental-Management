@@ -20,3 +20,48 @@
   border-radius: 12px;
   gap: 18px;
 }
+
+.request-container {
+  padding: 4px 0 28px;
+}
+
+.request-contents {
+  max-width: 1040px;
+  gap: 17px;
+  padding: 25px;
+  border: 1px solid #e4eaf2;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 32px rgb(26 50 84 / 6%);
+}
+
+.request-contents > .requests-header {
+  padding-bottom: 17px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.request-contents > .search-requests-container {
+  max-width: 390px;
+}
+
+.request-contents > [role="alert"] {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #f2c8cc;
+  border-radius: 10px;
+  background: #fff6f6;
+  color: #a4262c;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .request-contents {
+    gap: 15px;
+    padding: 17px;
+    border-radius: 15px;
+  }
+
+  .request-contents > .search-requests-container {
+    max-width: none;
+  }
+}
