@@ -8,6 +8,10 @@ import {
   getRequestDetails,
   getTenantRequests,
 } from "../controllers/request.controller.js";
+import {
+  getLatestTenantAnnouncements,
+  markAnnouncementRead,
+} from "../controllers/announcement.controller.js";
 
 const router = Router();
 
@@ -25,6 +29,8 @@ router.get("/dashboard", (req, res) => {
 router.get("/rentals/me", getMyRental);
 router.get("/payments/me", getMyPayments);
 router.get("/requests/me", getTenantRequests);
+router.get("/announcements/latest", getLatestTenantAnnouncements);
+router.post("/announcements/:id/read", markAnnouncementRead);
 router.post("/requests", createTenantRequest);
 router.get("/requests/:id", getRequestDetails);
 

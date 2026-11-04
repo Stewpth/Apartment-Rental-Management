@@ -1,29 +1,50 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateAnnouncement from "./CreateAnnouncement";
+import api from "../../api/axios";
 
 import "./Announcements.css";
 
 export default function Announcements() {
   const [isCreating, setIsCreating] = useState(false);
   const [announcements, setAnnouncements] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  function publishAnnouncement({ title, content }) {
-    setAnnouncements((current) => [
-      {
-        id: Date.now(),
-        title,
-        content,
-        date: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-          new Date(),
-        ),
-      },
-      ...current,
-    ]);
-    setIsCreating(false);
+  const loadAnnouncements = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get("/admin/announcements");
+      setAnnouncements(data.data);
+      setError("");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message || "Unable to load announcements.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAnnouncements();
+  }, [loadAnnouncements]);
+
+  async function publishAnnouncement({ title, content }) {
+    try {
+      await api.post("/admin/announcements", { title, content });
+      await loadAnnouncements();
+      setIsCreating(false);
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to publish announcement.",
+      );
+      throw requestError;
+    }
   }
 
   return (
@@ -54,7 +75,16 @@ export default function Announcements() {
                   </button>
                 </div>
 
-                {announcements.length === 0 ? (
+                {error && (
+                  <p className="announcement-error" role="alert">
+                    {error}
+                  </p>
+                )}
+                {loading ? (
+                  <p className="announcement-loading" role="status">
+                    Loading announcements…
+                  </p>
+                ) : announcements.length === 0 ? (
                   <section
                     className="announcements-empty-state"
                     aria-live="polite"
@@ -78,7 +108,11 @@ export default function Announcements() {
                       >
                         <div className="announcement-card-heading">
                           <h2>{announcement.title}</h2>
-                          <time>{announcement.date}</time>
+                          <time dateTime={announcement.publishedAt}>
+                            {new Intl.DateTimeFormat("en-US", {
+                              dateStyle: "medium",
+                            }).format(new Date(announcement.publishedAt))}
+                          </time>
                         </div>
                         <p>{announcement.content}</p>
                       </article>

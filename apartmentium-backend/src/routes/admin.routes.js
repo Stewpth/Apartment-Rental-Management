@@ -28,6 +28,10 @@ import {
   recordSettlementAdjustment,
   updateRequest,
 } from "../controllers/request.controller.js";
+import {
+  createAnnouncement,
+  getAnnouncements,
+} from "../controllers/announcement.controller.js";
 
 const router = Router();
 
@@ -52,6 +56,8 @@ router.post("/rentals/:rentalId/mark-unit-ready", markUnitReady);
 router.post("/rentals/request-tenant-activation", requestTenantActivation);
 router.post("/rentals/verify-tenant-activation", verifyTenantActivation);
 router.post("/rentals/resend-tenant-activation", resendTenantActivationOtp);
+router.get("/announcements", getAnnouncements);
+router.post("/announcements", createAnnouncement);
 
 router.get("/dashboard", (req, res) => {
   res.status(200).json({

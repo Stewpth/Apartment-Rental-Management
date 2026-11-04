@@ -1,14 +1,29 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function CreateAnnouncement({ onClose, onPublish }) {
-  function handleSubmit(event) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    onPublish({
-      title: formData.get("title").trim(),
-      content: formData.get("content").trim(),
-    });
+    setSaving(true);
+    setError("");
+    try {
+      await onPublish({
+        title: formData.get("title").trim(),
+        content: formData.get("content").trim(),
+      });
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to publish announcement.",
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -36,6 +51,11 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </header>
+        {error && (
+          <p className="announcement-error" role="alert">
+            {error}
+          </p>
+        )}
         <form onSubmit={handleSubmit}>
           <label className="announcement-form-field">
             <span>Announcement Title</span>
@@ -54,6 +74,7 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
               name="content"
               placeholder="Write your announcement here..."
               rows="7"
+              maxLength="5000"
               required
             />
           </label>
@@ -65,9 +86,13 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
             >
               Cancel
             </button>
-            <button type="submit" className="announcement-publish-button">
+            <button
+              type="submit"
+              className="announcement-publish-button"
+              disabled={saving}
+            >
               <FontAwesomeIcon icon={faPaperPlane} />
-              <span>Publish Announcement</span>
+              <span>{saving ? "Publishing…" : "Publish Announcement"}</span>
             </button>
           </footer>
         </form>
