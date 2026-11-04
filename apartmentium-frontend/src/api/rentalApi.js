@@ -49,3 +49,10 @@ export async function getRentalUnits() {
     ...availableResponse.data.units.map(mapAvailableUnit),
   ];
 }
+
+export async function changeTenantPassword(rentalId) {
+  const response = await api.post(
+    `/admin/rentals/${rentalId}/change-tenant-password`,
+  );
+  return response.data;
+}

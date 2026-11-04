@@ -7,6 +7,7 @@ import {
 } from "../controllers/unit.controller.js";
 import {
   assignTenant,
+  changeTenantPassword,
   getRentalRecords,
 } from "../controllers/rental.controller.js";
 import {
@@ -50,6 +51,7 @@ router.get("/units/available", getAvailableUnits);
 
 router.post("/rentals/assign-tenant", assignTenant);
 router.get("/rentals", getRentalRecords);
+router.post("/rentals/:rentalId/change-tenant-password", changeTenantPassword);
 router.get("/payments", getPaymentRecords);
 router.get("/payments/:rentalId", getPaymentDetails);
 router.post("/payments/:rentalId", recordPayment);

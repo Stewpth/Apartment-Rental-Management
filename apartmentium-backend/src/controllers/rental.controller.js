@@ -1,6 +1,8 @@
 import prisma from "../config/prisma.js";
 import bcrypt from "bcrypt";
+import { randomBytes } from "node:crypto";
 import { sendActivationOtp } from "../services/activation.service.js";
+import { sendEmail } from "../services/email.service.js";
 
 export async function assignTenant(req, res) {
   try {
@@ -328,5 +330,73 @@ export async function getMyRental(req, res) {
     return res
       .status(500)
       .json({ success: false, message: "Failed to retrieve your rental." });
+  }
+}
+
+export async function changeTenantPassword(req, res) {
+  try {
+    const rental = await prisma.rental.findFirst({
+      where: {
+        id: req.params.rentalId,
+        status: { in: ["ACTIVE", "ON_LEAVING"] },
+      },
+      select: {
+        tenant: {
+          select: {
+            user: { select: { id: true, email: true, passwordHashed: true } },
+          },
+        },
+      },
+    });
+
+    if (!rental?.tenant?.user) {
+      return res.status(404).json({
+        success: false,
+        message: "Active tenant account was not found for this rental.",
+      });
+    }
+
+    const user = rental.tenant.user;
+    const temporaryPassword = randomBytes(18).toString("base64url");
+    const passwordHashed = await bcrypt.hash(temporaryPassword, 10);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHashed },
+    });
+
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: "Your Apartmentium password was changed",
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:24px;color:#203b63">
+            <h2>Your password has been changed</h2>
+            <p>An administrator changed the password for your Apartmentium account.</p>
+            <p>Your temporary password is:</p>
+            <p style="padding:16px;background:#eef3f7;border-radius:8px;font-size:20px;font-weight:bold;letter-spacing:1px">${temporaryPassword}</p>
+            <p>Sign in with this password, then change it from Security Settings.</p>
+            <p>If you did not expect this change, contact the admin/landlord immediately.</p>
+          </div>
+        `,
+      });
+    } catch (emailError) {
+      await prisma.user.updateMany({
+        where: { id: user.id, passwordHashed },
+        data: { passwordHashed: user.passwordHashed },
+      });
+      throw emailError;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `A new password was sent to ${user.email}.`,
+    });
+  } catch (error) {
+    console.error("Change tenant password error:", error);
+    return res.status(502).json({
+      success: false,
+      message:
+        "Could not email the new password. The account password was not changed.",
+    });
   }
 }

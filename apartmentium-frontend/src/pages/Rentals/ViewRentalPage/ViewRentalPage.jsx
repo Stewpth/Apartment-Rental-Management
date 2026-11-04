@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../../components/layout/Sidebar";
 import Header from "../../../components/layout/Header";
-import { getRentalUnits } from "../../../api/rentalApi";
+import { changeTenantPassword, getRentalUnits } from "../../../api/rentalApi";
 import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
 import RentalTenantSummary from "./RentalTenantSummary";
@@ -17,6 +17,9 @@ export default function ViewRentalPage() {
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -47,6 +50,22 @@ export default function ViewRentalPage() {
         ...(assignTenant && unit ? { assignUnitId: unit.unit_id } : {}),
       },
     });
+  }
+
+  async function handleChangePassword() {
+    if (!unit?.rental_id || changingPassword) return;
+    if (!window.confirm(`Generate a new password and email it to ${unit.tenant_email}? The tenant's current password will stop working.`)) return;
+    setChangingPassword(true);
+    setPasswordStatus("");
+    setPasswordError("");
+    try {
+      const result = await changeTenantPassword(unit.rental_id);
+      setPasswordStatus(result.message || "The new password was emailed to the tenant.");
+    } catch (requestError) {
+      setPasswordError(requestError.response?.data?.message || "Unable to change the tenant password.");
+    } finally {
+      setChangingPassword(false);
+    }
   }
 
   const tenantName = unit?.tenant_name || "No Tenant Assigned";
@@ -86,6 +105,10 @@ export default function ViewRentalPage() {
                       email={unit.tenant_email || "Email unavailable"}
                       contact={unit.tenant_contact || "Phone unavailable"}
                       onBack={() => backToRentals()}
+                      onChangePassword={handleChangePassword}
+                      changingPassword={changingPassword}
+                      passwordStatus={passwordStatus}
+                      passwordError={passwordError}
                     />
                     <RentalInformation unit={unit} />
                   </>

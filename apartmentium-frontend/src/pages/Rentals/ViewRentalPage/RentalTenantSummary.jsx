@@ -7,6 +7,10 @@ export default function RentalTenantSummary({
   email,
   contact,
   onBack,
+  onChangePassword,
+  changingPassword,
+  passwordStatus,
+  passwordError,
 }) {
   return (
     <section className="view-rental-card">
@@ -41,6 +45,18 @@ export default function RentalTenantSummary({
           <p>{contact}</p>
           <span className="view-rental-status occupied">Occupied</span>
         </div>
+      </div>
+      <div className="view-rental-password-actions">
+        <button
+          type="button"
+          className="view-rental-secondary-button"
+          onClick={onChangePassword}
+          disabled={changingPassword}
+        >
+          {changingPassword ? "Sending new password..." : "Change Password"}
+        </button>
+        {passwordStatus && <p className="view-rental-password-success" role="status">{passwordStatus}</p>}
+        {passwordError && <p className="view-rental-password-error" role="alert">{passwordError}</p>}
       </div>
     </section>
   );
