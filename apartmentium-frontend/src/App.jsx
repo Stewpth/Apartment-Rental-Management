@@ -1,22 +1,24 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
-import Rentals from "./pages/Rentals/Rentals";
-import TenantRentals from "./pages/Rentals/TenantRentals";
-import ViewRentalPage from "./pages/Rentals/ViewRentalPage/ViewRentalPage";
-import Payments from "./pages/Payments/Payments";
-import TenantPayments from "./pages/Payments/TenantPayments";
-import ViewPayments from "./pages/Payments/ViewPayments/ViewPayments";
-import Requests from "./pages/Request/Requests";
-import TenantRequests from "./pages/Request/TenantRequests";
-import ViewRequest from "./pages/Request/ViewRequest/ViewRequest";
-import Announcements from "./pages/Announcements/Announcements";
-import TenantDashboard from "./pages/Dashboard/TenantDashboard";
-import ProfilePage from "./pages/Account/ProfilePage";
-import SecuritySettingsPage from "./pages/Account/SecuritySettingsPage";
-import Login from "./pages/Login";
 import { useAuth } from "./hooks/useAuth";
 import { HomeRedirect, ProtectedRoute } from "./auth/ProtectedRoute";
 import LoadingState from "./components/ui/LoadingState";
+
+const AdminDashboard = lazy(() => import("./pages/Dashboard/AdminDashboard"));
+const Rentals = lazy(() => import("./pages/Rentals/Rentals"));
+const TenantRentals = lazy(() => import("./pages/Rentals/TenantRentals"));
+const ViewRentalPage = lazy(() => import("./pages/Rentals/ViewRentalPage/ViewRentalPage"));
+const Payments = lazy(() => import("./pages/Payments/Payments"));
+const TenantPayments = lazy(() => import("./pages/Payments/TenantPayments"));
+const ViewPayments = lazy(() => import("./pages/Payments/ViewPayments/ViewPayments"));
+const Requests = lazy(() => import("./pages/Request/Requests"));
+const TenantRequests = lazy(() => import("./pages/Request/TenantRequests"));
+const ViewRequest = lazy(() => import("./pages/Request/ViewRequest/ViewRequest"));
+const Announcements = lazy(() => import("./pages/Announcements/Announcements"));
+const TenantDashboard = lazy(() => import("./pages/Dashboard/TenantDashboard"));
+const ProfilePage = lazy(() => import("./pages/Account/ProfilePage"));
+const SecuritySettingsPage = lazy(() => import("./pages/Account/SecuritySettingsPage"));
+const Login = lazy(() => import("./pages/Login"));
 
 function LoginRoute() {
   const { user, isLoading } = useAuth();
@@ -27,34 +29,36 @@ function LoginRoute() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomeRedirect />} />
-      <Route path="/login" element={<LoginRoute />} />
+    <Suspense fallback={<LoadingState variant="page" message="Loading page…" />}>
+      <Routes>
+        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/login" element={<LoginRoute />} />
 
-      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/profile" element={<ProfilePage />} />
-        <Route path="/admin/settings" element={<SecuritySettingsPage />} />
-        <Route path="/admin/rentals" element={<Rentals />} />
-        <Route path="/admin/rentals/:unitId" element={<ViewRentalPage />} />
-        <Route path="/admin/payments" element={<Payments />} />
-        <Route path="/admin/payments/:id" element={<ViewPayments />} />
-        <Route path="/admin/requests" element={<Requests />} />
-        <Route path="/admin/requests/:id" element={<ViewRequest />} />
-        <Route path="/admin/announcements" element={<Announcements />} />
-      </Route>
+        <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/profile" element={<ProfilePage />} />
+          <Route path="/admin/settings" element={<SecuritySettingsPage />} />
+          <Route path="/admin/rentals" element={<Rentals />} />
+          <Route path="/admin/rentals/:unitId" element={<ViewRentalPage />} />
+          <Route path="/admin/payments" element={<Payments />} />
+          <Route path="/admin/payments/:id" element={<ViewPayments />} />
+          <Route path="/admin/requests" element={<Requests />} />
+          <Route path="/admin/requests/:id" element={<ViewRequest />} />
+          <Route path="/admin/announcements" element={<Announcements />} />
+        </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["TENANT"]} />}>
-        <Route path="/tenant/dashboard" element={<TenantDashboard />} />
-        <Route path="/tenant/profile" element={<ProfilePage />} />
-        <Route path="/tenant/settings" element={<SecuritySettingsPage />} />
-        <Route path="/tenant/rentals" element={<TenantRentals />} />
-        <Route path="/tenant/payments" element={<TenantPayments />} />
-        <Route path="/tenant/requests" element={<TenantRequests />} />
-      </Route>
+        <Route element={<ProtectedRoute allowedRoles={["TENANT"]} />}>
+          <Route path="/tenant/dashboard" element={<TenantDashboard />} />
+          <Route path="/tenant/profile" element={<ProfilePage />} />
+          <Route path="/tenant/settings" element={<SecuritySettingsPage />} />
+          <Route path="/tenant/rentals" element={<TenantRentals />} />
+          <Route path="/tenant/payments" element={<TenantPayments />} />
+          <Route path="/tenant/requests" element={<TenantRequests />} />
+        </Route>
 
-      <Route path="*" element={<HomeRedirect />} />
-    </Routes>
+        <Route path="*" element={<HomeRedirect />} />
+      </Routes>
+    </Suspense>
   );
 }
 

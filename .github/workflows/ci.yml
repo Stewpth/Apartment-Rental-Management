@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend lint and production build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: apartmentium-frontend/package-lock.json
+      - run: npm ci
+        working-directory: apartmentium-frontend
+      - run: npm run lint
+        working-directory: apartmentium-frontend
+      - run: npm run build
+        working-directory: apartmentium-frontend
+
+  backend:
+    name: Backend validation and unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24, 26]
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://ci:ci@localhost:5432/apartmentium?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: apartmentium-backend/package-lock.json
+      - run: npm ci
+        working-directory: apartmentium-backend
+      - run: npm run db:generate
+        working-directory: apartmentium-backend
+      - run: npx prisma validate --schema prisma/schema.prisma
+        working-directory: apartmentium-backend
+      - run: npm test
+        working-directory: apartmentium-backend
+      - name: Check backend JavaScript syntax
+        run: find src -path 'src/generated' -prune -o -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+        working-directory: apartmentium-backend

@@ -10,6 +10,16 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is required to start the API.");
+    }
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.JWT_SECRET.length < 32
+    ) {
+      throw new Error("JWT_SECRET must be at least 32 characters in production.");
+    }
+
     await prisma.$connect();
     console.log("Database connected successfully!");
 
@@ -28,7 +38,7 @@ async function startServer() {
     }
 
     const server = app.listen(PORT, () => {
-      console.log(`Apartmentium API running at http://localhost:${PORT}`);
+      console.log(`Apartmentium API listening on port ${PORT}`);
     });
 
     process.on("SIGINT", () => shutdown(server));

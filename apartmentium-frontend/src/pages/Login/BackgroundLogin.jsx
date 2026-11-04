@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 
-import LoginBackgroundImg from "../../assets/images/backgrounds/login-background.jpg";
+import LoginBackgroundImg from "../../assets/images/backgrounds/login-background-optimized.jpg";
 import "./BackgroundLogin.css";
 
 export default function BackgroundLogin() {
