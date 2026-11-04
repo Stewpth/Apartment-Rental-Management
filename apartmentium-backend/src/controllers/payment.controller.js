@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
+import { notifyUser } from "../services/notification.service.js";
 
 const PAYMENT_RENTAL_STATUSES = ["ACTIVE", "ON_LEAVING", "ENDED"];
 
@@ -279,6 +280,14 @@ export async function recordPayment(req, res) {
       },
       { isolationLevel: "Serializable" },
     );
+
+    await notifyUser({
+      userId: rental.tenant.user.id,
+      type: "PAYMENT",
+      title: "Payment recorded",
+      message: `A payment of ${payment.amount.toString()} has been recorded for your rental.`,
+      link: "/tenant/payments",
+    });
 
     return res.status(201).json({
       success: true,

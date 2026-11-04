@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
 import supabase, { requestAttachmentsBucket } from "../config/supabase.js";
 import { ensureMonthlyDues } from "./payment.controller.js";
+import { notifyRoleUsers, notifyUser } from "../services/notification.service.js";
 import {
   includeRequest,
   publicRequest,
@@ -174,9 +175,17 @@ export async function createTenantRequest(req, res) {
       },
       include: includeRequest,
     });
+    const responseRequest = publicRequest(created);
+    await notifyRoleUsers({
+      role: "ADMIN",
+      type: "REQUEST",
+      title: "New tenant request",
+      message: `${responseRequest.tenant.fullName}: ${created.title}`,
+      link: `/admin/requests/${created.id}`,
+    });
     return res
       .status(201)
-      .json({ success: true, data: publicRequest(created) });
+      .json({ success: true, data: responseRequest });
   } catch (error) {
     await removeStoredAttachments(stored);
     if (
@@ -355,7 +364,7 @@ export async function updateRequest(req, res) {
   try {
     const request = await prisma.tenantRequest.findUnique({
       where: { id: req.params.id },
-      include: { rental: true },
+      include: { rental: { include: { tenant: { select: { userId: true } } } } },
     });
     if (!request)
       return res
@@ -441,6 +450,21 @@ export async function updateRequest(req, res) {
       },
       { isolationLevel: "Serializable" },
     );
+    if (status || message) {
+      const nextMessage =
+        typeof message === "string" && message.trim()
+          ? message.trim().slice(0, 2000)
+          : status
+            ? `Your request status is now ${status.toLowerCase().replaceAll("_", " ")}.`
+            : "Your request has been updated.";
+      await notifyUser({
+        userId: request.rental.tenant.userId,
+        type: "REQUEST_UPDATE",
+        title: "Request update",
+        message: `${request.title}: ${nextMessage}`,
+        link: `/tenant/requests`,
+      });
+    }
     return res.json({ success: true, data: publicRequest(updated) });
   } catch (error) {
     if (error.code === "P2034")

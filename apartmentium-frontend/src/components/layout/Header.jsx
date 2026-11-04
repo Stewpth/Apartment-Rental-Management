@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import ProfileCardHeader from "../ui/ProfileCardHeader";
+import NotificationDropdown from "./NotificationDropdown";
 import "./Header.css";
+import "./NotificationDropdown.css";
 
 export default function Header() {
   return (
@@ -24,16 +25,7 @@ export default function Header() {
       </section>
 
       <section className="header-right-side">
-        <button
-          type="button"
-          className="show-notification-button"
-          aria-label="Notifications, 3 unread"
-          title="Notifications"
-        >
-          <span className="notification-count">3</span>
-
-          <FontAwesomeIcon icon={faBell} />
-        </button>
+        <NotificationDropdown />
 
         <div className="header-profile-card">
           <ProfileCardHeader />

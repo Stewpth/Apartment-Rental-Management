@@ -72,6 +72,7 @@ model User {
   creditTransactions CreditTransaction[] @relation("CreditTransactionRecorder")
   announcements      Announcement[]      @relation("AnnouncementAuthor")
   announcementReads  AnnouncementRead[]
+  notifications      Notification[]
   requestUpdates     RequestUpdate[]     @relation("RequestUpdateAuthor")
   confirmedSettlements FinalSettlement[]
   settlementAdjustments SettlementAdjustment[]
@@ -384,6 +385,22 @@ model AnnouncementRead {
   user         User         @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@unique([announcementId, userId])
+  @@index([userId, readAt])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String    @db.VarChar(40)
+  title     String   @db.VarChar(120)
+  message   String
+  link      String?  @db.VarChar(255)
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
   @@index([userId, readAt])
 }
 

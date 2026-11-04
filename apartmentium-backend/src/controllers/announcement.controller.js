@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { notifyRoleUsers } from "../services/notification.service.js";
 
 function serializeAnnouncement(announcement, read = false) {
   return {
@@ -42,6 +43,13 @@ export async function createAnnouncement(req, res) {
   try {
     const announcement = await prisma.announcement.create({
       data: { authorId: req.user.id, title, content },
+    });
+    await notifyRoleUsers({
+      role: "TENANT",
+      type: "ANNOUNCEMENT",
+      title: "New announcement",
+      message: title,
+      link: "/tenant/dashboard",
     });
     return res.status(201).json({
       success: true,
