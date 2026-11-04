@@ -55,6 +55,33 @@ export async function createAnnouncement(req, res) {
   }
 }
 
+export async function updateAnnouncement(req, res) {
+  const title = typeof req.body.title === "string" ? req.body.title.trim() : "";
+  const content =
+    typeof req.body.content === "string" ? req.body.content.trim() : "";
+  if (!title || title.length > 120 || !content || content.length > 5000) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Enter a title of up to 120 characters and content of up to 5,000 characters.",
+    });
+  }
+
+  try {
+    const announcement = await prisma.announcement.update({
+      where: { id: req.params.id },
+      data: { title, content },
+    });
+    return res.json({ success: true, data: serializeAnnouncement(announcement) });
+  } catch (error) {
+    if (error.code === "P2025") {
+      return res.status(404).json({ success: false, message: "Announcement not found." });
+    }
+    console.error("Update announcement error:", error);
+    return res.status(500).json({ success: false, message: "Failed to update announcement." });
+  }
+}
+
 export async function getLatestTenantAnnouncements(req, res) {
   try {
     const announcements = await prisma.announcement.findMany({

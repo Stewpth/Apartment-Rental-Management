@@ -121,6 +121,13 @@
   gap: 16px;
 }
 
+.announcement-card-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
 .announcement-card h2 {
   margin: 0;
   color: #202b3b;
@@ -131,6 +138,24 @@
   color: #748094;
   font-size: 12px;
 }
+.announcement-edit-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid #d8e1eb;
+  border-radius: 7px;
+  background: #fff;
+  color: #245b87;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.announcement-edit-button:hover { background: #f2f7fb; border-color: #b8cddd; }
+.announcement-edit-button:focus-visible { outline: 3px solid rgba(20, 85, 131, .24); outline-offset: 2px; }
 .announcement-card p {
   margin: 10px 0 0;
   color: #526077;
@@ -295,6 +320,13 @@
   }
   .announcement-create-button {
     width: 100%;
+  }
+  .announcement-card-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .announcement-edit-button {
+    align-self: flex-start;
   }
   .announcements-empty-state {
     min-height: 210px;

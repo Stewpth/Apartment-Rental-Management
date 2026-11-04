@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBullhorn,
+  faPenToSquare,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import CreateAnnouncement from "./CreateAnnouncement";
 import api from "../../api/axios";
 
@@ -10,6 +14,7 @@ import "./Announcements.css";
 
 export default function Announcements() {
   const [isCreating, setIsCreating] = useState(false);
+  const [editingAnnouncement, setEditingAnnouncement] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -42,6 +47,23 @@ export default function Announcements() {
       setError(
         requestError.response?.data?.message ||
           "Unable to publish announcement.",
+      );
+      throw requestError;
+    }
+  }
+
+  async function saveAnnouncement({ title, content }) {
+    try {
+      await api.patch(`/admin/announcements/${editingAnnouncement.id}`, {
+        title,
+        content,
+      });
+      await loadAnnouncements();
+      setEditingAnnouncement(null);
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to update announcement.",
       );
       throw requestError;
     }
@@ -107,12 +129,23 @@ export default function Announcements() {
                         key={announcement.id}
                       >
                         <div className="announcement-card-heading">
-                          <h2>{announcement.title}</h2>
-                          <time dateTime={announcement.publishedAt}>
-                            {new Intl.DateTimeFormat("en-US", {
-                              dateStyle: "medium",
-                            }).format(new Date(announcement.publishedAt))}
-                          </time>
+                          <div className="announcement-card-title">
+                            <h2>{announcement.title}</h2>
+                            <time dateTime={announcement.publishedAt}>
+                              {new Intl.DateTimeFormat("en-US", {
+                                dateStyle: "medium",
+                              }).format(new Date(announcement.publishedAt))}
+                            </time>
+                          </div>
+                          <button
+                            type="button"
+                            className="announcement-edit-button"
+                            onClick={() => setEditingAnnouncement(announcement)}
+                            aria-label={`Edit announcement: ${announcement.title}`}
+                          >
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                            <span>Edit Announcement</span>
+                          </button>
                         </div>
                         <p>{announcement.content}</p>
                       </article>
@@ -124,10 +157,14 @@ export default function Announcements() {
           </div>
         </main>
       </div>
-      {isCreating && (
+      {(isCreating || editingAnnouncement) && (
         <CreateAnnouncement
-          onClose={() => setIsCreating(false)}
-          onPublish={publishAnnouncement}
+          announcement={editingAnnouncement}
+          onClose={() => {
+            setIsCreating(false);
+            setEditingAnnouncement(null);
+          }}
+          onPublish={editingAnnouncement ? saveAnnouncement : publishAnnouncement}
         />
       )}
     </>

@@ -2,7 +2,12 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function CreateAnnouncement({ onClose, onPublish }) {
+export default function CreateAnnouncement({
+  announcement = null,
+  onClose,
+  onPublish,
+}) {
+  const isEditing = Boolean(announcement);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,8 +44,14 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
       >
         <header className="announcement-form-header">
           <div>
-            <h2 id="announcement-form-title">Create Announcement</h2>
-            <p>Create an announcement for your tenants.</p>
+            <h2 id="announcement-form-title">
+              {isEditing ? "Edit Announcement" : "Create Announcement"}
+            </h2>
+            <p>
+              {isEditing
+                ? "Update this announcement for your tenants."
+                : "Create an announcement for your tenants."}
+            </p>
           </div>
           <button
             type="button"
@@ -66,6 +77,7 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
               maxLength="120"
               required
               autoFocus
+              defaultValue={announcement?.title || ""}
             />
           </label>
           <label className="announcement-form-field">
@@ -76,6 +88,7 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
               rows="7"
               maxLength="5000"
               required
+              defaultValue={announcement?.content || ""}
             />
           </label>
           <footer className="announcement-form-actions">
@@ -92,7 +105,15 @@ export default function CreateAnnouncement({ onClose, onPublish }) {
               disabled={saving}
             >
               <FontAwesomeIcon icon={faPaperPlane} />
-              <span>{saving ? "Publishing…" : "Publish Announcement"}</span>
+              <span>
+                {saving
+                  ? isEditing
+                    ? "Saving…"
+                    : "Publishing…"
+                  : isEditing
+                    ? "Save Changes"
+                    : "Publish Announcement"}
+              </span>
             </button>
           </footer>
         </form>

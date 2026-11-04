@@ -31,6 +31,7 @@ import {
 import {
   createAnnouncement,
   getAnnouncements,
+  updateAnnouncement,
 } from "../controllers/announcement.controller.js";
 
 const router = Router();
@@ -58,6 +59,7 @@ router.post("/rentals/verify-tenant-activation", verifyTenantActivation);
 router.post("/rentals/resend-tenant-activation", resendTenantActivationOtp);
 router.get("/announcements", getAnnouncements);
 router.post("/announcements", createAnnouncement);
+router.patch("/announcements/:id", updateAnnouncement);
 
 router.get("/dashboard", (req, res) => {
   res.status(200).json({
