@@ -34,7 +34,12 @@ export default function RequestAttachmentLink({ file }) {
   return (
     <div className="request-attachment-preview">
       {url ? (
-        <a href={url} target="_blank" rel="noreferrer" title={`Open ${file.fileName}`}>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          title={`Open ${file.fileName}`}
+        >
           <img src={url} alt={file.fileName} />
           <span>
             <FontAwesomeIcon icon={faPaperclip} /> {file.fileName}

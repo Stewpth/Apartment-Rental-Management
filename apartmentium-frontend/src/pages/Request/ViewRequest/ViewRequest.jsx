@@ -23,7 +23,9 @@ export default function ViewRequest() {
       setRequest(data.data);
       setError("");
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to load request.");
+      setError(
+        requestError.response?.data?.message || "Unable to load request.",
+      );
     }
   }, [id]);
 
@@ -38,7 +40,9 @@ export default function ViewRequest() {
       await load();
       return true;
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to update request.");
+      setError(
+        requestError.response?.data?.message || "Unable to update request.",
+      );
       return false;
     } finally {
       setSaving(false);
@@ -48,10 +52,14 @@ export default function ViewRequest() {
   async function confirmMoveOut(actualMoveOutDate) {
     setSaving(true);
     try {
-      await api.post(`/admin/requests/${id}/confirm-move-out`, { actualMoveOutDate });
+      await api.post(`/admin/requests/${id}/confirm-move-out`, {
+        actualMoveOutDate,
+      });
       await load();
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to confirm move-out.");
+      setError(
+        requestError.response?.data?.message || "Unable to confirm move-out.",
+      );
     } finally {
       setSaving(false);
     }
@@ -63,7 +71,9 @@ export default function ViewRequest() {
       await api.post(`/admin/rentals/${request.rental.id}/mark-unit-ready`, {});
       await load();
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to mark unit ready.");
+      setError(
+        requestError.response?.data?.message || "Unable to mark unit ready.",
+      );
     } finally {
       setSaving(false);
     }
@@ -80,21 +90,37 @@ export default function ViewRequest() {
             <div className="request-container view-request-container">
               <div className="request-contents view-request-contents">
                 <Link to="/admin/requests" className="request-back-link">
-                  <FontAwesomeIcon icon={faArrowLeft} /> <span>Back to Requests</span>
+                  <FontAwesomeIcon icon={faArrowLeft} />{" "}
+                  <span>Back to Requests</span>
                 </Link>
-                {error && <p className="payments-error" role="alert">{error}</p>}
-                {request && <>
-                  <RequestOverview request={request} />
-                  <AdminRequestFields request={request} onSave={update} saving={saving} />
-                  {request.settlement && <SettlementPanel settlement={request.settlement} onRefresh={load} />}
-                  <RequestActions
-                    request={request}
-                    saving={saving}
-                    onUpdate={update}
-                    onConfirmMoveOut={confirmMoveOut}
-                    onMarkUnitReady={markUnitReady}
-                  />
-                </>}
+                {error && (
+                  <p className="payments-error" role="alert">
+                    {error}
+                  </p>
+                )}
+                {request && (
+                  <>
+                    <RequestOverview request={request} />
+                    <AdminRequestFields
+                      request={request}
+                      onSave={update}
+                      saving={saving}
+                    />
+                    {request.settlement && (
+                      <SettlementPanel
+                        settlement={request.settlement}
+                        onRefresh={load}
+                      />
+                    )}
+                    <RequestActions
+                      request={request}
+                      saving={saving}
+                      onUpdate={update}
+                      onConfirmMoveOut={confirmMoveOut}
+                      onMarkUnitReady={markUnitReady}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
