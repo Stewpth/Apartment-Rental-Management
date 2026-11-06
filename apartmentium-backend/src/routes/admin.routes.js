@@ -4,6 +4,9 @@ import { authenticate, authorize } from "../middleware/auth.middleware.js";
 import {
   createUnit,
   getAvailableUnits,
+  getUnoccupiedUnits,
+  setUnitAvailableStatus,
+  setUnitMaintenanceStatus,
 } from "../controllers/unit.controller.js";
 import {
   assignTenant,
@@ -50,6 +53,9 @@ router.use(authenticate, authorize("ADMIN"));
 
 router.post("/units", createUnit);
 router.get("/units/available", getAvailableUnits);
+router.get("/units/unoccupied", getUnoccupiedUnits);
+router.patch("/units/:unitId/maintenance", setUnitMaintenanceStatus);
+router.patch("/units/:unitId/available", setUnitAvailableStatus);
 
 router.post("/rentals/assign-tenant", assignTenant);
 router.get("/rentals", getRentalRecords);

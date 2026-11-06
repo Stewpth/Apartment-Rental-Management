@@ -7,6 +7,8 @@ import {
   changeTenantPassword,
   getRentalUnits,
   resendRentalTenantActivationOtp,
+  setUnitAvailableStatus,
+  setUnitMaintenanceStatus,
 } from "../../../api/rentalApi";
 import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
@@ -31,6 +33,10 @@ export default function ViewRentalPage() {
   const [resendingActivationOtp, setResendingActivationOtp] = useState(false);
   const [resendActivationStatus, setResendActivationStatus] = useState("");
   const [resendActivationError, setResendActivationError] = useState("");
+  const [settingMaintenance, setSettingMaintenance] = useState(false);
+  const [maintenanceStatus, setMaintenanceStatus] = useState("");
+  const [maintenanceError, setMaintenanceError] = useState("");
+  const [settingAvailable, setSettingAvailable] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -65,15 +71,25 @@ export default function ViewRentalPage() {
 
   async function handleChangePassword() {
     if (!unit?.rental_id || changingPassword) return;
-    if (!window.confirm(`Generate a new password and email it to ${unit.tenant_email}? The tenant's current password will stop working.`)) return;
+    if (
+      !window.confirm(
+        `Generate a new password and email it to ${unit.tenant_email}? The tenant's current password will stop working.`,
+      )
+    )
+      return;
     setChangingPassword(true);
     setPasswordStatus("");
     setPasswordError("");
     try {
       const result = await changeTenantPassword(unit.rental_id);
-      setPasswordStatus(result.message || "The new password was emailed to the tenant.");
+      setPasswordStatus(
+        result.message || "The new password was emailed to the tenant.",
+      );
     } catch (requestError) {
-      setPasswordError(requestError.response?.data?.message || "Unable to change the tenant password.");
+      setPasswordError(
+        requestError.response?.data?.message ||
+          "Unable to change the tenant password.",
+      );
     } finally {
       setChangingPassword(false);
     }
@@ -90,7 +106,8 @@ export default function ViewRentalPage() {
       setActivationStatus(result.message || "Tenant account activated.");
     } catch (requestError) {
       setActivationError(
-        requestError.response?.data?.message || "Unable to activate tenant account.",
+        requestError.response?.data?.message ||
+          "Unable to activate tenant account.",
       );
     } finally {
       setActivatingTenant(false);
@@ -104,14 +121,67 @@ export default function ViewRentalPage() {
     setResendActivationError("");
     try {
       const result = await resendRentalTenantActivationOtp(unit.rental_id);
-      setResendActivationStatus(result.message || "A new OTP was sent to the tenant.");
+      setResendActivationStatus(
+        result.message || "A new OTP was sent to the tenant.",
+      );
       return result;
     } catch (requestError) {
       setResendActivationError(
-        requestError.response?.data?.message || "Unable to resend the activation OTP.",
+        requestError.response?.data?.message ||
+          "Unable to resend the activation OTP.",
       );
     } finally {
       setResendingActivationOtp(false);
+    }
+  }
+
+  async function handleSetMaintenanceStatus() {
+    if (!unit?.unit_id || !unit.isAvailable || settingMaintenance) return;
+    setSettingMaintenance(true);
+    setMaintenanceStatus("");
+    setMaintenanceError("");
+    try {
+      const result = await setUnitMaintenanceStatus(unit.unit_id);
+      setUnit((current) => ({
+        ...current,
+        status: "MAINTENANCE",
+        unit_status: "MAINTENANCE",
+        isAvailable: false,
+        isMaintenance: true,
+      }));
+      setMaintenanceStatus(result.message || "Unit set to maintenance.");
+    } catch (requestError) {
+      setMaintenanceError(
+        requestError.response?.data?.message ||
+          "Unable to set unit to maintenance.",
+      );
+    } finally {
+      setSettingMaintenance(false);
+    }
+  }
+
+  async function handleSetAvailableStatus() {
+    if (!unit?.unit_id || !unit.isMaintenance || settingAvailable) return;
+    setSettingAvailable(true);
+    setMaintenanceStatus("");
+    setMaintenanceError("");
+    try {
+      const result = await setUnitAvailableStatus(unit.unit_id);
+      setUnit((current) => ({
+        ...current,
+        status: "AVAILABLE",
+        unit_status: "AVAILABLE",
+        isAvailable: true,
+        isMaintenance: false,
+      }));
+      setMaintenanceStatus(result.message || "Unit marked available.");
+    } catch (requestError) {
+      setMaintenanceError(
+        requestError.response?.data?.message ||
+          "Unable to mark unit available.",
+      );
+    } finally {
+      setSettingAvailable(false);
     }
   }
 
@@ -138,11 +208,17 @@ export default function ViewRentalPage() {
                     actionLabel="Back to Rentals"
                     onAction={() => navigate("/admin/rentals")}
                   />
-                ) : unit.isAvailable ? (
+                ) : unit.isAvailable || unit.isMaintenance ? (
                   <AvailableUnitDetails
                     unit={unit}
                     onBack={() => backToRentals()}
                     onAssignTenant={() => backToRentals(true)}
+                    onSetMaintenanceStatus={handleSetMaintenanceStatus}
+                    onSetAvailableStatus={handleSetAvailableStatus}
+                    settingMaintenance={settingMaintenance}
+                    settingAvailable={settingAvailable}
+                    maintenanceStatus={maintenanceStatus}
+                    maintenanceError={maintenanceError}
                   />
                 ) : (
                   <>

@@ -405,6 +405,11 @@
   color: rgb(36, 119, 68);
 }
 
+.rentals-unit-status.maintenance {
+  background-color: #fff4dc;
+  color: #9a6700;
+}
+
 /* =========================
   RESPONSIVE
 ========================= */

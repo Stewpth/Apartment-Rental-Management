@@ -7,7 +7,7 @@ export default function SearchRecords({
   searchTerm,
   setSearchTerm,
 }) {
-  const filters = ["All Rentals", "Occupied", "Available"];
+  const filters = ["All Rentals", "Occupied", "Available", "Maintenance"];
 
   return (
     <>

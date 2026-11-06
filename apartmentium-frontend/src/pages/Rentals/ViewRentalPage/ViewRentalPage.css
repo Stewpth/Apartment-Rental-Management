@@ -58,7 +58,10 @@
   background: #fff;
   color: #52647c;
   cursor: pointer;
-  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
 }
 
 .view-rental-back-icon:hover {
@@ -69,7 +72,10 @@
 
 .view-rental-tenant-layout {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(250px, 1.15fr) minmax(210px, 0.85fr);
+  grid-template-columns: minmax(220px, 1fr) minmax(250px, 1.15fr) minmax(
+      210px,
+      0.85fr
+    );
   align-items: center;
   gap: 24px;
   padding-top: 24px;
@@ -186,6 +192,14 @@
   border-left: 1px solid #edf1f6;
 }
 
+.view-rental-unit-actions {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+  padding-left: 22px;
+  border-left: 1px solid #edf1f6;
+}
+
 .view-rental-primary-button,
 .view-rental-secondary-button {
   display: flex;
@@ -199,7 +213,10 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .view-rental-primary-button {
@@ -325,6 +342,12 @@
   margin-left: auto;
   background: #e5f7ef;
   color: #138a55;
+}
+
+.view-rental-status.maintenance {
+  margin-left: auto;
+  background: #fff4dc;
+  color: #9a6700;
 }
 
 .view-rental-status.pending {
@@ -459,6 +482,10 @@
   color: #138a55 !important;
 }
 
+.view-rental-maintenance-text {
+  color: #9a6700 !important;
+}
+
 .view-rental-vacant-note {
   display: grid;
   gap: 8px;
@@ -489,8 +516,42 @@
 
 .view-rental-unit-card .view-rental-primary-button,
 .view-rental-unit-card .view-rental-secondary-button {
-  max-width: 320px;
-  margin-top: 10px;
+  width: 100%;
+  max-width: none;
+  min-height: 46px;
+  margin: 0;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.view-rental-unit-card .view-rental-unit-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 230px));
+  gap: 12px;
+  margin-top: 20px;
+  padding: 0;
+  border: 0;
+}
+
+.view-rental-unit-card .view-rental-unit-actions .view-rental-secondary-button {
+  border-color: #cddbed;
+  background: #f7faff;
+  color: #245cae;
+}
+
+.view-rental-unit-card .view-rental-unit-actions .view-rental-secondary-button:hover:not(:disabled) {
+  border-color: #a9c3e8;
+  background: #edf4ff;
+}
+
+.view-rental-unit-card .view-rental-unit-actions [role="status"],
+.view-rental-unit-card .view-rental-unit-actions [role="alert"] {
+  grid-column: 1 / -1;
+}
+
+.view-rental-unit-card button:disabled {
+  opacity: 0.65;
+  cursor: wait;
 }
 
 @media (max-width: 900px) {
@@ -568,5 +629,9 @@
   .view-rental-unit-card .view-rental-primary-button,
   .view-rental-unit-card .view-rental-secondary-button {
     max-width: none;
+  }
+
+  .view-rental-unit-card .view-rental-unit-actions {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

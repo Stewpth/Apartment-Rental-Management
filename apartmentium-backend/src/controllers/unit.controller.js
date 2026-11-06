@@ -102,3 +102,96 @@ export async function getAvailableUnits(req, res) {
     });
   }
 }
+
+export async function getUnoccupiedUnits(req, res) {
+  try {
+    const units = await prisma.unit.findMany({
+      where: { status: { in: ["AVAILABLE", "MAINTENANCE"] } },
+      orderBy: { unitNumber: "asc" },
+      select: {
+        id: true,
+        unitNumber: true,
+        description: true,
+        unitPrice: true,
+        status: true,
+      },
+    });
+
+    return res.status(200).json({ success: true, units });
+  } catch (error) {
+    console.error("Get unoccupied units error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch unoccupied units.",
+    });
+  }
+}
+
+export async function setUnitMaintenanceStatus(req, res) {
+  try {
+    const result = await prisma.unit.updateMany({
+      where: { id: req.params.unitId, status: "AVAILABLE" },
+      data: { status: "MAINTENANCE" },
+    });
+
+    if (result.count !== 1) {
+      const unit = await prisma.unit.findUnique({
+        where: { id: req.params.unitId },
+        select: { id: true, status: true },
+      });
+
+      return res.status(unit ? 409 : 404).json({
+        success: false,
+        message: unit
+          ? "Only an available unit can be set to maintenance."
+          : "Unit was not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Unit status set to maintenance.",
+      status: "MAINTENANCE",
+    });
+  } catch (error) {
+    console.error("Set unit maintenance status error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to set unit maintenance status.",
+    });
+  }
+}
+
+export async function setUnitAvailableStatus(req, res) {
+  try {
+    const result = await prisma.unit.updateMany({
+      where: { id: req.params.unitId, status: "MAINTENANCE" },
+      data: { status: "AVAILABLE" },
+    });
+
+    if (result.count !== 1) {
+      const unit = await prisma.unit.findUnique({
+        where: { id: req.params.unitId },
+        select: { id: true },
+      });
+      return res.status(unit ? 409 : 404).json({
+        success: false,
+        message: unit
+          ? "Only a unit under maintenance can be marked available."
+          : "Unit was not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Unit marked available.",
+      status: "AVAILABLE",
+    });
+  } catch (error) {
+    console.error("Set unit available status error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to mark unit available.",
+    });
+  }
+}

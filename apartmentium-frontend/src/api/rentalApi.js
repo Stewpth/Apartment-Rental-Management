@@ -20,6 +20,8 @@ function mapRentalToUnit(rental) {
     unit: displayUnitNumber(rental.unit.unitNumber),
     unit_cost: Number(rental.monthlyRent),
     isAvailable: false,
+    isMaintenance: false,
+    unit_status: rental.unit.status,
     move_in_date: rental.moveInDate,
     lease_end_date: rental.endDate,
     status: rental.status,
@@ -34,22 +36,34 @@ function mapAvailableUnit(unit) {
     tenant_name: null,
     unit: displayUnitNumber(unit.unitNumber),
     unit_cost: Number(unit.unitPrice),
-    isAvailable: true,
+    isAvailable: unit.status === "AVAILABLE",
+    isMaintenance: unit.status === "MAINTENANCE",
+    unit_status: unit.status,
     status: unit.status,
     description: unit.description,
   };
 }
 
 export async function getRentalUnits() {
-  const [rentalsResponse, availableResponse] = await Promise.all([
+  const [rentalsResponse, unitsResponse] = await Promise.all([
     api.get("/admin/rentals"),
-    api.get("/admin/units/available"),
+    api.get("/admin/units/unoccupied"),
   ]);
 
   return [
     ...rentalsResponse.data.data.map(mapRentalToUnit),
-    ...availableResponse.data.units.map(mapAvailableUnit),
+    ...unitsResponse.data.units.map(mapAvailableUnit),
   ];
+}
+
+export async function setUnitMaintenanceStatus(unitId) {
+  const response = await api.patch(`/admin/units/${unitId}/maintenance`);
+  return response.data;
+}
+
+export async function setUnitAvailableStatus(unitId) {
+  const response = await api.patch(`/admin/units/${unitId}/available`);
+  return response.data;
 }
 
 export async function changeTenantPassword(rentalId) {

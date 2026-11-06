@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import EmptyState from "../../../../components/ui/EmptyState";
 
-function UnitStatus({ isAvailable }) {
+function UnitStatus({ unit }) {
+  const status = unit.isMaintenance
+    ? "maintenance"
+    : unit.isAvailable
+      ? "available"
+      : "occupied";
   return (
-    <div
-      className={`rentals-unit-status ${isAvailable ? "available" : "occupied"}`}
-    >
-      {isAvailable ? "Available" : "Occupied"}
+    <div className={`rentals-unit-status ${status}`}>
+      {status === "maintenance" ? "Maintenance" : status === "available" ? "Available" : "Occupied"}
     </div>
   );
 }
@@ -21,7 +24,8 @@ export default function RecordList({ units, selectedFilter, searchTerm }) {
     const matchesFilter =
       selectedFilter === "All Rentals" ||
       (selectedFilter === "Available" && unit.isAvailable) ||
-      (selectedFilter === "Occupied" && !unit.isAvailable);
+      (selectedFilter === "Occupied" && Boolean(unit.tenant_id)) ||
+      (selectedFilter === "Maintenance" && unit.isMaintenance);
     return matchesSearch && matchesFilter;
   });
 
@@ -48,7 +52,7 @@ export default function RecordList({ units, selectedFilter, searchTerm }) {
                 /month
               </span>
             </span>
-            <UnitStatus isAvailable={unit.isAvailable} />
+            <UnitStatus unit={unit} />
           </button>
         ))
       ) : (
