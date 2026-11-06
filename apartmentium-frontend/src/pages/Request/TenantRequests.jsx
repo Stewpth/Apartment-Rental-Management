@@ -6,6 +6,7 @@ import TenantRequestsHeader from "./tenant-request-contents/TenantRequestsHeader
 import TenantRequestSummary from "./tenant-request-contents/TenantRequestSummary";
 import TenantRequestList from "./tenant-request-contents/TenantRequestList";
 import TenantRequestModal from "./tenant-request-contents/TenantRequestModal";
+import { isAfterTodayInManila } from "../../utils/manilaDate";
 import "./TenantRequests.css";
 
 export default function TenantRequests() {
@@ -27,6 +28,18 @@ export default function TenantRequests() {
     load();
   }, [load]);
   async function handleCreateRequest(formValues) {
+    if (
+      formValues.category === "MOVING_OUT" &&
+      !isAfterTodayInManila(formValues.requestedMoveOutDate)
+    ) {
+      const validationError = new Error(
+        "Requested move-out date must be tomorrow or later.",
+      );
+      validationError.response = {
+        data: { message: validationError.message },
+      };
+      throw validationError;
+    }
     await api.post("/tenant/requests", formValues);
     await load();
     setCurrentPage(1);

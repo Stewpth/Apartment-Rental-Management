@@ -539,7 +539,9 @@
   color: #245cae;
 }
 
-.view-rental-unit-card .view-rental-unit-actions .view-rental-secondary-button:hover:not(:disabled) {
+.view-rental-unit-card
+  .view-rental-unit-actions
+  .view-rental-secondary-button:hover:not(:disabled) {
   border-color: #a9c3e8;
   background: #edf4ff;
 }

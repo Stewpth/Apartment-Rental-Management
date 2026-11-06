@@ -79,6 +79,9 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
                 </button>
               </th>
               <th className="payments-amount-heading">
+                Monthly Rent
+              </th>
+              <th className="payments-amount-heading">
                 <button type="button" onClick={() => toggleSort("totalDue")}>
                   Total Due {sortIcon("totalDue")}
                 </button>
@@ -102,6 +105,9 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
                       : formatPaymentDate(payment.dueDate)}
                   </td>
                   <td className="payments-amount">
+                    {formatPaymentAmount(payment.monthlyRent)}
+                  </td>
+                  <td className="payments-amount">
                     {formatPaymentAmount(payment.totalDue)}
                   </td>
                   <td className="payments-row-action-box">
@@ -118,7 +124,7 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
               ))
             ) : (
               <tr>
-                <td className="payments-empty" colSpan="4">
+                <td className="payments-empty" colSpan="5">
                   <EmptyState
                     title={
                       searchTerm ? "No matching tenants" : "No payment records"

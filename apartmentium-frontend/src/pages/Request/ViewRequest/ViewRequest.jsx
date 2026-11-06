@@ -109,6 +109,7 @@ export default function ViewRequest() {
                     {request.settlement && (
                       <SettlementPanel
                         settlement={request.settlement}
+                        rentalId={request.rental.id}
                         onRefresh={load}
                       />
                     )}

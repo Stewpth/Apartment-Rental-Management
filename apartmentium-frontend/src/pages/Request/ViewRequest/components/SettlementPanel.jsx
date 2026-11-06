@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../../../../api/axios";
 
-export default function SettlementPanel({ settlement, onRefresh }) {
+export default function SettlementPanel({ settlement, rentalId, onRefresh }) {
   const [refundAmount, setRefundAmount] = useState("");
   const [adjustmentAmount, setAdjustmentAmount] = useState("");
   const [reason, setReason] = useState("");
@@ -80,6 +81,11 @@ export default function SettlementPanel({ settlement, onRefresh }) {
         Refund recorded: ₱{refunded.toFixed(2)} · Remaining: ₱
         {Math.max(0, adjustedRefundDue - refunded).toFixed(2)}
       </p>
+      {Number(settlement.unpaidDues) > 0 && (
+        <Link className="request-btn accept" to={`/admin/payments/${rentalId}`}>
+          Review or record remaining rent payments
+        </Link>
+      )}
       <h3>Unpaid due snapshot</h3>
       {settlement.dueSnapshots.map((due) => (
         <p key={due.billingPeriod}>

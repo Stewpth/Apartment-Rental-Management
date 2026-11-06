@@ -9,6 +9,39 @@ export function validDate(value) {
     : date;
 }
 
+export function isAfterTodayInManila(value) {
+  if (!validDate(value)) return false;
+  const today = dateInManila(new Date());
+  return value > today;
+}
+
+function dateInManila(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const dateParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Manila",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(date)
+    .reduce((parts, part) => {
+      if (part.type !== "literal") parts[part.type] = part.value;
+      return parts;
+    }, {});
+  return `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
+}
+
+export function isRenderableRequest(request) {
+  if (request.category !== "MOVING_OUT") return true;
+  const requestedDate = request.requestedMoveOutDate;
+  const requestedDateString =
+    requestedDate instanceof Date
+      ? requestedDate.toISOString().slice(0, 10)
+      : requestedDate;
+  return isAfterTodayInManila(requestedDateString);
+}
+
 export function publicRequest(request) {
   const profile = request.rental.tenant.user.profile;
   return {

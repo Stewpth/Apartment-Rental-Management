@@ -2,9 +2,14 @@ import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
 import supabase, { requestAttachmentsBucket } from "../config/supabase.js";
 import { ensureMonthlyDues } from "./payment.controller.js";
-import { notifyRoleUsers, notifyUser } from "../services/notification.service.js";
+import {
+  notifyRoleUsers,
+  notifyUser,
+} from "../services/notification.service.js";
 import {
   includeRequest,
+  isAfterTodayInManila,
+  isRenderableRequest,
   publicRequest,
   validDate,
 } from "../services/request-data.js";
@@ -78,7 +83,9 @@ async function removeStoredAttachments(files) {
 export async function createTenantRequest(req, res) {
   let stored = [];
   try {
-    const category = String(req.body.category ?? "").toUpperCase();
+    const category = String(req.body.category ?? "")
+      .trim()
+      .toUpperCase();
     const title =
       typeof req.body.title === "string" ? req.body.title.trim() : "";
     const description =
@@ -117,12 +124,16 @@ export async function createTenantRequest(req, res) {
       });
     if (
       category === "MOVING_OUT" &&
-      (!validDate(req.body.requestedMoveOutDate) || reason.length > 500)
+      !isAfterTodayInManila(req.body.requestedMoveOutDate)
     )
       return res.status(400).json({
         success: false,
-        message:
-          "Enter a valid requested move-out date and a reason of 500 characters or fewer.",
+        message: "Requested move-out date must be tomorrow or later.",
+      });
+    if (category === "MOVING_OUT" && reason.length > 500)
+      return res.status(400).json({
+        success: false,
+        message: "Reason must be 500 characters or fewer.",
       });
 
     const rental = await prisma.rental.findFirst({
@@ -138,17 +149,27 @@ export async function createTenantRequest(req, res) {
         message: "An active rental is required to create a request.",
       });
     if (category === "MOVING_OUT") {
-      const activeRequest = await prisma.tenantRequest.findFirst({
+      const activeRequests = await prisma.tenantRequest.findMany({
         where: {
           rentalId: rental.id,
           category,
           status: { in: ["PENDING", "IN_PROGRESS"] },
         },
       });
-      if (activeRequest || rental.status === "ON_LEAVING")
+      if (
+        activeRequests.some(isRenderableRequest) ||
+        rental.status === "ON_LEAVING"
+      )
         return res.status(409).json({
           success: false,
           message: "A moving-out request is already active for this rental.",
+        });
+      // Recheck at the persistence boundary so midnight cannot make a stale
+      // date valid while request validation and creation are in progress.
+      if (!isAfterTodayInManila(req.body.requestedMoveOutDate))
+        return res.status(400).json({
+          success: false,
+          message: "Requested move-out date must be tomorrow or later.",
         });
     }
     stored = await persistAttachments(attachments);
@@ -183,9 +204,7 @@ export async function createTenantRequest(req, res) {
       message: `${responseRequest.tenant.fullName}: ${created.title}`,
       link: `/admin/requests/${created.id}`,
     });
-    return res
-      .status(201)
-      .json({ success: true, data: responseRequest });
+    return res.status(201).json({ success: true, data: responseRequest });
   } catch (error) {
     await removeStoredAttachments(stored);
     if (
@@ -219,10 +238,11 @@ export async function getTenantRequests(req, res) {
       orderBy: { createdAt: "desc" },
       include: includeRequest,
     });
+    const visibleRequests = requests.filter(isRenderableRequest);
     return res.json({
       success: true,
-      count: requests.length,
-      data: requests.map(publicRequest),
+      count: visibleRequests.length,
+      data: visibleRequests.map(publicRequest),
     });
   } catch (error) {
     console.error("Get tenant requests error:", error);
@@ -266,10 +286,11 @@ export async function getAdminRequests(req, res) {
       orderBy: { createdAt: "desc" },
       include: includeRequest,
     });
+    const visibleRequests = requests.filter(isRenderableRequest);
     return res.json({
       success: true,
-      count: requests.length,
-      data: requests.map(publicRequest),
+      count: visibleRequests.length,
+      data: visibleRequests.map(publicRequest),
     });
   } catch (error) {
     console.error("Get admin requests error:", error);
@@ -287,6 +308,7 @@ export async function getRequestDetails(req, res) {
     });
     if (
       !request ||
+      !isRenderableRequest(request) ||
       (req.user.role === "TENANT" &&
         request.rental.tenant.userId !== req.user.id)
     )
@@ -364,7 +386,9 @@ export async function updateRequest(req, res) {
   try {
     const request = await prisma.tenantRequest.findUnique({
       where: { id: req.params.id },
-      include: { rental: { include: { tenant: { select: { userId: true } } } } },
+      include: {
+        rental: { include: { tenant: { select: { userId: true } } } },
+      },
     });
     if (!request)
       return res
@@ -402,6 +426,18 @@ export async function updateRequest(req, res) {
       return res.status(409).json({
         success: false,
         message: "Only an active rental can be approved to move out.",
+      });
+    if (
+      request.category === "MOVING_OUT" &&
+      status === "IN_PROGRESS" &&
+      !isAfterTodayInManila(
+        request.requestedMoveOutDate?.toISOString().slice(0, 10),
+      )
+    )
+      return res.status(409).json({
+        success: false,
+        message:
+          "This requested move-out date has passed. Ask the tenant to submit a new request with a future date.",
       });
     if (request.category === "MOVING_OUT" && status === "IN_PROGRESS")
       await ensureMonthlyDues(request.rental);

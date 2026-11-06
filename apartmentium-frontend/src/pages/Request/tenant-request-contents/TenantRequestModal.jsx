@@ -4,6 +4,10 @@ import { faImage, faXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TenantRequestModal.css";
 import RequestAttachmentLink from "../RequestAttachmentLink";
 import RequestTimeline from "../ViewRequest/components/RequestTimeline";
+import {
+  getTomorrowInManila,
+  isAfterTodayInManila,
+} from "../../../utils/manilaDate";
 
 const labels = {
   REPAIR: "Repair",
@@ -55,6 +59,13 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
   async function submit(event) {
     event.preventDefault();
     setError("");
+    if (
+      category === "MOVING_OUT" &&
+      !isAfterTodayInManila(requestedMoveOutDate)
+    ) {
+      setError("Requested move-out date must be tomorrow or later.");
+      return;
+    }
     if (
       (category === "REPAIR" || category === "COMPLAINT") &&
       selectedFiles.length > 3
@@ -267,6 +278,7 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
                   <input
                     type="date"
                     required
+                    min={getTomorrowInManila()}
                     value={requestedMoveOutDate}
                     onChange={(event) =>
                       setRequestedMoveOutDate(event.target.value)

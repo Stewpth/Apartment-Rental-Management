@@ -3,6 +3,7 @@ import prisma from "../config/prisma.js";
 import { notifyUser } from "../services/notification.service.js";
 
 const PAYMENT_RENTAL_STATUSES = ["ACTIVE", "ON_LEAVING", "ENDED"];
+const ADMIN_PAYMENT_LIST_STATUSES = ["ACTIVE", "ON_LEAVING"];
 
 function dateOnly(date) {
   return date ? new Date(date).toISOString().slice(0, 10) : null;
@@ -97,9 +98,12 @@ function summarizeDues(dues) {
   return { totalDue: totalDue.toFixed(2), dueDate: dateOnly(dueDate) };
 }
 
-async function getRentalWithCurrentDues(where) {
+async function getRentalWithCurrentDues(
+  where,
+  statuses = PAYMENT_RENTAL_STATUSES,
+) {
   const rentals = await prisma.rental.findMany({
-    where: { ...where, status: { in: PAYMENT_RENTAL_STATUSES } },
+    where: { ...where, status: { in: statuses } },
     orderBy: { createdAt: "desc" },
     select: { id: true, moveInDate: true, monthlyRent: true, status: true },
   });
@@ -109,9 +113,9 @@ async function getRentalWithCurrentDues(where) {
 
 export async function getPaymentRecords(req, res) {
   try {
-    await getRentalWithCurrentDues({});
+    await getRentalWithCurrentDues({}, ADMIN_PAYMENT_LIST_STATUSES);
     const rentals = await prisma.rental.findMany({
-      where: { status: { in: PAYMENT_RENTAL_STATUSES } },
+      where: { status: { in: ADMIN_PAYMENT_LIST_STATUSES } },
       orderBy: { createdAt: "desc" },
       include: {
         unit: true,
