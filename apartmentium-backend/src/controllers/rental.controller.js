@@ -1,7 +1,10 @@
 import prisma from "../config/prisma.js";
 import bcrypt from "bcrypt";
 import { randomBytes } from "node:crypto";
-import { sendActivationOtp } from "../services/activation.service.js";
+import {
+  sendActivationOtp,
+  verifyActivationOtp,
+} from "../services/activation.service.js";
 import { sendEmail } from "../services/email.service.js";
 
 export async function assignTenant(req, res) {
@@ -240,6 +243,79 @@ export async function assignTenant(req, res) {
   }
 }
 
+export async function activateRentalTenant(req, res) {
+  const { otp } = req.body ?? {};
+  try {
+    const rental = await prisma.rental.findFirst({
+      where: {
+        id: req.params.rentalId,
+        status: { in: ["ACTIVE", "ON_LEAVING"] },
+      },
+      select: {
+        tenant: { select: { userId: true, user: { select: { status: true } } } },
+      },
+    });
+
+    if (!rental?.tenant?.userId) {
+      return res.status(404).json({
+        success: false,
+        message: "Tenant account was not found for this rental.",
+      });
+    }
+
+    if (rental.tenant.user.status !== "PENDING_ACTIVATION") {
+      return res.status(409).json({
+        success: false,
+        message: "This tenant account is already activated.",
+      });
+    }
+
+    const result = await verifyActivationOtp(rental.tenant.userId, otp);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Failed to activate tenant account.",
+    });
+  }
+}
+
+export async function resendRentalTenantActivationOtp(req, res) {
+  try {
+    const rental = await prisma.rental.findFirst({
+      where: {
+        id: req.params.rentalId,
+        status: { in: ["ACTIVE", "ON_LEAVING"] },
+      },
+      select: {
+        tenant: { select: { userId: true, user: { select: { status: true } } } },
+      },
+    });
+
+    if (!rental?.tenant?.userId) {
+      return res.status(404).json({
+        success: false,
+        message: "Tenant account was not found for this rental.",
+      });
+    }
+
+    if (rental.tenant.user.status !== "PENDING_ACTIVATION") {
+      return res.status(409).json({
+        success: false,
+        message: "This tenant account is already activated.",
+      });
+    }
+
+    const result = await sendActivationOtp(rental.tenant.userId);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Failed to resend activation OTP.",
+    });
+  }
+}
+
 export async function getRentalRecords(req, res) {
   try {
     const rentals = await prisma.rental.findMany({
@@ -256,6 +332,8 @@ export async function getRentalRecords(req, res) {
       unitId: rental.unit.id,
       tenant: {
         id: rental.tenant.id,
+        userId: rental.tenant.user.id,
+        accountStatus: rental.tenant.user.status,
         fullName:
           rental.tenant.user.profile?.fullName ?? rental.tenant.user.username,
         username: rental.tenant.user.username,

@@ -11,6 +11,8 @@ function mapRentalToUnit(rental) {
     unit_id: rental.unitId,
     rental_id: rental.id,
     tenant_id: rental.tenant.id,
+    tenant_user_id: rental.tenant.userId,
+    tenant_account_status: rental.tenant.accountStatus,
     tenant_name: rental.tenant.fullName,
     tenant_email: rental.tenant.email,
     tenant_contact: rental.tenant.phone,
@@ -53,6 +55,21 @@ export async function getRentalUnits() {
 export async function changeTenantPassword(rentalId) {
   const response = await api.post(
     `/admin/rentals/${rentalId}/change-tenant-password`,
+  );
+  return response.data;
+}
+
+export async function activateRentalTenant(rentalId, otp) {
+  const response = await api.post(
+    `/admin/rentals/${rentalId}/activate-tenant`,
+    { otp },
+  );
+  return response.data;
+}
+
+export async function resendRentalTenantActivationOtp(rentalId) {
+  const response = await api.post(
+    `/admin/rentals/${rentalId}/resend-activation-otp`,
   );
   return response.data;
 }

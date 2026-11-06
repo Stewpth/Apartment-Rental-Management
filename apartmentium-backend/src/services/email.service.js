@@ -1,35 +1,49 @@
 import "dotenv/config";
-import nodemailer from "nodemailer";
 
-const emailUser = process.env.EMAIL_USER;
-const emailAppPassword = process.env.EMAIL_APP_PASSWORD;
+const brevoApiKey = process.env.BREVO_API_KEY;
+const emailFrom = process.env.EMAIL_FROM;
 
-if (!emailUser || !emailAppPassword) {
-  throw new Error("Gmail email configuration is missing.");
+if (!brevoApiKey || !emailFrom) {
+  throw new Error(
+    "Brevo email configuration is missing (BREVO_API_KEY, EMAIL_FROM).",
+  );
 }
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: emailUser,
-    pass: emailAppPassword,
-  },
-});
+const senderMatch = emailFrom.match(/^\s*(.*?)\s*<([^<>]+)>\s*$/);
+const sender = senderMatch
+  ? { name: senderMatch[1], email: senderMatch[2] }
+  : { email: emailFrom.trim() };
+
+console.log("Brevo sender:", sender);
 
 export async function sendEmail({ to, subject, html }) {
   try {
-    const info = await transporter.sendMail({
-      from: `Apartmentium <${emailUser}>`,
-      to,
-      subject,
-      html,
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": brevoApiKey,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender,
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
     });
 
-    return info;
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      console.error("Brevo email error:", result);
+      throw new Error(
+        result.message || `Brevo returned HTTP ${response.status}.`,
+      );
+    }
+
+    return result;
   } catch (error) {
-    console.error("Gmail email error:", error);
-    throw new Error("Failed to send email.");
+    console.error("Brevo email error:", error);
+    throw new Error("Failed to send email.", { cause: error });
   }
 }

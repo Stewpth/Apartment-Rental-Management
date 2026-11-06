@@ -19,6 +19,7 @@ const TenantDashboard = lazy(() => import("./pages/Dashboard/TenantDashboard"));
 const ProfilePage = lazy(() => import("./pages/Account/ProfilePage"));
 const SecuritySettingsPage = lazy(() => import("./pages/Account/SecuritySettingsPage"));
 const Login = lazy(() => import("./pages/Login"));
+const ActivateAccountPage = lazy(() => import("./pages/ActivateAccountPage"));
 
 function LoginRoute() {
   const { user, isLoading } = useAuth();
@@ -33,6 +34,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeRedirect />} />
         <Route path="/login" element={<LoginRoute />} />
+        <Route path="/activate-account" element={<ActivateAccountPage />} />
 
         <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

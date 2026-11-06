@@ -21,14 +21,22 @@ if (process.env.NODE_ENV === "production" && !process.env.FRONTEND_URL) {
 }
 
 app.disable("x-powered-by");
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+app.use(
+  helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }),
+);
 
-if (process.env.TRUST_PROXY_HOPS) {
-  const trustProxyHops = Number(process.env.TRUST_PROXY_HOPS);
+const trustProxyHopsValue = process.env.TRUST_PROXY_HOPS;
+if (trustProxyHopsValue) {
+  const trustProxyHops = Number(trustProxyHopsValue);
   if (!Number.isInteger(trustProxyHops) || trustProxyHops < 1) {
-    throw new Error("TRUST_PROXY_HOPS must be a positive integer when configured.");
+    throw new Error(
+      "TRUST_PROXY_HOPS must be a positive integer when configured.",
+    );
   }
   app.set("trust proxy", trustProxyHops);
+} else if (process.env.NODE_ENV === "production") {
+  // Render terminates public traffic at one trusted reverse proxy.
+  app.set("trust proxy", 1);
 }
 
 app.use(

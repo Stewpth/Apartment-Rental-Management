@@ -73,6 +73,42 @@ export async function sendActivationOtp(userId) {
   };
 }
 
+export async function resendActivationOtpForEmail(email) {
+  const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+  if (!normalizedEmail) throw new Error("Email address is required.");
+
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true, status: true },
+  });
+
+  if (!user || user.status !== "PENDING_ACTIVATION") {
+    return {
+      success: true,
+      message: "If the account needs activation, a new OTP will be sent.",
+    };
+  }
+
+  await sendActivationOtp(user.id);
+  return { success: true, message: "A new activation OTP has been sent." };
+}
+
+export async function verifyActivationOtpForEmail(email, otp) {
+  const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+  if (!normalizedEmail) throw new Error("Email address is required.");
+
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true, status: true },
+  });
+
+  if (!user || user.status !== "PENDING_ACTIVATION") {
+    throw new Error("The account or activation OTP is invalid.");
+  }
+
+  return verifyActivationOtp(user.id, otp);
+}
+
 export async function verifyActivationOtp(userId, submittedOtp) {
   if (typeof submittedOtp !== "string" || !/^\d{6}$/.test(submittedOtp)) {
     throw new Error("Please enter a valid 6-digit OTP.");

@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../../components/layout/Sidebar";
 import Header from "../../../components/layout/Header";
-import { changeTenantPassword, getRentalUnits } from "../../../api/rentalApi";
+import {
+  activateRentalTenant,
+  changeTenantPassword,
+  getRentalUnits,
+  resendRentalTenantActivationOtp,
+} from "../../../api/rentalApi";
 import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
 import RentalTenantSummary from "./RentalTenantSummary";
@@ -20,6 +25,12 @@ export default function ViewRentalPage() {
   const [passwordStatus, setPasswordStatus] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+  const [activatingTenant, setActivatingTenant] = useState(false);
+  const [activationStatus, setActivationStatus] = useState("");
+  const [activationError, setActivationError] = useState("");
+  const [resendingActivationOtp, setResendingActivationOtp] = useState(false);
+  const [resendActivationStatus, setResendActivationStatus] = useState("");
+  const [resendActivationError, setResendActivationError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -68,6 +79,42 @@ export default function ViewRentalPage() {
     }
   }
 
+  async function handleActivateTenant(otp) {
+    if (!unit?.rental_id || activatingTenant) return;
+    setActivatingTenant(true);
+    setActivationStatus("");
+    setActivationError("");
+    try {
+      const result = await activateRentalTenant(unit.rental_id, otp);
+      setUnit((current) => ({ ...current, tenant_account_status: "ACTIVE" }));
+      setActivationStatus(result.message || "Tenant account activated.");
+    } catch (requestError) {
+      setActivationError(
+        requestError.response?.data?.message || "Unable to activate tenant account.",
+      );
+    } finally {
+      setActivatingTenant(false);
+    }
+  }
+
+  async function handleResendActivationOtp() {
+    if (!unit?.rental_id || resendingActivationOtp) return;
+    setResendingActivationOtp(true);
+    setResendActivationStatus("");
+    setResendActivationError("");
+    try {
+      const result = await resendRentalTenantActivationOtp(unit.rental_id);
+      setResendActivationStatus(result.message || "A new OTP was sent to the tenant.");
+      return result;
+    } catch (requestError) {
+      setResendActivationError(
+        requestError.response?.data?.message || "Unable to resend the activation OTP.",
+      );
+    } finally {
+      setResendingActivationOtp(false);
+    }
+  }
+
   const tenantName = unit?.tenant_name || "No Tenant Assigned";
 
   return (
@@ -109,6 +156,15 @@ export default function ViewRentalPage() {
                       changingPassword={changingPassword}
                       passwordStatus={passwordStatus}
                       passwordError={passwordError}
+                      accountStatus={unit.tenant_account_status}
+                      onActivateTenant={handleActivateTenant}
+                      activatingTenant={activatingTenant}
+                      activationStatus={activationStatus}
+                      activationError={activationError}
+                      onResendActivationOtp={handleResendActivationOtp}
+                      resendingActivationOtp={resendingActivationOtp}
+                      resendActivationStatus={resendActivationStatus}
+                      resendActivationError={resendActivationError}
                     />
                     <RentalInformation unit={unit} />
                   </>

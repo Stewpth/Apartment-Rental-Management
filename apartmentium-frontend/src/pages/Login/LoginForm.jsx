@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
   faEye,
@@ -112,6 +112,9 @@ export default function LoginForm() {
           {error && (
             <p className="login-error" role="alert">
               {error}
+              {error.toLowerCase().includes("not active") && (
+                <> <Link to="/activate-account">Activate your account</Link></>
+              )}
             </p>
           )}
           <button
@@ -126,7 +129,8 @@ export default function LoginForm() {
 
         <p className="login-form-footer">
           Need help accessing your account?
-          <span> Contact your administrator.</span>
+          <span> Contact your administrator. </span>
+          <Link to="/activate-account">Activate account</Link>
         </p>
       </div>
     </section>

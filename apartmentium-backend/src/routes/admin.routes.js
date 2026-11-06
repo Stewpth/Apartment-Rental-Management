@@ -7,8 +7,10 @@ import {
 } from "../controllers/unit.controller.js";
 import {
   assignTenant,
+  activateRentalTenant,
   changeTenantPassword,
   getRentalRecords,
+  resendRentalTenantActivationOtp,
 } from "../controllers/rental.controller.js";
 import {
   getPaymentDetails,
@@ -51,6 +53,11 @@ router.get("/units/available", getAvailableUnits);
 
 router.post("/rentals/assign-tenant", assignTenant);
 router.get("/rentals", getRentalRecords);
+router.post("/rentals/:rentalId/activate-tenant", activateRentalTenant);
+router.post(
+  "/rentals/:rentalId/resend-activation-otp",
+  resendRentalTenantActivationOtp,
+);
 router.post("/rentals/:rentalId/change-tenant-password", changeTenantPassword);
 router.get("/payments", getPaymentRecords);
 router.get("/payments/:rentalId", getPaymentDetails);

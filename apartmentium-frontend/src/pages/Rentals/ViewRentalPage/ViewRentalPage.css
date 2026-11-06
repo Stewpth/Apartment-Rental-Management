@@ -327,6 +327,80 @@
   color: #138a55;
 }
 
+.view-rental-status.pending {
+  margin-top: 7px;
+  background: #fff4dc;
+  color: #9a6700;
+}
+
+.view-rental-activation-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(140px, 190px) auto auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid #f1dfb7;
+  border-radius: 12px;
+  background: #fffbf1;
+}
+
+.view-rental-activation-form h3 {
+  margin: 0 0 5px;
+  color: #203b63;
+  font-size: 13px;
+}
+
+.view-rental-activation-form p {
+  color: #8290a3;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.view-rental-activation-form input {
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  font: inherit;
+  letter-spacing: 2px;
+}
+
+.view-rental-activation-form button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #245cae;
+  border-radius: 9px;
+  background: #245cae;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-rental-activation-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.view-rental-activation-form button.view-rental-resend-otp-button {
+  border-color: #dce5f0;
+  background: #fff;
+  color: #38516f;
+}
+
+.view-rental-activation-form [role="status"] {
+  grid-column: 1 / -1;
+  color: #138a55;
+}
+
+.view-rental-activation-form [role="alert"] {
+  grid-column: 1 / -1;
+  color: #b42318;
+}
+
 .view-rental-unit-intro {
   display: flex;
   align-items: center;
@@ -422,6 +496,10 @@
 @media (max-width: 900px) {
   .view-rental-tenant-layout {
     grid-template-columns: minmax(200px, 1fr) minmax(230px, 1fr);
+  }
+
+  .view-rental-activation-form {
+    grid-template-columns: 1fr;
   }
 
   .view-rental-password-actions {
