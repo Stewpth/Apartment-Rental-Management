@@ -5,9 +5,12 @@ import "./Login.css";
 
 export default function Login() {
   return (
-    <main className="login-container">
-      <BackgroundLogin />
-      <LoginForm />
-    </main>
+    <>
+      <title>Login</title>
+      <main className="login-container">
+        <BackgroundLogin />
+        <LoginForm />
+      </main>
+    </>
   );
 }

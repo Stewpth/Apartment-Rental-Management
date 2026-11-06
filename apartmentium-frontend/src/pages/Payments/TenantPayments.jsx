@@ -17,27 +17,49 @@ export default function TenantPayments() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/tenant/payments/me")
+    api
+      .get("/tenant/payments/me")
       .then(({ data }) => setPayments(data.data))
-      .catch((requestError) => setError(requestError.response?.data?.message || "Unable to load your payment information."))
+      .catch((requestError) =>
+        setError(
+          requestError.response?.data?.message ||
+            "Unable to load your payment information.",
+        ),
+      )
       .finally(() => setLoading(false));
   }, []);
   return (
     <>
-      <title>My Payments | Apartmentium</title>
+      <title>My Payments</title>
       <div className="page-container">
         <Sidebar />
         <main className="page-main">
           <Header />
           <div className="page-content tenant-payments-page">
-            {loading ? <LoadingState message="Loading your payment information…" /> : error ? <p className="payments-error" role="alert">{error}</p> : payments ? <>
-              <div className="tenant-payments-main">
-                <TenantPaymentsHeader />
-                <PaymentSummaryCards summary={payments.summary} />
-                <TenantPaymentHistory payments={payments.payments} />
-              </div>
-              <TenantPaymentSidebar summary={payments.summary} rental={payments.rental} />
-            </> : <EmptyState title="No payment information" description="An active rental is required before payment information is available." />}
+            {loading ? (
+              <LoadingState message="Loading your payment information…" />
+            ) : error ? (
+              <p className="payments-error" role="alert">
+                {error}
+              </p>
+            ) : payments ? (
+              <>
+                <div className="tenant-payments-main">
+                  <TenantPaymentsHeader />
+                  <PaymentSummaryCards summary={payments.summary} />
+                  <TenantPaymentHistory payments={payments.payments} />
+                </div>
+                <TenantPaymentSidebar
+                  summary={payments.summary}
+                  rental={payments.rental}
+                />
+              </>
+            ) : (
+              <EmptyState
+                title="No payment information"
+                description="An active rental is required before payment information is available."
+              />
+            )}
           </div>
         </main>
       </div>
