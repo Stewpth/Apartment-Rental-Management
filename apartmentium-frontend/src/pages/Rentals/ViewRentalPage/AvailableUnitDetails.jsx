@@ -94,8 +94,8 @@ export default function AvailableUnitDetails({
               disabled={settingMaintenance}
             >
               {settingMaintenance
-                ? "Setting maintenance status..."
-                : "Set Maintenance Status"}
+                ? "Setting as maintenance..."
+                : "Set as Maintenance"}
             </button>
           </>
         )}
