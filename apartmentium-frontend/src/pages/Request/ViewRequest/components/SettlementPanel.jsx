@@ -56,10 +56,31 @@ export default function SettlementPanel({ settlement, rentalId, onRefresh }) {
       0,
     );
   const adjustedRefundDue = Math.max(0, -adjustedBalance);
+  const amountOwedCents = Math.max(0, Math.round(adjustedBalance * 100));
+  const remainingRefundCents = Math.max(
+    0,
+    Math.round(adjustedRefundDue * 100) - Math.round(refunded * 100),
+  );
+  const fullyPaid = amountOwedCents === 0;
 
   return (
-    <section className="request-description-container">
+    <section className="rental-history-settlement">
       <h2>Final Settlement Snapshot</h2>
+      <div
+        className={`settlement-payment-status${fullyPaid ? " is-paid" : " has-balance"}`}
+        role="status"
+      >
+        <span className="settlement-payment-badge">
+          {fullyPaid ? "Fully paid" : "Balance due"}
+        </span>
+        <p>
+          {fullyPaid
+            ? remainingRefundCents > 0
+              ? `The tenant has no balance to pay. Refund pending: ₱${(remainingRefundCents / 100).toFixed(2)}.`
+              : "The tenant has no remaining balance to pay."
+            : `Remaining balance to pay: ₱${(amountOwedCents / 100).toFixed(2)}.`}
+        </p>
+      </div>
       <p>Unpaid monthly dues: ₱{settlement.unpaidDues}</p>
       <p>Unused rent credit: ₱{settlement.unusedRentCredit}</p>
       <p>
@@ -81,7 +102,7 @@ export default function SettlementPanel({ settlement, rentalId, onRefresh }) {
         Refund recorded: ₱{refunded.toFixed(2)} · Remaining: ₱
         {Math.max(0, adjustedRefundDue - refunded).toFixed(2)}
       </p>
-      {Number(settlement.unpaidDues) > 0 && (
+      {amountOwedCents > 0 && Number(settlement.unpaidDues) > 0 && (
         <Link className="request-btn accept" to={`/admin/payments/${rentalId}`}>
           Review or record remaining rent payments
         </Link>

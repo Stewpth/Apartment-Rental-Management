@@ -292,6 +292,85 @@ export async function markUnitReady(req, res) {
   }
 }
 
+export async function getUnitRentalHistory(req, res) {
+  try {
+    const unit = await prisma.unit.findUnique({
+      where: { id: req.params.unitId },
+      select: { id: true },
+    });
+    if (!unit)
+      return res
+        .status(404)
+        .json({ success: false, message: "Unit not found." });
+
+    const rentals = await prisma.rental.findMany({
+      where: { unitId: unit.id, status: "ENDED" },
+      orderBy: [{ endDate: "desc" }, { createdAt: "desc" }],
+      include: {
+        tenant: { include: { user: { include: { profile: true } } } },
+        settlement: {
+          include: {
+            refunds: { orderBy: { processedAt: "asc" } },
+            adjustments: { orderBy: { createdAt: "asc" } },
+            dueSnapshots: { orderBy: { billingPeriod: "asc" } },
+          },
+        },
+      },
+    });
+
+    const data = rentals.map((rental) => {
+      const profile = rental.tenant.user.profile;
+      const settlement = rental.settlement;
+      return {
+        rentalId: rental.id,
+        tenant: {
+          fullName: profile?.fullName ?? rental.tenant.user.username,
+          email: rental.tenant.user.email,
+          contact: profile?.phone ?? null,
+        },
+        moveInDate: rental.moveInDate.toISOString().slice(0, 10),
+        moveOutDate: rental.endDate?.toISOString().slice(0, 10) ?? null,
+        settlement: settlement
+          ? {
+              id: settlement.id,
+              unpaidDues: settlement.unpaidDues.toString(),
+              unusedRentCredit: settlement.unusedRentCredit.toString(),
+              existingTenantCredit: settlement.existingTenantCredit.toString(),
+              tenantCreditRefund: settlement.tenantCreditRefund.toString(),
+              approvedCharges: settlement.approvedCharges.toString(),
+              creditsApplied: settlement.creditsApplied.toString(),
+              originalBalance: settlement.originalBalance.toString(),
+              amountOwed: settlement.amountOwed.toString(),
+              refundDue: settlement.refundDue.toString(),
+              refunds: settlement.refunds.map((refund) => ({
+                ...refund,
+                amount: refund.amount.toString(),
+              })),
+              adjustments: settlement.adjustments.map((adjustment) => ({
+                ...adjustment,
+                amount: adjustment.amount.toString(),
+              })),
+              dueSnapshots: settlement.dueSnapshots.map((due) => ({
+                ...due,
+                amountDue: due.amountDue.toString(),
+                amountPaid: due.amountPaid.toString(),
+                balance: due.balance.toString(),
+              })),
+            }
+          : null,
+      };
+    });
+
+    return res.status(200).json({ success: true, count: data.length, data });
+  } catch (error) {
+    console.error("Get unit rental history error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve this unit's rental history.",
+    });
+  }
+}
+
 export async function recordSettlementRefund(req, res) {
   try {
     const amount = Number(req.body.amount);

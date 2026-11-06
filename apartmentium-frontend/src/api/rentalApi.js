@@ -66,6 +66,11 @@ export async function setUnitAvailableStatus(unitId) {
   return response.data;
 }
 
+export async function getUnitRentalHistory(unitId) {
+  const response = await api.get(`/admin/units/${unitId}/rental-history`);
+  return response.data.data;
+}
+
 export async function changeTenantPassword(rentalId) {
   const response = await api.post(
     `/admin/rentals/${rentalId}/change-tenant-password`,

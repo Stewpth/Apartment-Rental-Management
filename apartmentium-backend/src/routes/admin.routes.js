@@ -32,6 +32,7 @@ import {
 } from "../controllers/request.controller.js";
 import {
   confirmMoveOut,
+  getUnitRentalHistory,
   markUnitReady,
   recordSettlementAdjustment,
   recordSettlementRefund,
@@ -56,6 +57,7 @@ router.get("/units/available", getAvailableUnits);
 router.get("/units/unoccupied", getUnoccupiedUnits);
 router.patch("/units/:unitId/maintenance", setUnitMaintenanceStatus);
 router.patch("/units/:unitId/available", setUnitAvailableStatus);
+router.get("/units/:unitId/rental-history", getUnitRentalHistory);
 
 router.post("/rentals/assign-tenant", assignTenant);
 router.get("/rentals", getRentalRecords);

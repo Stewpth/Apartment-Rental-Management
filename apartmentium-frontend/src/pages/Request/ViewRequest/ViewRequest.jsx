@@ -8,7 +8,6 @@ import Header from "../../../components/layout/Header";
 import AdminRequestFields from "./components/AdminRequestFields";
 import RequestActions from "./components/RequestActions";
 import RequestOverview from "./components/RequestOverview";
-import SettlementPanel from "./components/SettlementPanel";
 import "./ViewRequest.css";
 
 export default function ViewRequest() {
@@ -106,13 +105,6 @@ export default function ViewRequest() {
                       onSave={update}
                       saving={saving}
                     />
-                    {request.settlement && (
-                      <SettlementPanel
-                        settlement={request.settlement}
-                        rentalId={request.rental.id}
-                        onRefresh={load}
-                      />
-                    )}
                     <RequestActions
                       request={request}
                       saving={saving}

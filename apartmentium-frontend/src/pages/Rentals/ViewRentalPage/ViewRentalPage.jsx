@@ -5,6 +5,7 @@ import Header from "../../../components/layout/Header";
 import {
   activateRentalTenant,
   changeTenantPassword,
+  getUnitRentalHistory,
   getRentalUnits,
   resendRentalTenantActivationOtp,
   setUnitAvailableStatus,
@@ -13,6 +14,7 @@ import {
 import AvailableUnitDetails from "./AvailableUnitDetails";
 import RentalInformation from "./RentalInformation";
 import RentalTenantSummary from "./RentalTenantSummary";
+import RentalHistory from "./RentalHistory";
 import LoadingState from "../../../components/ui/LoadingState";
 import EmptyState from "../../../components/ui/EmptyState";
 import "../Rentals.css";
@@ -22,6 +24,7 @@ export default function ViewRentalPage() {
   const { unitId } = useParams();
   const navigate = useNavigate();
   const [unit, setUnit] = useState(null);
+  const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("");
@@ -40,10 +43,12 @@ export default function ViewRentalPage() {
 
   useEffect(() => {
     let active = true;
-    getRentalUnits()
-      .then((units) => {
-        if (active)
+    Promise.all([getRentalUnits(), getUnitRentalHistory(unitId)])
+      .then(([units, history]) => {
+        if (active) {
           setUnit(units.find((record) => record.unit_id === unitId) || null);
+          setRentalHistory(history);
+        }
       })
       .catch((requestError) => {
         if (active)
@@ -59,6 +64,11 @@ export default function ViewRentalPage() {
       active = false;
     };
   }, [unitId]);
+
+  async function refreshRentalHistory() {
+    const history = await getUnitRentalHistory(unitId);
+    setRentalHistory(history);
+  }
 
   function backToRentals(assignTenant = false) {
     navigate("/admin/rentals", {
@@ -244,6 +254,12 @@ export default function ViewRentalPage() {
                     />
                     <RentalInformation unit={unit} />
                   </>
+                )}
+                {!loading && !error && unit && (
+                  <RentalHistory
+                    rentals={rentalHistory}
+                    onRefresh={refreshRentalHistory}
+                  />
                 )}
               </div>
             </div>
