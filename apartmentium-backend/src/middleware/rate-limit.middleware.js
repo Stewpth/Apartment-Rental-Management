@@ -16,11 +16,13 @@ export const loginRateLimit = rateLimit({
 });
 
 export const activationRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 3 * 60 * 1000,
   limit: 8,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  message: limitMessage("Too many activation attempts. Try again in 15 minutes."),
+  message: limitMessage(
+    "Too many activation attempts. Try again in 3 minutes.",
+  ),
 });
 
 export const resendActivationRateLimit = rateLimit({
@@ -28,5 +30,7 @@ export const resendActivationRateLimit = rateLimit({
   limit: 5,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  message: limitMessage("Too many activation emails requested. Try again in an hour."),
+  message: limitMessage(
+    "Too many activation emails requested. Try again in an hour.",
+  ),
 });

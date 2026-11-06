@@ -21,6 +21,11 @@ export function getTomorrowInManila() {
     .slice(0, 10);
 }
 
+export function getTodayInManila() {
+  const parts = getManilaDateParts();
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
 export function isAfterTodayInManila(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false;

@@ -11,8 +11,12 @@ export function validDate(value) {
 
 export function isAfterTodayInManila(value) {
   if (!validDate(value)) return false;
-  const today = dateInManila(new Date());
+  const today = todayInManila();
   return value > today;
+}
+
+export function todayInManila() {
+  return dateInManila(new Date());
 }
 
 function dateInManila(value) {
@@ -30,16 +34,6 @@ function dateInManila(value) {
       return parts;
     }, {});
   return `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
-}
-
-export function isRenderableRequest(request) {
-  if (request.category !== "MOVING_OUT") return true;
-  const requestedDate = request.requestedMoveOutDate;
-  const requestedDateString =
-    requestedDate instanceof Date
-      ? requestedDate.toISOString().slice(0, 10)
-      : requestedDate;
-  return isAfterTodayInManila(requestedDateString);
 }
 
 export function publicRequest(request) {
@@ -68,6 +62,7 @@ export function publicRequest(request) {
       id: request.rental.id,
       status: request.rental.status,
       monthlyRent: request.rental.monthlyRent.toString(),
+      moveInDate: request.rental.moveInDate?.toISOString().slice(0, 10) ?? null,
       unitStatus: request.rental.unit.status,
     },
     attachments: request.attachments.map((file) => ({

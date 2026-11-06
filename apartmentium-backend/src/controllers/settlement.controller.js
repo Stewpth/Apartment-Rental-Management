@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import {
   includeRequest,
+  isAfterTodayInManila,
   publicRequest,
   validDate,
 } from "../services/request-data.js";
@@ -22,12 +23,10 @@ export async function confirmMoveOut(req, res) {
         success: false,
         message: "Enter a valid actual move-out date.",
       });
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    if (actualMoveOutDate > today)
+    if (!isAfterTodayInManila(req.body.actualMoveOutDate))
       return res.status(400).json({
         success: false,
-        message: "Actual move-out date cannot be in the future.",
+        message: "Move-out date must be tomorrow or later (Manila time).",
       });
     const result = await prisma.$transaction(
       async (tx) => {
@@ -50,26 +49,32 @@ export async function confirmMoveOut(req, res) {
             sum + Math.max(0, Math.round(Number(due.balance) * 100)),
           0,
         );
-        const moveOutPeriodDue =
-          dues.find(
-            (due) =>
-              due.billingPeriod.getUTCFullYear() ===
-                actualMoveOutDate.getUTCFullYear() &&
-              due.billingPeriod.getUTCMonth() ===
-                actualMoveOutDate.getUTCMonth(),
-          )?.dueDate ?? null;
-        let unusedRentCreditCents = 0;
-        if (moveOutPeriodDue && actualMoveOutDate < moveOutPeriodDue) {
-          const days = Math.max(
-            0,
-            (dateAtUtc(moveOutPeriodDue) - dateAtUtc(actualMoveOutDate)) /
-              86400000,
-          );
-          const dailyRentCents = Math.round(
-            (Number(request.rental.monthlyRent) / 30) * 100,
-          );
-          unusedRentCreditCents = dailyRentCents * days;
+        const moveInDate = request.rental.moveInDate;
+        const moveOutYear = actualMoveOutDate.getUTCFullYear();
+        const moveOutMonth = actualMoveOutDate.getUTCMonth();
+        let nextRentDueDate = dueDateForPeriod(
+          moveInDate,
+          moveOutYear,
+          moveOutMonth,
+        );
+        if (nextRentDueDate <= actualMoveOutDate) {
+          const nextMonth =
+            moveOutMonth === 11 ? 0 : moveOutMonth + 1;
+          const nextYear = moveOutMonth === 11 ? moveOutYear + 1 : moveOutYear;
+          nextRentDueDate = dueDateForPeriod(moveInDate, nextYear, nextMonth);
         }
+        const daysUntilNextDue = Math.max(
+          0,
+          (dateAtUtc(nextRentDueDate) - dateAtUtc(actualMoveOutDate)) /
+            86400000,
+        );
+        const monthlyRentCents = Math.round(
+          Number(request.rental.monthlyRent) * 100,
+        );
+        const unusedRentCreditCents = Math.min(
+          monthlyRentCents,
+          Math.round((monthlyRentCents * daysUntilNextDue) / 30),
+        );
         const existingTenantCreditCents = Math.max(
           0,
           Math.round(Number(request.rental.credit?.balance ?? 0) * 100),
@@ -215,7 +220,11 @@ export async function confirmMoveOut(req, res) {
         });
         return { request: updatedRequest, settlement };
       },
-      { isolationLevel: "Serializable" },
+      {
+        isolationLevel: "Serializable",
+        maxWait: 10000,
+        timeout: 20000,
+      },
     );
     return res.json({
       success: true,
@@ -230,6 +239,12 @@ export async function confirmMoveOut(req, res) {
         success: false,
         message:
           "Rental financial data changed during settlement. Refresh and retry.",
+      });
+    if (error.code === "P2028")
+      return res.status(503).json({
+        success: false,
+        message:
+          "The settlement took too long and was rolled back. Please retry.",
       });
     if (
       [

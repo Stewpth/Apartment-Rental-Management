@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import prisma from "../config/prisma.js";
 import { notifyUser } from "../services/notification.service.js";
+import { todayInManila } from "../services/request-data.js";
 
 const PAYMENT_RENTAL_STATUSES = ["ACTIVE", "ON_LEAVING", "ENDED"];
 const ADMIN_PAYMENT_LIST_STATUSES = ["ACTIVE", "ON_LEAVING"];
@@ -18,47 +19,74 @@ function dueDateForPeriod(moveInDate, year, month) {
 }
 
 export async function ensureMonthlyDues(rental) {
-  if (rental.status !== "ACTIVE") return;
-  const moveInDate = new Date(rental.moveInDate);
-  const now = new Date();
-  if (moveInDate > now) return;
+  if (!rental?.id) return;
 
-  const startYear = moveInDate.getUTCFullYear();
-  const startMonth = moveInDate.getUTCMonth();
-  const endYear = now.getUTCFullYear();
-  const endMonth = now.getUTCMonth();
-  const operations = [];
+  // Recheck the persisted rental status inside the same serializable
+  // transaction as due generation. This prevents a stale ACTIVE snapshot from
+  // creating future dues after another request has moved the rental to
+  // ON_LEAVING or ENDED.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await prisma.$transaction(
+        async (tx) => {
+          const currentRental = await tx.rental.findUnique({
+            where: { id: rental.id },
+            select: {
+              id: true,
+              status: true,
+              moveInDate: true,
+              monthlyRent: true,
+            },
+          });
+          if (!currentRental || currentRental.status !== "ACTIVE") return;
 
-  for (
-    let year = startYear, month = startMonth;
-    year < endYear || (year === endYear && month <= endMonth);
-    month += 1
-  ) {
-    if (month > 11) {
-      year += 1;
-      month = 0;
+          const moveInDate = new Date(currentRental.moveInDate);
+          if (dateOnly(moveInDate) > todayInManila()) return;
+
+          const startYear = moveInDate.getUTCFullYear();
+          const startMonth = moveInDate.getUTCMonth();
+          const manilaToday = new Date(`${todayInManila()}T00:00:00.000Z`);
+          const endYear = manilaToday.getUTCFullYear();
+          const endMonth = manilaToday.getUTCMonth();
+
+          for (
+            let year = startYear, month = startMonth;
+            year < endYear || (year === endYear && month <= endMonth);
+            month += 1
+          ) {
+            if (month > 11) {
+              year += 1;
+              month = 0;
+            }
+            const billingPeriod = new Date(Date.UTC(year, month, 1));
+            const dueDate = dueDateForPeriod(moveInDate, year, month);
+            await tx.monthlyDue.upsert({
+              where: {
+                rentalId_billingPeriod: {
+                  rentalId: currentRental.id,
+                  billingPeriod,
+                },
+              },
+              create: {
+                rentalId: currentRental.id,
+                billingPeriod,
+                dueDate,
+                amountDue: currentRental.monthlyRent,
+                amountPaid: 0,
+                balance: currentRental.monthlyRent,
+                status: "UNPAID",
+              },
+              update: { dueDate },
+            });
+          }
+        },
+        { isolationLevel: "Serializable" },
+      );
+      return;
+    } catch (error) {
+      if (error.code !== "P2034" || attempt === 2) throw error;
     }
-    const billingPeriod = new Date(Date.UTC(year, month, 1));
-    operations.push(
-      prisma.monthlyDue.upsert({
-        where: {
-          rentalId_billingPeriod: { rentalId: rental.id, billingPeriod },
-        },
-        create: {
-          rentalId: rental.id,
-          billingPeriod,
-          dueDate: dueDateForPeriod(moveInDate, year, month),
-          amountDue: rental.monthlyRent,
-          amountPaid: 0,
-          balance: rental.monthlyRent,
-          status: "UNPAID",
-        },
-        update: { dueDate: dueDateForPeriod(moveInDate, year, month) },
-      }),
-    );
   }
-
-  await Promise.all(operations);
 }
 
 async function findPaymentRental(rentalId) {
@@ -354,9 +382,9 @@ export async function getMyPayments(req, res) {
       }),
     ]);
     const summary = summarizeDues(dues);
-    const now = new Date();
+    const manilaToday = new Date(`${todayInManila()}T00:00:00.000Z`);
     const currentPeriod = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
+      Date.UTC(manilaToday.getUTCFullYear(), manilaToday.getUTCMonth(), 1),
     );
     const currentDue = dues.find(
       (due) =>

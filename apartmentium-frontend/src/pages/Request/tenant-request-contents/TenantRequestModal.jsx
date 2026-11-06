@@ -63,7 +63,7 @@ export default function TenantRequestModal({ request, onClose, onSubmit }) {
       category === "MOVING_OUT" &&
       !isAfterTodayInManila(requestedMoveOutDate)
     ) {
-      setError("Requested move-out date must be tomorrow or later.");
+      setError("Can't make request, make sure that your moving out date is tomorrow.");
       return;
     }
     if (

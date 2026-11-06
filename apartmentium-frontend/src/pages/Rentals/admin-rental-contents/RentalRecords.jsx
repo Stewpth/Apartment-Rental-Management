@@ -44,6 +44,8 @@ export default function RentalsRecords({ units, onRefresh, initialUnitId }) {
         moveInDate: tenant.moveInDate,
       });
       await onRefresh();
+      // Keep the loading screen visible long enough to be noticed on fast responses.
+      await new Promise((resolve) => window.setTimeout(resolve, 650));
       setIsAssignTenantOpen(false);
     } catch (error) {
       throw new Error(

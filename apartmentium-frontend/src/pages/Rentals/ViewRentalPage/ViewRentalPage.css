@@ -380,14 +380,30 @@
   line-height: 1.5;
 }
 
+.view-rental-otp-field {
+  display: grid;
+  gap: 6px;
+  color: #52647c;
+  font-size: 10px;
+  font-weight: 600;
+}
+
 .view-rental-activation-form input {
+  box-sizing: border-box;
   min-width: 0;
+  width: 100%;
   height: 40px;
   padding: 0 12px;
   border: 1px solid #dce5f0;
   border-radius: 9px;
   font: inherit;
   letter-spacing: 2px;
+}
+
+.view-rental-activation-form input:focus {
+  outline: 0;
+  border-color: #3975dc;
+  box-shadow: 0 0 0 3px rgb(57 117 220 / 12%);
 }
 
 .view-rental-activation-form button {

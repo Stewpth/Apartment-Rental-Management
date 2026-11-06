@@ -33,7 +33,7 @@ export default function TenantRequests() {
       !isAfterTodayInManila(formValues.requestedMoveOutDate)
     ) {
       const validationError = new Error(
-        "Requested move-out date must be tomorrow or later.",
+        "Can't make request, make sure that your moving out date is tomorrow.",
       );
       validationError.response = {
         data: { message: validationError.message },

@@ -66,10 +66,13 @@ export default function RentalTenantSummary({
             <span className="view-rental-status occupied">Active rental</span>
             {accountStatus === "PENDING_ACTIVATION" && (
               <span
-                className={`view-rental-status ${accountStatus === "ACTIVE" ? "occupied" : "pending"}`}
+                className="view-rental-status pending"
               >
-                Account activated
+                Activation required
               </span>
+            )}
+            {accountStatus === "ACTIVE" && (
+              <span className="view-rental-status occupied">Account activated</span>
             )}
           </div>
         </div>
@@ -130,21 +133,28 @@ export default function RentalTenantSummary({
         >
           <div>
             <h3>Activate tenant account</h3>
-            <p>Enter the 6-digit OTP sent to {email}.</p>
+            <p>
+              This tenant cannot sign in until the account is activated. Enter
+              the 6-digit OTP sent to <strong>{email}</strong>.
+            </p>
           </div>
-          <input
-            aria-label="Tenant activation OTP"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={6}
-            pattern="[0-9]{6}"
-            placeholder="6-digit OTP"
-            value={otp}
-            onChange={(event) =>
-              setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            required
-          />
+          <label className="view-rental-otp-field">
+            <span>Activation code</span>
+            <input
+              aria-label="Tenant activation OTP"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              pattern="[0-9]{6}"
+              placeholder="6-digit OTP"
+              value={otp}
+              disabled={activatingTenant}
+              onChange={(event) =>
+                setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))
+              }
+              required
+            />
+          </label>
           <button type="submit" disabled={activatingTenant || otp.length !== 6}>
             {activatingTenant ? "Activating..." : "Activate account"}
           </button>

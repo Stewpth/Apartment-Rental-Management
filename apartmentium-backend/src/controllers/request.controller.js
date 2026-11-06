@@ -9,7 +9,6 @@ import {
 import {
   includeRequest,
   isAfterTodayInManila,
-  isRenderableRequest,
   publicRequest,
   validDate,
 } from "../services/request-data.js";
@@ -22,6 +21,8 @@ const validCategories = new Set([
   "MOVING_OUT",
 ]);
 const statusOrder = ["PENDING", "IN_PROGRESS", "RESOLVED", "REJECTED"];
+const invalidMoveOutDateMessage =
+  "Can't make request, make sure that your moving out date is tomorrow.";
 
 async function persistAttachments(files) {
   if (!Array.isArray(files)) throw new Error("INVALID_ATTACHMENTS");
@@ -128,7 +129,7 @@ export async function createTenantRequest(req, res) {
     )
       return res.status(400).json({
         success: false,
-        message: "Requested move-out date must be tomorrow or later.",
+        message: invalidMoveOutDateMessage,
       });
     if (category === "MOVING_OUT" && reason.length > 500)
       return res.status(400).json({
@@ -156,10 +157,7 @@ export async function createTenantRequest(req, res) {
           status: { in: ["PENDING", "IN_PROGRESS"] },
         },
       });
-      if (
-        activeRequests.some(isRenderableRequest) ||
-        rental.status === "ON_LEAVING"
-      )
+      if (activeRequests.length > 0 || rental.status === "ON_LEAVING")
         return res.status(409).json({
           success: false,
           message: "A moving-out request is already active for this rental.",
@@ -169,7 +167,7 @@ export async function createTenantRequest(req, res) {
       if (!isAfterTodayInManila(req.body.requestedMoveOutDate))
         return res.status(400).json({
           success: false,
-          message: "Requested move-out date must be tomorrow or later.",
+          message: invalidMoveOutDateMessage,
         });
     }
     stored = await persistAttachments(attachments);
@@ -238,11 +236,10 @@ export async function getTenantRequests(req, res) {
       orderBy: { createdAt: "desc" },
       include: includeRequest,
     });
-    const visibleRequests = requests.filter(isRenderableRequest);
     return res.json({
       success: true,
-      count: visibleRequests.length,
-      data: visibleRequests.map(publicRequest),
+      count: requests.length,
+      data: requests.map(publicRequest),
     });
   } catch (error) {
     console.error("Get tenant requests error:", error);
@@ -286,11 +283,10 @@ export async function getAdminRequests(req, res) {
       orderBy: { createdAt: "desc" },
       include: includeRequest,
     });
-    const visibleRequests = requests.filter(isRenderableRequest);
     return res.json({
       success: true,
-      count: visibleRequests.length,
-      data: visibleRequests.map(publicRequest),
+      count: requests.length,
+      data: requests.map(publicRequest),
     });
   } catch (error) {
     console.error("Get admin requests error:", error);
@@ -308,7 +304,6 @@ export async function getRequestDetails(req, res) {
     });
     if (
       !request ||
-      !isRenderableRequest(request) ||
       (req.user.role === "TENANT" &&
         request.rental.tenant.userId !== req.user.id)
     )

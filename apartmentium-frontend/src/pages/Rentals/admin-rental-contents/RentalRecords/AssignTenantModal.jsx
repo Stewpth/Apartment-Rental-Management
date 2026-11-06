@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { createPortal } from "react-dom";
 import { useEffect, useMemo, useState } from "react";
 import ChooseUnit from "./AssignTenantModal/ChooseUnit";
 import TenantInfoForm from "./AssignTenantModal/TenantInfoForm";
@@ -41,6 +42,7 @@ export default function AssignTenantModal({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const selectedUnit = useMemo(
     () => availableUnits.find((unit) => unit.unit_id === unitId),
     [availableUnits, unitId],
@@ -48,11 +50,11 @@ export default function AssignTenantModal({
 
   useEffect(() => {
     function closeOnEscape(event) {
-      if (event.key === "Escape") onCancel();
+      if (event.key === "Escape" && !isCreating) onCancel();
     }
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [onCancel]);
+  }, [isCreating, onCancel]);
 
   function updateTenant(field, value) {
     setTenant((current) => ({ ...current, [field]: value }));
@@ -84,14 +86,36 @@ export default function AssignTenantModal({
 
   async function createTenant(event) {
     event.preventDefault();
+    if (isCreating) return;
+    if (!username.trim())
+      return setError("Enter a username to create the tenant account.");
     if (!password || password.length < 8)
       return setError("Use a password with at least 8 characters.");
     if (password !== confirmPassword)
       return setError("The passwords do not match.");
+    setError("");
+    setIsCreating(true);
+    // Let React paint the loading layer before starting the network request.
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
+    const loadingStartedAt = Date.now();
     try {
-      await onCreate({ unit: selectedUnit, tenant: { ...tenant, username, password, confirmPassword } });
+      await onCreate({
+        unit: selectedUnit,
+        tenant: {
+          ...tenant,
+          username: username.trim(),
+          password,
+          confirmPassword,
+        },
+      });
     } catch (requestError) {
       setError(requestError.message || "Failed to assign tenant.");
+    } finally {
+      const remainingLoadingTime = 650 - (Date.now() - loadingStartedAt);
+      if (remainingLoadingTime > 0) {
+        await new Promise((resolve) => window.setTimeout(resolve, remainingLoadingTime));
+      }
+      setIsCreating(false);
     }
   }
 
@@ -103,13 +127,16 @@ export default function AssignTenantModal({
   return (
     <div
       className="assign-tenant-overlay"
-      onClick={(event) => event.target === event.currentTarget && onCancel()}
+      onClick={(event) =>
+        !isCreating && event.target === event.currentTarget && onCancel()
+      }
     >
       <section
         className="assign-tenant-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="assign-tenant-title"
+        aria-busy={isCreating}
       >
         <header className="assign-tenant-header">
           <div>
@@ -121,6 +148,7 @@ export default function AssignTenantModal({
             className="assign-tenant-close"
             aria-label="Close"
             onClick={onCancel}
+            disabled={isCreating}
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
@@ -170,9 +198,21 @@ export default function AssignTenantModal({
             setError={setError}
             onBack={() => goBack(2)}
             onCreate={createTenant}
+            isCreating={isCreating}
           />
         )}
       </section>
+      {isCreating &&
+        createPortal(
+          <div className="assign-tenant-loading" role="status" aria-live="polite">
+            <div className="assign-tenant-loading-card">
+              <span className="assign-tenant-loading-spinner" aria-hidden="true" />
+              <strong>Creating tenant...</strong>
+              <p>Please wait while we create the account and send the activation OTP.</p>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

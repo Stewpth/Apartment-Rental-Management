@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  getTomorrowInManila,
+  isAfterTodayInManila,
+} from "../../../../utils/manilaDate";
 
 export default function RequestActions({
   request,
@@ -10,7 +14,15 @@ export default function RequestActions({
   onMarkUnitReady,
 }) {
   const [moveOutDate, setMoveOutDate] = useState("");
-  const canAccept = request.status === "PENDING";
+  const [moveOutDateError, setMoveOutDateError] = useState("");
+  const movingOutDateCanBeApproved =
+    request.category !== "MOVING_OUT" ||
+    isAfterTodayInManila(request.requestedMoveOutDate);
+  const canAccept = request.status === "PENDING" && movingOutDateCanBeApproved;
+  const movingOutRequestExpired =
+    request.status === "PENDING" &&
+    request.category === "MOVING_OUT" &&
+    !movingOutDateCanBeApproved;
   const acceptStatus =
     request.category === "PERMISSION" ? "RESOLVED" : "IN_PROGRESS";
   const canResolve =
@@ -21,9 +33,20 @@ export default function RequestActions({
   const canMarkUnitReady =
     request.rental.status === "ENDED" &&
     request.rental.unitStatus === "MAINTENANCE";
+  const tomorrowInManila = getTomorrowInManila();
+  const earliestMoveOutDate =
+    request.rental.moveInDate > tomorrowInManila
+      ? request.rental.moveInDate
+      : tomorrowInManila;
 
   return (
     <>
+      {movingOutRequestExpired && (
+        <p className="request-action-warning" role="alert">
+          This requested move-out date has passed. Reject this request and ask
+          the tenant to submit a new request with a future date.
+        </p>
+      )}
       {canMarkUnitReady && (
         <button
           type="button"
@@ -88,17 +111,39 @@ export default function RequestActions({
             <input
               type="date"
               required
+              min={earliestMoveOutDate}
               value={moveOutDate}
-              onChange={(event) => setMoveOutDate(event.target.value)}
+              disabled={saving}
+              onChange={(event) => {
+                setMoveOutDate(event.target.value);
+                setMoveOutDateError("");
+              }}
             />
           </label>
+          {moveOutDateError && <p role="alert">{moveOutDateError}</p>}
           <button
             type="button"
             className="request-btn accept"
             disabled={saving || !moveOutDate}
-            onClick={() => onConfirmMoveOut(moveOutDate)}
+            onClick={() => {
+              if (moveOutDate < request.rental.moveInDate) {
+                setMoveOutDateError(
+                  "Actual move-out date cannot be before the tenant's move-in date.",
+                );
+                return;
+              }
+              if (!isAfterTodayInManila(moveOutDate)) {
+                setMoveOutDateError(
+                  "Move-out date must be tomorrow or later.",
+                );
+                return;
+              }
+              onConfirmMoveOut(moveOutDate);
+            }}
           >
-            Confirm Move-out and Create Settlement
+            {saving
+              ? "Confirming move-out..."
+              : "Confirm Move-out and Create Settlement"}
           </button>
         </section>
       )}
