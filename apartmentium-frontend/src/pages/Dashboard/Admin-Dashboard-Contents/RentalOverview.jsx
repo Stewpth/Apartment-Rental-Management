@@ -27,11 +27,6 @@ export default function RentalOverview({ data = [] }) {
             <i className="legend-dot collected-dot" />
             Collected
           </span>
-
-          <span>
-            <i className="legend-dot pending-dot" />
-            Pending
-          </span>
         </div>
       </div>
 
@@ -80,10 +75,7 @@ export default function RentalOverview({ data = [] }) {
 
             <Tooltip
               cursor={{ fill: "#F3F7FC" }}
-              formatter={(value, name) => [
-                formatCurrency(value),
-                name === "Collected" ? "Collected" : "Pending",
-              ]}
+              formatter={(value) => [formatCurrency(value), "Collected"]}
               labelFormatter={(label) => `${label}`}
               contentStyle={{
                 border: "1px solid #E5EAF2",
@@ -101,14 +93,6 @@ export default function RentalOverview({ data = [] }) {
               fill="#3478E5"
               radius={[0, 0, 0, 0]}
               name="Collected"
-            />
-
-            <Bar
-              dataKey="pending"
-              stackId="rental"
-              fill="#B7D2FF"
-              radius={[3, 3, 0, 0]}
-              name="Pending"
             />
           </BarChart>
         </ResponsiveContainer>

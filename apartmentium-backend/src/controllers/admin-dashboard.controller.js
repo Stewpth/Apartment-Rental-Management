@@ -22,7 +22,6 @@ export async function getAdminDashboard(req, res) {
       dues,
       requests,
       chartPayments,
-      chartDues,
     ] = await Promise.all([
       prisma.unit.findMany({
         select: { id: true, unitNumber: true, status: true },
@@ -78,10 +77,6 @@ export async function getAdminDashboard(req, res) {
         where: { paymentDate: { gte: chartStart } },
         select: { paymentDate: true, amount: true },
       }),
-      prisma.monthlyDue.findMany({
-        where: { dueDate: { gte: chartStart } },
-        select: { dueDate: true, balance: true },
-      }),
     ]);
 
     const chart = Array.from({ length: 6 }, (_, index) => {
@@ -102,13 +97,6 @@ export async function getAdminDashboard(req, res) {
               item.paymentDate.getUTCMonth() === month,
           )
           .reduce((sum, item) => sum + Number(item.amount), 0),
-        pending: chartDues
-          .filter(
-            (item) =>
-              item.dueDate.getUTCFullYear() === year &&
-              item.dueDate.getUTCMonth() === month,
-          )
-          .reduce((sum, item) => sum + Number(item.balance), 0),
       };
     });
 

@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmptyState from "../../components/ui/EmptyState";
-import { formatPaymentAmount, formatPaymentDate } from "../../utils/paymentUtils";
+import {
+  formatPaymentAmount,
+  formatPaymentDate,
+} from "../../utils/paymentUtils";
 import {
   faChevronDown,
   faChevronLeft,
@@ -21,7 +24,9 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
 
   const rows = useMemo(() => {
     const filtered = payments.filter((payment) =>
-      payment.tenant.fullName.toLowerCase().includes(searchTerm.trim().toLowerCase()),
+      payment.tenant.fullName
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase()),
     );
     if (!sort.key) return filtered;
     return [...filtered].sort((a, b) => {
@@ -70,7 +75,7 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
               </th>
               <th>
                 <button type="button" onClick={() => toggleSort("dueDate")}>
-                  Monthly Due Date {sortIcon("dueDate")}
+                  Due Date {sortIcon("dueDate")}
                 </button>
               </th>
               <th className="payments-amount-heading">
@@ -85,8 +90,17 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
             {visibleRows.length ? (
               visibleRows.map((payment) => (
                 <tr key={payment.rentalId}>
-                  <td>{payment.tenant.fullName}<small className="payments-unit-label">{payment.unit.unitNumber}</small></td>
-                  <td>{formatPaymentDate(payment.dueDate)}</td>
+                  <td>
+                    {payment.tenant.fullName}
+                    <small className="payments-unit-label">
+                      {payment.unit.unitNumber}
+                    </small>
+                  </td>
+                  <td>
+                    {Number(payment.totalDue) === 0
+                      ? <span className="payments-fully-paid">Fully paid</span>
+                      : formatPaymentDate(payment.dueDate)}
+                  </td>
                   <td className="payments-amount">
                     {formatPaymentAmount(payment.totalDue)}
                   </td>
@@ -105,7 +119,16 @@ export default function PaymentsTable({ searchTerm = "", payments = [] }) {
             ) : (
               <tr>
                 <td className="payments-empty" colSpan="4">
-                  <EmptyState title={searchTerm ? "No matching tenants" : "No payment records"} description={searchTerm ? "Try a different search term." : "Active rental balances will appear here when monthly dues are available."} />
+                  <EmptyState
+                    title={
+                      searchTerm ? "No matching tenants" : "No payment records"
+                    }
+                    description={
+                      searchTerm
+                        ? "Try a different search term."
+                        : "Active rental balances will appear here when monthly dues are available."
+                    }
+                  />
                 </td>
               </tr>
             )}
